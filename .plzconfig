@@ -9,13 +9,10 @@
  version = 17.2.1
  versionchecksum = "280ae215dd4e56317dc33fcf73ba6c3f8e2fca4f4e6fca6ffbad9aeaba7201b3"
 
-[go]
-;gotool = ...
-;goroot - ...
-importpath = github.com/samwestmoreland/chessengine
-
 [parse]
 preloadsubincludes = ///go//build_defs:go
 
 [Plugin "go"]
 Target = //plugins:go
+Importpath = github.com/samwestmoreland/chessengine
+GoTool = //third_party/go:toolchain|go

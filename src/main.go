@@ -3,14 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/samwestmoreland/chessengine/src/position"
 )
 
-type position string
-
-// we want a colour type that is an enum of white and black
 type colour string
 
 const (
@@ -23,9 +19,9 @@ func main() {
 	fmt.Println("")
 	fmt.Println("Please enter a position in FEN notation")
 
-	var pos position
+	var pos position.Position
 	fmt.Scanln(&pos)
-	if !pos.isValid() {
+	if !pos.IsValid() {
 		fmt.Println("Invalid position")
 		os.Exit(1)
 	}
@@ -33,16 +29,4 @@ func main() {
 	// print out the position
 	fmt.Println(pos)
 	return
-}
-
-func (p position) splitRows() []string {
-	str := string(p)
-	rows := make([]string, 8)
-	rows = strings.Split(str, "/")
-
-	return rows
-}
-
-func (p position) nextColourToMove() string {
-	return ""
 }

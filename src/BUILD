@@ -10,13 +10,3 @@ go_binary(
         "//src/position",
     ],
 )
-
-go_test(
-    name = "chessengine_test",
-    srcs = glob(
-        ["*_test.go"],
-    ),
-    deps = [
-        ":chessengine",
-    ],
-)

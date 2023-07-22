@@ -8,5 +8,4 @@ go_test(
     name = "position_test",
     srcs = ["position_test.go"],
     deps = [":position"],
-    visibility = ["PUBLIC"],
 )
