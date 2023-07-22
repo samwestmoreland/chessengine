@@ -18,19 +18,28 @@ import (
 //
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2
 
-type Position string
-
-func (p Position) String() string {
-	return string(p)
+type FEN struct {
+	Raw string
 }
 
-func (p Position) IsValid() bool {
+func (f FEN) String() string {
+	return f.Raw
+}
+
+func (f FEN) IsValid() bool {
+	// things we need to check:
+	// 1. 8 rows
 	return true
 }
 
-func GetPosition(s string) (Position, error) {
+func GetFEN(s string) (*FEN, error) {
+	var ret FEN
 	if len(s) == 0 {
-		return "", fmt.Errorf("Empty string")
+		return nil, fmt.Errorf("Empty string")
 	}
-	return Position(s), nil
+	if len(s) > 100 {
+		return nil, fmt.Errorf("String too long")
+	}
+	ret.Raw = s
+	return &ret, nil
 }
