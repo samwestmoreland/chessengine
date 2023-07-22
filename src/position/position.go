@@ -20,17 +20,16 @@ import (
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2
 
 type FEN struct {
-	Str string
+	Str            string
+	Colour         string // w or b
+	CastlingRights string // KQkq
+	EnPassant      string // e3
+	HalfMoveClock  int    // the number of half moves since the last capture or pawn advance
+	FullMoveNumber int    // the number of full moves, starting at 1 and incrementing after black moves
 }
 
 func (f FEN) String() string {
 	return f.Str
-}
-
-func (f FEN) IsValid() bool {
-	// things we need to check:
-	// 1. 8 rows
-	return true
 }
 
 func ParseFEN(s string) (*FEN, error) {
@@ -42,7 +41,15 @@ func ParseFEN(s string) (*FEN, error) {
 	if len(s) > 100 {
 		return nil, fmt.Errorf("FEN too long")
 	}
+
+	// check the first part is valid
+	ranks := strings.Split(parts[0], "/")
+	if len(ranks) != 8 {
+		return nil, fmt.Errorf("FEN must have 8 ranks")
+	}
+
 	var ret FEN
 	ret.Str = s
+	ret.Colour = parts[1]
 	return &ret, nil
 }
