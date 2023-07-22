@@ -12,3 +12,12 @@ func TestParseValidFEN(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestParseInvalidFENColour(t *testing.T) {
+	t.Log("Testing invalid FEN")
+	input := "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR p KQkq - 0 1"
+	_, err := ParseFEN(input)
+	if err == nil {
+		t.Error("Expected error")
+	}
+}

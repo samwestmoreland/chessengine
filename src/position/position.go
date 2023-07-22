@@ -2,6 +2,7 @@ package position
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -51,5 +52,41 @@ func ParseFEN(s string) (*FEN, error) {
 	var ret FEN
 	ret.Str = s
 	ret.Colour = parts[1]
+	ret.CastlingRights = parts[2]
+	ret.EnPassant = parts[3]
+
+	halfMoveClock, err := strconv.Atoi(parts[4])
+	if err != nil {
+		return nil, fmt.Errorf("Failed to parse half move clock: %w", err)
+	}
+	ret.HalfMoveClock = halfMoveClock
+	ret.FullMoveNumber, err = strconv.Atoi(parts[5])
+	if err != nil {
+		return nil, fmt.Errorf("Failed to parse full move number: %w", err)
+	}
+
+	if ret.Colour != "w" && ret.Colour != "b" {
+		return nil, fmt.Errorf("FEN colour must be w or b")
+	}
+
+	if err := validateCastlingRights(ret.CastlingRights); err != nil {
+		return nil, err
+	}
+
 	return &ret, nil
+}
+
+// validateCastlingRights checks that the castling rights string is valid, returning an error if not
+func validateCastlingRights(s string) error {
+	if len(s) > 4 {
+		return fmt.Errorf("Castling rights cannot be longer than 4 characters")
+	}
+	// TODO: there are more valid strings to add
+	validStrings := []string{"KQkq", "KQk", "Kk", "Qq", "K", "Q", "k", "q", "-"}
+	for _, valid := range validStrings {
+		if s == valid {
+			return nil
+		}
+	}
+	return nil
 }
