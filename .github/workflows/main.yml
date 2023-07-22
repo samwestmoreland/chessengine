@@ -1,0 +1,17 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Please build
+      run: ./pleasew build //... --plain_output
+
