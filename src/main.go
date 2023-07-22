@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/samwestmoreland/chessengine/src/position"
 )
 
 type position string
@@ -31,15 +33,6 @@ func main() {
 	// print out the position
 	fmt.Println(pos)
 	return
-}
-
-func (p position) isValid() bool {
-	rows := p.splitRows()
-	if len(rows) != 8 {
-		return false
-	}
-
-	return true
 }
 
 func (p position) splitRows() []string {
