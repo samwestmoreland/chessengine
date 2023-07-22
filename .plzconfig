@@ -1,0 +1,21 @@
+; Please config file
+; Leaving this file as is is enough to use plz to build your project.
+; Please will stay on whatever version you currently have until you run
+; 'plz update', when it will download the latest available version.
+;
+; Or you can uncomment the following to pin everyone to a particular version;
+; when you change it all users will automatically get updated.
+ [please]
+ version = 17.2.1
+ versionchecksum = "280ae215dd4e56317dc33fcf73ba6c3f8e2fca4f4e6fca6ffbad9aeaba7201b3"
+
+[go]
+;gotool = ...
+;goroot - ...
+importpath = github.com/samwestmoreland/chessengine
+
+[parse]
+preloadsubincludes = ///go//build_defs:go
+
+[Plugin "go"]
+Target = //plugins:go
