@@ -15,3 +15,6 @@ jobs:
     - name: Please build
       run: ./pleasew build //... --plain_output
 
+    - test: Please test
+      run: ./pleasew test //... --plain_output
+
