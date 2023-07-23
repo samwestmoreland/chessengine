@@ -3,8 +3,11 @@ package board
 import (
 	"fmt"
 
-	"github.com/uber-go/zap"
+	"go.uber.org/zap"
 )
+
+var logger = zap.NewProduction()
+var sugar = logger.Sugar()
 
 type Square struct {
 	Rank, File int
@@ -51,5 +54,6 @@ func ParseSquare(s string) (Square, error) {
 	}
 	rank := int(s[1])
 	file := int(s[0] - 'a' + 1)
+	sugar.Infof("rank: %d, file: %d", rank, file)
 	return Square{rank, file}, nil
 }
