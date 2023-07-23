@@ -2,6 +2,7 @@ package position
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -86,12 +87,10 @@ func validateCastlingRights(s string) error {
 	if len(s) > 4 {
 		return fmt.Errorf("Castling rights cannot be longer than 4 characters")
 	}
-	// TODO: there are more valid strings to add
-	validStrings := []string{"KQkq", "KQk", "Kk", "Qq", "K", "Q", "k", "q", "-"}
-	for _, valid := range validStrings {
-		if s == valid {
-			return nil
-		}
+	validRegex := "^[K?Q?k?q?]|-"
+	if _, err := regexp.MatchString(validRegex, s); err != nil {
+		return fmt.Errorf("Castling rights string is invalid: %w", err)
 	}
+
 	return nil
 }

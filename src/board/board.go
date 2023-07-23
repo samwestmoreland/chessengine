@@ -2,6 +2,8 @@ package board
 
 import (
 	"fmt"
+
+	"github.com/uber-go/zap"
 )
 
 type Square struct {
