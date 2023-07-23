@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/samwestmoreland/chessengine/src/board"
 )
 
 // A position is in Forsyth–Edwards notation
@@ -22,11 +24,11 @@ import (
 
 type FEN struct {
 	Str            string
-	Colour         string // w or b
-	CastlingRights string // KQkq
-	EnPassant      string // e3
-	HalfMoveClock  int    // the number of half moves since the last capture or pawn advance
-	FullMoveNumber int    // the number of full moves, starting at 1 and incrementing after black moves
+	Colour         string       // w or b
+	CastlingRights string       // KQkq
+	EnPassant      board.Square // e3
+	HalfMoveClock  int          // the number of half moves since the last capture or pawn advance
+	FullMoveNumber int          // the number of full moves, starting at 1 and incrementing after black moves
 }
 
 func (f FEN) String() string {
@@ -53,13 +55,16 @@ func ParseFEN(s string) (*FEN, error) {
 	ret.Str = s
 	ret.Colour = parts[1]
 	ret.CastlingRights = parts[2]
-	ret.EnPassant = parts[3]
+	enPassant, err := board.ParseSquare(parts[3])
+	if err != nil {
+		return nil, fmt.Errorf("Failed to parse en passant square: %w", err)
+	}
+	ret.EnPassant = enPassant
 
-	halfMoveClock, err := strconv.Atoi(parts[4])
+	ret.HalfMoveClock, err = strconv.Atoi(parts[4])
 	if err != nil {
 		return nil, fmt.Errorf("Failed to parse half move clock: %w", err)
 	}
-	ret.HalfMoveClock = halfMoveClock
 	ret.FullMoveNumber, err = strconv.Atoi(parts[5])
 	if err != nil {
 		return nil, fmt.Errorf("Failed to parse full move number: %w", err)

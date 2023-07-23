@@ -2,6 +2,9 @@ go_library(
     name = "position",
     srcs = ["position.go"],
     visibility = ["PUBLIC"],
+    deps = [
+        "//src/board",
+    ],
 )
 
 go_test(
