@@ -3,7 +3,7 @@ package board
 import (
 	"fmt"
 
-	"go.uber.org/zap"
+	"github.com/uber-go/zap"
 )
 
 var logger = zap.NewProduction()
