@@ -33,3 +33,49 @@ func TestIsValidSquare(t *testing.T) {
 		}
 	}
 }
+
+func TestSquareColour(t *testing.T) {
+	darkSquares := []Square{
+		{File: 1, Rank: 1},
+		{File: 2, Rank: 2},
+		{File: 3, Rank: 3},
+		{File: 4, Rank: 4},
+		{File: 5, Rank: 5},
+		{File: 6, Rank: 6},
+		{File: 7, Rank: 7},
+		{File: 8, Rank: 8},
+		{File: 1, Rank: 3},
+		{File: 2, Rank: 4},
+		{File: 3, Rank: 5},
+		{File: 4, Rank: 6},
+		{File: 5, Rank: 7},
+		{File: 6, Rank: 8},
+	}
+	for _, square := range darkSquares {
+		if dark, err := square.IsDarkSquare(); err != nil || !dark {
+			t.Error(fmt.Sprintf("Expected %v to be dark", square))
+		}
+	}
+
+	lightSquares := []Square{
+		{File: 1, Rank: 2},
+		{File: 2, Rank: 1},
+		{File: 3, Rank: 2},
+		{File: 4, Rank: 3},
+		{File: 5, Rank: 4},
+		{File: 6, Rank: 5},
+		{File: 7, Rank: 6},
+		{File: 8, Rank: 7},
+		{File: 2, Rank: 3},
+		{File: 3, Rank: 4},
+		{File: 4, Rank: 5},
+		{File: 5, Rank: 6},
+		{File: 6, Rank: 7},
+		{File: 7, Rank: 8},
+	}
+	for _, square := range lightSquares {
+		if light, err := square.IsLightSquare(); err != nil || !light {
+			t.Error(fmt.Sprintf("Expected %v to be light", square))
+		}
+	}
+}

@@ -23,12 +23,20 @@ func (s Square) CheckValidity() error {
 	return nil
 }
 
-func (s Square) IsLightSquare() bool {
-	return (s.Rank+s.File)%2 == 0
+func (s Square) IsLightSquare() (bool, error) {
+	if err := s.CheckValidity(); err != nil {
+		return false, err
+	}
+
+	return (s.Rank+s.File)%2 == 1, nil
 }
 
-func (s Square) IsDarkSquare() bool {
-	return !s.IsLightSquare()
+func (s Square) IsDarkSquare() (bool, error) {
+	isLight, err := s.IsLightSquare()
+	if err != nil {
+		return false, err
+	}
+	return !isLight, nil
 }
 
 func (s Square) IsSameSquare(other Square) bool {
