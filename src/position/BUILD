@@ -1,12 +1,12 @@
 go_library(
     name = "position",
-    srcs = ["position.go"],
+    srcs = glob(["*.go"]),
     visibility = ["PUBLIC"],
     deps = ["//src/board"],
 )
 
 go_test(
     name = "position_test",
-    srcs = ["position_test.go"],
+    srcs = glob(["*_test.go"]),
     deps = [":position"],
 )
