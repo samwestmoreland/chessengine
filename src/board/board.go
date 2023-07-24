@@ -9,11 +9,18 @@ type Square struct {
 }
 
 func (s Square) String() string {
-	return fmt.Sprintf("%s%d", s.File, s.Rank)
+	file := string('a' + s.File - 1)
+	return fmt.Sprintf("%s%d", file, s.Rank)
 }
 
-func (s Square) IsValidSquare() bool {
-	return s.Rank >= 1 && s.Rank <= 8 && s.File >= 'a' && s.File <= 'h'
+func (s Square) CheckValidity() error {
+	if s.Rank < 1 || s.Rank > 8 {
+		return fmt.Errorf("Invalid rank: %d", s.Rank)
+	}
+	if s.File < 1 || s.File > 8 {
+		return fmt.Errorf("Invalid file: %d", s.File)
+	}
+	return nil
 }
 
 func (s Square) IsLightSquare() bool {
@@ -47,7 +54,9 @@ func ParseSquare(s string) (Square, error) {
 		}
 		return Square{}, fmt.Errorf("Invalid square: %s", s)
 	}
-	rank := int(s[1])
+	rank := int(s[1] - '0')
 	file := int(s[0] - 'a' + 1)
-	return Square{rank, file}, nil
+	square := Square{rank, file}
+	fmt.Printf("Parsed square: %s\n", square)
+	return square, square.CheckValidity()
 }
