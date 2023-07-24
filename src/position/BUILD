@@ -2,7 +2,10 @@ go_library(
     name = "position",
     srcs = glob(["*.go"]),
     visibility = ["PUBLIC"],
-    deps = ["//src/board"],
+    deps = [
+        "//src/board",
+        "//src/pieces",
+    ],
 )
 
 go_test(
