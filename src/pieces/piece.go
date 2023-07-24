@@ -3,7 +3,7 @@ package pieces
 import (
 	"fmt"
 
-	"github.com/samwestmoreland/chessengine/board"
+	"github.com/samwestmoreland/chessengine/src/board"
 )
 
 type Type int
