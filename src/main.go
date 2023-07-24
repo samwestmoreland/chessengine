@@ -19,14 +19,18 @@ func main() {
 	fmt.Println("")
 	fmt.Println("Please enter a position in FEN notation")
 
-	var pos position.Position
-	fmt.Scanln(&pos)
-	if !pos.IsValid() {
-		fmt.Println("Invalid position")
+	var input string
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	_, err = position.ParseFEN(input)
+	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	// print out the position
-	fmt.Println(pos)
 	return
+
 }

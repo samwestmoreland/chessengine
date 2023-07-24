@@ -1,5 +1,9 @@
+subinclude("///go//build_defs:go")
+
+package(default_visibility = ["PUBLIC"])
+
 go_toolchain(
     name = "toolchain",
-    version = "1.20.6",
     install_std = True,
+    version = "1.20.6",
 )
