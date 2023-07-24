@@ -1,8 +1,6 @@
 package pieces
 
 import (
-	"fmt"
-
 	"github.com/samwestmoreland/chessengine/src/board"
 )
 
@@ -15,11 +13,12 @@ const (
 	BishopType
 	KnightType
 	PawnType
+	NoneType
 )
 
 type Piece interface {
 	// Returns the piece's color
-	Color() board.Color
+	Colour() board.Colour
 	// Returns the piece's type
 	Type() Type
 	// Returns the piece's current square

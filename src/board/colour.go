@@ -1,8 +1,8 @@
 package board
 
-type Color int
+type Colour int
 
 const (
-	White Color = iota
+	White Colour = iota
 	Black
 )
