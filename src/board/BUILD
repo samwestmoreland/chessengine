@@ -7,6 +7,6 @@ go_library(
 go_test(
     name = "board_test",
     srcs = glob(["*_test.go"]),
-    deps = [":board"],
     visibility = ["PUBLIC"],
+    deps = [":board"],
 )
