@@ -26,32 +26,32 @@ type Piece interface {
 	GetLegalMoves() []board.Square
 }
 
-func FromChar(char rune) Piece {
-	switch char {
+func FromChar(ch rune, sq board.Square) Piece {
+	switch ch {
 	case 'K':
-		return NewKing(board.White)
+		return NewKing(sq, board.White)
 	case 'k':
-		return NewKing(board.Black)
+		return NewKing(sq, board.Black)
 	case 'Q':
-		return NewQueen(board.White)
+		return NewQueen(sq, board.White)
 	case 'q':
-		return NewQueen(board.Black)
+		return NewQueen(sq, board.Black)
 	case 'R':
-		return NewRook(board.White)
+		return NewRook(sq, board.White)
 	case 'r':
-		return NewRook(board.Black)
+		return NewRook(sq, board.Black)
 	case 'B':
-		return NewBishop(board.White)
+		return NewBishop(sq, board.White)
 	case 'b':
-		return NewBishop(board.Black)
+		return NewBishop(sq, board.Black)
 	case 'N':
-		return NewKnight(board.White)
+		return NewKnight(sq, board.White)
 	case 'n':
-		return NewKnight(board.Black)
+		return NewKnight(sq, board.Black)
 	case 'P':
-		return NewPawn(board.White)
+		return NewPawn(sq, board.White)
 	case 'p':
-		return NewPawn(board.Black)
+		return NewPawn(sq, board.Black)
 	default:
 		return nil
 	}
