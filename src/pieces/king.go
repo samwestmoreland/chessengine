@@ -6,14 +6,15 @@ import (
 
 type King struct {
 	CurrentSqure board.Square
+	Colour       board.Colour
 }
 
-func NewKing(currentSquare board.Square) *King {
-	return &King{CurrentSqure: currentSquare}
+func NewKing(currentSquare board.Square, colour board.Colour) *King {
+	return &King{CurrentSqure: currentSquare, Colour: colour}
 }
 
 // Returns the piece's color
-func (k *King) Colour() board.Colour {
+func (k *King) GetColour() board.Colour {
 	panic("not implemented") // TODO: Implement
 }
 

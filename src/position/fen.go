@@ -83,7 +83,7 @@ func ParseFEN(s string) (*FEN, error) {
 	return &ret, nil
 }
 
-func (f FEN) GetPiece(s board.Square) pieces.Type {
+func (f FEN) GetPiece(s board.Square) (*pieces.Piece, error) {
 	ranks := strings.Split(f.Str, "/")
 	rank := ranks[s.Rank]
 	file := s.File
@@ -100,12 +100,9 @@ func (f FEN) GetPiece(s board.Square) pieces.Type {
 		}
 	}
 
-	if emptySquares == file {
-		return pieces.NoneType
-	}
-
 	piece := rank[emptySquares-1]
-	return pieces.FromChar(piece)
+	ret := pieces.FromChar(rune(piece))
+	return &ret, nil
 }
 
 // validateCastlingRights checks that the castling rights string is valid, returning an error if not

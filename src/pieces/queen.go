@@ -6,10 +6,18 @@ import (
 
 type Queen struct {
 	CurrentSquare board.Square
+	Colour        board.Colour
+}
+
+func NewQueen(colour board.Colour, square board.Square) *Queen {
+	return &Queen{
+		CurrentSquare: square,
+		Colour:        colour,
+	}
 }
 
 // Returns the piece's color
-func (q *Queen) Colour() board.Colour {
+func (q *Queen) GetColour() board.Colour {
 	panic("not implemented") // TODO: Implement
 }
 

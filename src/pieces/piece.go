@@ -18,7 +18,7 @@ const (
 
 type Piece interface {
 	// Returns the piece's color
-	Colour() board.Colour
+	GetColour() board.Colour
 	// Returns the piece's type
 	Type() Type
 	// Returns the piece's current square

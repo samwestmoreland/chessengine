@@ -6,14 +6,15 @@ import (
 
 type Pawn struct {
 	CurrentSquare board.Square
+	Colour        board.Colour
 }
 
-func NewPawn(currentSquare board.Square) *Pawn {
-	return &Pawn{CurrentSquare: currentSquare}
+func NewPawn(currentSquare board.Square, colour board.Colour) *Pawn {
+	return &Pawn{CurrentSquare: currentSquare, Colour: colour}
 }
 
 // Returns the piece's color
-func (p *Pawn) Colour() board.Colour {
+func (p *Pawn) GetColour() board.Colour {
 	panic("not implemented") // TODO: Implement
 }
 

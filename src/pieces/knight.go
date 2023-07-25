@@ -6,10 +6,15 @@ import (
 
 type Knight struct {
 	CurrentSquare board.Square
+	Colour        board.Colour
+}
+
+func NewKnight(currentSquare board.Square, colour board.Colour) *Knight {
+	return &Knight{CurrentSquare: currentSquare}
 }
 
 // Returns the piece's color
-func (k *Knight) Colour() board.Colour {
+func (k *Knight) GetColour() board.Colour {
 	panic("not implemented") // TODO: Implement
 }
 
