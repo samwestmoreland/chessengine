@@ -6,10 +6,15 @@ import (
 
 type Bishop struct {
 	CurrentSquare board.Square
+	Colour        board.Colour
+}
+
+func NewBishop(square board.Square, colour board.Colour) *Bishop {
+	return &Bishop{CurrentSquare: square, Colour: colour}
 }
 
 // Returns the piece's color
-func (b *Bishop) Colour() board.Colour {
+func (b *Bishop) GetColour() board.Colour {
 	panic("not implemented") // TODO: Implement
 }
 

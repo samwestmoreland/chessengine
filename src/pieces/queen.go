@@ -9,7 +9,7 @@ type Queen struct {
 	Colour        board.Colour
 }
 
-func NewQueen(colour board.Colour, square board.Square) *Queen {
+func NewQueen(square board.Square, colour board.Colour) *Queen {
 	return &Queen{
 		CurrentSquare: square,
 		Colour:        colour,

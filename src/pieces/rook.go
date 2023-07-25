@@ -9,7 +9,7 @@ type Rook struct {
 	Colour        board.Colour
 }
 
-func NewRook(colour board.Colour, square board.Square) *Rook {
+func NewRook(square board.Square, colour board.Colour) *Rook {
 	return &Rook{
 		CurrentSquare: square,
 		Colour:        colour,

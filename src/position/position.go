@@ -12,9 +12,9 @@ type Position struct {
 }
 
 // NewPosition returns a new Position.
-func NewPosition(fen FEN) (*Position, error) {
-	position, err := getPositionFromFEN(fen)
-	return &position, err
+func NewPosition(fen FEN) *Position {
+	position := getPositionFromFEN(fen)
+	return &position
 }
 
 func getPositionFromFEN(fen FEN) Position {
@@ -26,19 +26,17 @@ func getPiecePositionsFromFEN(fen FEN) (map[board.Square]pieces.Piece, map[board
 	white := make(map[board.Square]pieces.Piece)
 	black := make(map[board.Square]pieces.Piece)
 
-	for i, square := range board.Squares {
+	for _, square := range board.Squares {
 		piece, err := fen.GetPiece(square)
 		if err != nil {
 			continue
 		}
-		if piece.IsWhite() {
-			white[i] = piece
+		if piece.GetColour() == board.White {
+			white[square] = piece
 		} else {
-			black[i] = piece
+			black[square] = piece
 		}
 	}
 
 	return white, black
 }
-
-// GetPiece returns the piece at the given square.
