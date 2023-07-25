@@ -12,17 +12,18 @@ type Position struct {
 }
 
 // NewPosition returns a new Position.
-func NewPosition(fen FEN) *Position {
+func NewPosition(fen *FEN) *Position {
 	position := getPositionFromFEN(fen)
-	return &position
+	return position
 }
 
-func getPositionFromFEN(fen FEN) Position {
+func getPositionFromFEN(fen *FEN) *Position {
 	white, black := getPiecePositionsFromFEN(fen)
-	return Position{White: white, Black: black}
+	ret := Position{White: white, Black: black}
+	return &ret
 }
 
-func getPiecePositionsFromFEN(fen FEN) (map[board.Square]pieces.Piece, map[board.Square]pieces.Piece) {
+func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]pieces.Piece, map[board.Square]pieces.Piece) {
 	white := make(map[board.Square]pieces.Piece)
 	black := make(map[board.Square]pieces.Piece)
 
