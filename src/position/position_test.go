@@ -29,5 +29,4 @@ func TestGetPositionFromFEN(t *testing.T) {
 	if piece.Type() != pieces.PawnType {
 		t.Error("Error in GetPositionFromFEN")
 	}
-
 }

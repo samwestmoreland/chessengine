@@ -1,6 +1,8 @@
 package position
 
 import (
+	"fmt"
+
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/pieces"
 )
@@ -28,6 +30,7 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]pieces.Piece, map[boar
 	black := make(map[board.Square]pieces.Piece)
 
 	for _, square := range board.Squares {
+		fmt.Println("Calling GetPiece with square: ", square)
 		piece, err := fen.GetPiece(square)
 		if err != nil {
 			continue

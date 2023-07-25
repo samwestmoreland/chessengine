@@ -84,25 +84,54 @@ func ParseFEN(s string) (*FEN, error) {
 }
 
 func (f FEN) GetPiece(s board.Square) (pieces.Piece, error) {
+	// Given a fen, return the piece at the given square
+	// The first rank is the 8th rank, so we need to reverse the ranks
 	ranks := strings.Split(f.Str, "/")
-	rank := ranks[s.Rank]
+	if len(ranks) != 8 {
+		return nil, fmt.Errorf("FEN must have 8 ranks")
+	}
+
+	// check the square is valid
+	if err := s.Valid(); err != nil {
+		return nil, err
+	}
+
+	// now we know the square is valid, we can get the rank and file
+	rank := s.Rank
 	file := s.File
 
-	var emptySquares int
-	for _, char := range rank {
-		if emptySquares >= file {
-			break
+	// reverse the ranks
+	rank = 7 - rank
+
+	// get the rank
+	r := ranks[rank]
+
+	// now we need to iterate through the rank, counting the number of empty squares
+	// until we get to the file we want
+	emptySquares := 0
+	for _, c := range r {
+		if c == ' ' {
+			return nil, fmt.Errorf("FEN contains a space")
 		}
-		if char >= '1' && char <= '8' {
-			emptySquares += int(char - '0')
+		if c == '/' {
+			return nil, fmt.Errorf("FEN contains a /")
+		}
+		if c >= '1' && c <= '8' {
+			emptySquares += int(c - '0')
 		} else {
 			emptySquares++
 		}
+		if emptySquares > file {
+			return nil, fmt.Errorf("FEN contains a space")
+		}
+		if emptySquares == file {
+			// we've found the square we want
+			return pieces.FromChar(c, s), nil
+		}
 	}
 
-	piece := rank[emptySquares-1]
-	ret := pieces.FromChar(rune(piece), s)
-	return ret, nil
+	return nil, fmt.Errorf("Failed to find piece at square %s", s.String())
+
 }
 
 // validateCastlingRights checks that the castling rights string is valid, returning an error if not

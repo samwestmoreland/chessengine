@@ -15,7 +15,7 @@ func NewPawn(currentSquare board.Square, colour board.Colour) *Pawn {
 
 // Returns the piece's color
 func (p *Pawn) GetColour() board.Colour {
-	panic("not implemented") // TODO: Implement
+	return p.Colour
 }
 
 // Returns the piece's type
