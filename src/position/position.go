@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/samwestmoreland/chessengine/src/board"
+	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/pieces"
 )
 
@@ -11,6 +12,7 @@ import (
 type Position struct {
 	White map[board.Square]pieces.Piece
 	Black map[board.Square]pieces.Piece
+	Turn  board.Colour
 }
 
 // NewPosition returns a new Position.
@@ -46,4 +48,37 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]pieces.Piece, map[boar
 	}
 
 	return white, black
+}
+
+func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
+	var moves []moves.Move
+	if p.White == nil || p.Black == nil {
+		return moves, fmt.Errorf("Position is not valid")
+	}
+
+	if p.Turn == board.White {
+		return p.getWhiteMoves()
+	}
+
+	if p.Turn == board.Black {
+		return p.getBlackMoves()
+	}
+
+	return moves, fmt.Errorf("Position is not valid")
+}
+
+func (p *Position) getWhiteMoves() ([]moves.Move, error) {
+	var moves []moves.Move
+	for square, piece := range p.White {
+		moves = append(moves, piece.GetMoves(square, p))
+	}
+	return moves, nil
+}
+
+func (p *Position) getBlackMoves() ([]moves.Move, error) {
+	var moves []moves.Move
+	for square, piece := range p.Black {
+		moves = append(moves, piece.GetMoves(square, p))
+	}
+	return moves, nil
 }

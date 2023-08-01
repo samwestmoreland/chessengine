@@ -4,6 +4,7 @@ go_library(
     visibility = ["PUBLIC"],
     deps = [
         "//src/board",
+        "//src/moves",
         "//src/pieces",
     ],
 )

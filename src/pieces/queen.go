@@ -2,6 +2,8 @@ package pieces
 
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
+	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/position"
 )
 
 type Queen struct {
@@ -31,6 +33,6 @@ func (q *Queen) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (q *Queen) GetLegalMoves() []board.Square {
+func (q *Queen) GetMoves(board.Square, *position.Position) []moves.Move {
 	panic("not implemented") // TODO: Implement
 }

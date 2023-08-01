@@ -2,6 +2,8 @@ package pieces
 
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
+	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/position"
 )
 
 type Type int
@@ -23,7 +25,7 @@ type Piece interface {
 	Type() Type
 	// Returns the piece's current square
 	GetCurrentSquare() board.Square
-	GetLegalMoves() []board.Square
+	GetMoves(board.Square, *position.Position) []moves.Move
 }
 
 func FromChar(ch rune, sq board.Square) Piece {
