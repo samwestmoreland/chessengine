@@ -81,3 +81,17 @@ func (p *Position) getBlackMoves() ([]moves.Move, error) {
 	}
 	return moves, nil
 }
+
+// getPiece returns the piece at the given square, or an error if the square is invalid.
+func (p *Position) getPiece(square board.Square) (Piece, error) {
+	if err := square.Valid(); err != nil {
+		return nil, err
+	}
+	if piece, ok := p.White[square]; ok {
+		return piece, nil
+	}
+	if piece, ok := p.Black[square]; ok {
+		return piece, nil
+	}
+	return nil, nil
+}
