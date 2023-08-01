@@ -12,7 +12,7 @@ go_test(
     name = "position_test",
     srcs = glob(["*_test.go"]),
     deps = [
-    ":position",
+        ":position",
         "//src/board",
     ],
 )
