@@ -20,7 +20,7 @@ func (p *Pawn) GetColour() board.Colour {
 
 // Returns the piece's type
 func (p *Pawn) Type() Type {
-	panic("not implemented") // TODO: Implement
+	return PawnType
 }
 
 func (p *Pawn) GetLegalMoves() []board.Square {

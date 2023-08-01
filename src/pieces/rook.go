@@ -17,20 +17,20 @@ func NewRook(square board.Square, colour board.Colour) *Rook {
 }
 
 // Returns the piece's color
-func (q *Rook) GetColour() board.Colour {
-	panic("not implemented") // TODO: Implement
+func (r *Rook) GetColour() board.Colour {
+	return r.Colour
 }
 
 // Returns the piece's type
-func (q *Rook) Type() Type {
-	panic("not implemented") // TODO: Implement
+func (r *Rook) Type() Type {
+	return RookType
 }
 
 // Returns the piece's current square
-func (q *Rook) GetCurrentSquare() board.Square {
+func (r *Rook) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (q *Rook) GetLegalMoves() []board.Square {
+func (r *Rook) GetLegalMoves() []board.Square {
 	panic("not implemented") // TODO: Implement
 }

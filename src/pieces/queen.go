@@ -18,12 +18,12 @@ func NewQueen(square board.Square, colour board.Colour) *Queen {
 
 // Returns the piece's color
 func (q *Queen) GetColour() board.Colour {
-	panic("not implemented") // TODO: Implement
+	return q.Colour
 }
 
 // Returns the piece's type
 func (q *Queen) Type() Type {
-	panic("not implemented") // TODO: Implement
+	return QueenType
 }
 
 // Returns the piece's current square

@@ -15,12 +15,12 @@ func NewBishop(square board.Square, colour board.Colour) *Bishop {
 
 // Returns the piece's color
 func (b *Bishop) GetColour() board.Colour {
-	panic("not implemented") // TODO: Implement
+	return b.Colour
 }
 
 // Returns the piece's type
 func (b *Bishop) Type() Type {
-	panic("not implemented") // TODO: Implement
+	return BishopType
 }
 
 // Returns the piece's current square

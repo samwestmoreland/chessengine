@@ -15,12 +15,12 @@ func NewKnight(currentSquare board.Square, colour board.Colour) *Knight {
 
 // Returns the piece's color
 func (k *Knight) GetColour() board.Colour {
-	panic("not implemented") // TODO: Implement
+	return k.Colour
 }
 
 // Returns the piece's type
 func (k *Knight) Type() Type {
-	panic("not implemented") // TODO: Implement
+	return KnightType
 }
 
 // Returns the piece's current square

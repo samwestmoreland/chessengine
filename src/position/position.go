@@ -35,6 +35,9 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]pieces.Piece, map[boar
 		if err != nil {
 			continue
 		}
+		if piece == nil {
+			continue
+		}
 		if piece.GetColour() == board.White {
 			white[square] = piece
 		} else {

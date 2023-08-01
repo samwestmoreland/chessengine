@@ -101,7 +101,7 @@ func (f FEN) GetPiece(s board.Square) (pieces.Piece, error) {
 	file := s.File
 
 	// reverse the ranks
-	rank = 7 - rank
+	rank = 8 - rank
 
 	// get the rank
 	r := ranks[rank]
