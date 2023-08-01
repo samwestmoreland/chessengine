@@ -29,6 +29,6 @@ func (k *Knight) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (k *Knight) GetMoves(board.Square, *Position) []moves.Move {
+func (k *Knight) GetMoves(board.Square, *Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

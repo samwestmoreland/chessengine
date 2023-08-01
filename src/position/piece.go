@@ -24,7 +24,7 @@ type Piece interface {
 	Type() Type
 	// Returns the piece's current square
 	GetCurrentSquare() board.Square
-	GetMoves(board.Square, *Position) []moves.Move
+	GetMoves(board.Square, *Position) ([]moves.Move, error)
 }
 
 func FromChar(ch rune, sq board.Square) Piece {

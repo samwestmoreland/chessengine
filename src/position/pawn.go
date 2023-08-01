@@ -28,6 +28,6 @@ func (p *Pawn) GetCurrentSquare() board.Square {
 	return p.CurrentSquare
 }
 
-func (p *Pawn) GetMoves(board.Square, *Position) []moves.Move {
+func (p *Pawn) GetMoves(board.Square, *Position) ([]moves.Move, error) {
 	panic("implement me")
 }

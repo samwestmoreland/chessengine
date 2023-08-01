@@ -29,6 +29,6 @@ func (b *Bishop) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (b *Bishop) GetMoves(board.Square, *Position) []moves.Move {
+func (b *Bishop) GetMoves(board.Square, *Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

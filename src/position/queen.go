@@ -32,6 +32,6 @@ func (q *Queen) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (q *Queen) GetMoves(board.Square, *Position) []moves.Move {
+func (q *Queen) GetMoves(board.Square, *Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

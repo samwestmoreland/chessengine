@@ -32,6 +32,6 @@ func (r *Rook) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (r *Rook) GetMoves(board.Square, *Position) []moves.Move {
+func (r *Rook) GetMoves(board.Square, *Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }
