@@ -13,7 +13,7 @@ func (s Square) String() string {
 	return fmt.Sprintf("%s%d", file, s.Rank)
 }
 
-func (s Square) CheckValidity() error {
+func (s Square) Valid() error {
 	if s.Rank < 1 || s.Rank > 8 {
 		return fmt.Errorf("Invalid rank: %d", s.Rank)
 	}
@@ -24,7 +24,7 @@ func (s Square) CheckValidity() error {
 }
 
 func (s Square) IsLightSquare() (bool, error) {
-	if err := s.CheckValidity(); err != nil {
+	if err := s.Valid(); err != nil {
 		return false, err
 	}
 
@@ -66,5 +66,5 @@ func ParseSquare(s string) (Square, error) {
 	file := int(s[0] - 'a' + 1)
 	square := Square{rank, file}
 	fmt.Printf("Parsed square: %s\n", square)
-	return square, square.CheckValidity()
+	return square, square.Valid()
 }
