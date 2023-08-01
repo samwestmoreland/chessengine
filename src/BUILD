@@ -6,5 +6,8 @@ go_binary(
             "*_test.go",
         ],
     ),
-    deps = ["//src/position"],
+    deps = [
+        "///third_party/go/github.com_integrii_flaggy//:flaggy",
+        "//src/position",
+    ],
 )
