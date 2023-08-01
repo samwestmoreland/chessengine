@@ -1,9 +1,8 @@
-package pieces
+package position
 
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
-	"github.com/samwestmoreland/chessengine/src/position"
 )
 
 type Bishop struct {
@@ -30,6 +29,6 @@ func (b *Bishop) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (b *Bishop) GetMoves(board.Square, *position.Position) []moves.Move {
+func (b *Bishop) GetMoves(board.Square, *Position) []moves.Move {
 	panic("not implemented") // TODO: Implement
 }

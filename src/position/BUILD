@@ -5,7 +5,6 @@ go_library(
     deps = [
         "//src/board",
         "//src/moves",
-        "//src/pieces",
     ],
 )
 
@@ -13,8 +12,7 @@ go_test(
     name = "position_test",
     srcs = glob(["*_test.go"]),
     deps = [
-        ":position",
+    ":position",
         "//src/board",
-        "//src/pieces",
     ],
 )

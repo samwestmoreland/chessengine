@@ -1,9 +1,8 @@
-package pieces
+package position
 
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
-	"github.com/samwestmoreland/chessengine/src/position"
 )
 
 type Pawn struct {
@@ -29,6 +28,6 @@ func (p *Pawn) GetCurrentSquare() board.Square {
 	return p.CurrentSquare
 }
 
-func (p *Pawn) GetMoves(board.Square, *position.Position) []moves.Move {
+func (p *Pawn) GetMoves(board.Square, *Position) []moves.Move {
 	panic("implement me")
 }

@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/samwestmoreland/chessengine/src/board"
-	"github.com/samwestmoreland/chessengine/src/pieces"
 )
 
 // A position is in Forsyth–Edwards notation
@@ -83,7 +82,7 @@ func ParseFEN(s string) (*FEN, error) {
 	return &ret, nil
 }
 
-func (f FEN) GetPiece(s board.Square) (pieces.Piece, error) {
+func (f FEN) GetPiece(s board.Square) (Piece, error) {
 	// Given a fen, return the piece at the given square
 	// The first rank is the 8th rank, so we need to reverse the ranks
 	ranks := strings.Split(f.Str, "/")
@@ -126,7 +125,7 @@ func (f FEN) GetPiece(s board.Square) (pieces.Piece, error) {
 		}
 		if emptySquares == file {
 			// we've found the square we want
-			return pieces.FromChar(c, s), nil
+			return FromChar(c, s), nil
 		}
 	}
 

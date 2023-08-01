@@ -1,38 +1,37 @@
-package pieces
+package position
 
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
-	"github.com/samwestmoreland/chessengine/src/position"
 )
 
-type Queen struct {
+type Rook struct {
 	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
-func NewQueen(square board.Square, colour board.Colour) *Queen {
-	return &Queen{
+func NewRook(square board.Square, colour board.Colour) *Rook {
+	return &Rook{
 		CurrentSquare: square,
 		Colour:        colour,
 	}
 }
 
 // Returns the piece's color
-func (q *Queen) GetColour() board.Colour {
-	return q.Colour
+func (r *Rook) GetColour() board.Colour {
+	return r.Colour
 }
 
 // Returns the piece's type
-func (q *Queen) Type() Type {
-	return QueenType
+func (r *Rook) Type() Type {
+	return RookType
 }
 
 // Returns the piece's current square
-func (q *Queen) GetCurrentSquare() board.Square {
+func (r *Rook) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
-func (q *Queen) GetMoves(board.Square, *position.Position) []moves.Move {
+func (r *Rook) GetMoves(board.Square, *Position) []moves.Move {
 	panic("not implemented") // TODO: Implement
 }

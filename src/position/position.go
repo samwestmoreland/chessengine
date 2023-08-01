@@ -5,13 +5,12 @@ import (
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
-	"github.com/samwestmoreland/chessengine/src/pieces"
 )
 
 // A Position represents a chess position.
 type Position struct {
-	White map[board.Square]pieces.Piece
-	Black map[board.Square]pieces.Piece
+	White map[board.Square]Piece
+	Black map[board.Square]Piece
 	Turn  board.Colour
 }
 
@@ -27,9 +26,9 @@ func getPositionFromFEN(fen *FEN) *Position {
 	return &ret
 }
 
-func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]pieces.Piece, map[board.Square]pieces.Piece) {
-	white := make(map[board.Square]pieces.Piece)
-	black := make(map[board.Square]pieces.Piece)
+func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Square]Piece) {
+	white := make(map[board.Square]Piece)
+	black := make(map[board.Square]Piece)
 
 	for _, square := range board.Squares {
 		fmt.Println("Calling GetPiece with square: ", square)

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/src/board"
-	"github.com/samwestmoreland/chessengine/src/pieces"
 )
 
 func TestGetPositionFromFEN(t *testing.T) {
@@ -26,7 +25,7 @@ func TestGetPositionFromFEN(t *testing.T) {
 	if piece == nil {
 		t.Error("Error in GetPositionFromFEN")
 	}
-	if piece.Type() != pieces.PawnType {
+	if piece.Type() != PawnType {
 		t.Error("Error in GetPositionFromFEN")
 	}
 }
