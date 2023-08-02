@@ -70,7 +70,11 @@ func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
 func (p *Position) getWhiteMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 	for square, piece := range p.White {
-		moves = append(moves, piece.GetMoves(square, p))
+		pieceMoves, err := piece.GetMoves(square, p)
+		if err != nil {
+			return moves, err
+		}
+		moves = append(moves, pieceMoves...)
 	}
 	return moves, nil
 }
@@ -78,7 +82,11 @@ func (p *Position) getWhiteMoves() ([]moves.Move, error) {
 func (p *Position) getBlackMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 	for square, piece := range p.Black {
-		moves = append(moves, piece.GetMoves(square, p))
+		pieceMoves, err := piece.GetMoves(square, p)
+		if err != nil {
+			return moves, err
+		}
+		moves = append(moves, pieceMoves...)
 	}
 	return moves, nil
 }
