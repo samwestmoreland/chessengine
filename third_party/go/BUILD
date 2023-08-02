@@ -5,7 +5,7 @@ package(default_visibility = ["PUBLIC"])
 go_toolchain(
     name = "toolchain",
     install_std = True,
-    version = "1.20.6",
+    version = "1.20.7",
 )
 
 go_repo(
