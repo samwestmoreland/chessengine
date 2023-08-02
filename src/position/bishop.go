@@ -1,3 +1,4 @@
+// Package position provides a representation of a chess position, as well as the logic for the various chess pieces
 package position
 
 import (
@@ -5,30 +6,33 @@ import (
 	"github.com/samwestmoreland/chessengine/src/moves"
 )
 
+// Bishop represents a bishop piece
 type Bishop struct {
 	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
+// NewBishop creates a new bishop piece
 func NewBishop(square board.Square, colour board.Colour) *Bishop {
 	return &Bishop{CurrentSquare: square, Colour: colour}
 }
 
-// Returns the piece's color
+// GetColour returns the piece's color
 func (b *Bishop) GetColour() board.Colour {
 	return b.Colour
 }
 
-// Returns the piece's type
+// Type returns the piece's type
 func (b *Bishop) Type() Type {
 	return BishopType
 }
 
-// Returns the piece's current square
+// GetCurrentSquare returns the piece's current square
 func (b *Bishop) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
+// GetMoves returns the piece's valid moves
 func (b *Bishop) GetMoves(board.Square, *Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

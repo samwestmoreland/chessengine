@@ -49,6 +49,7 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Squar
 	return white, black
 }
 
+// GetAllPossibleMoves returns all possible moves for the current position.
 func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 	if p.White == nil || p.Black == nil {

@@ -5,30 +5,33 @@ import (
 	"github.com/samwestmoreland/chessengine/src/moves"
 )
 
+// King is a struct representing a king piece
 type King struct {
 	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
+// NewKing returns a new king piece
 func NewKing(currentSquare board.Square, colour board.Colour) *King {
 	return &King{CurrentSquare: currentSquare, Colour: colour}
 }
 
-// Returns the piece's color
+// GetColour returns the piece's color
 func (k *King) GetColour() board.Colour {
 	return k.Colour
 }
 
-// Returns the piece's type
+// Type returns the piece's type
 func (k *King) Type() Type {
 	return KingType
 }
 
-// Returns the piece's current square
+// GetCurrentSquare returns the piece's current square
 func (k *King) GetCurrentSquare() board.Square {
 	return k.CurrentSquare
 }
 
+// GetMoves returns a list of all possible moves for the king
 func (k *King) GetMoves(sq board.Square, p *Position) ([]moves.Move, error) {
 	// Get all possible moves assuming no other pieces on the board
 	// The king can move one square in any direction, so there are 8 possible moves

@@ -5,11 +5,13 @@ import (
 	"github.com/samwestmoreland/chessengine/src/moves"
 )
 
+// Rook represents a rook piece, which can move horizontally or vertically
 type Rook struct {
 	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
+// NewRook creates a new rook piece
 func NewRook(square board.Square, colour board.Colour) *Rook {
 	return &Rook{
 		CurrentSquare: square,
@@ -17,21 +19,22 @@ func NewRook(square board.Square, colour board.Colour) *Rook {
 	}
 }
 
-// Returns the piece's color
+// GetColour returns the piece's color
 func (r *Rook) GetColour() board.Colour {
 	return r.Colour
 }
 
-// Returns the piece's type
+// Type returns the piece's type
 func (r *Rook) Type() Type {
 	return RookType
 }
 
-// Returns the piece's current square
+// GetCurrentSquare returns the piece's current square
 func (r *Rook) GetCurrentSquare() board.Square {
 	panic("not implemented") // TODO: Implement
 }
 
+// GetMoves returns the piece's valid moves
 func (r *Rook) GetMoves(board.Square, *Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }
