@@ -2,10 +2,33 @@ package board
 
 import (
 	"fmt"
+	"strconv"
 )
 
 type Square struct {
 	Rank, File int
+}
+
+// newSquare takes a string representation of a square and returns a Square
+func newSquare(sqStr string) (*Square, error) {
+	if len(sqStr) != 2 {
+		return nil, fmt.Errorf("newSquare expects a string of length 2")
+	}
+
+	// Convert the letter into an int
+
+	file := int(sqStr[0] + 'a' - 1)
+	rank, err := strconv.Atoi(string(sqStr[1]))
+	if err != nil {
+		return nil, fmt.Errorf("Invalid rank %v: %w", sqStr[1], err)
+	}
+
+	ret := &Square{Rank: rank, File: file}
+	if err = ret.Valid(); err != nil {
+		return nil, fmt.Errorf("Invalid square: %w", err)
+	}
+
+	return ret, nil
 }
 
 func (s Square) String() string {
