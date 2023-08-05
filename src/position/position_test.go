@@ -1,6 +1,7 @@
 package position
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/src/board"

@@ -129,7 +129,7 @@ func (f FEN) GetPiece(s board.Square) (Piece, error) {
 		}
 		if emptySquares == file {
 			// we've found the square we want
-			return FromChar(c, s), nil
+			return FromChar(c, &s), nil
 		}
 	}
 

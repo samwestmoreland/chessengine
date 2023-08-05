@@ -7,12 +7,12 @@ import (
 
 // Rook represents a rook piece, which can move horizontally or vertically
 type Rook struct {
-	CurrentSquare board.Square
+	CurrentSquare *board.Square
 	Colour        board.Colour
 }
 
 // NewRook creates a new rook piece
-func NewRook(square board.Square, colour board.Colour) *Rook {
+func NewRook(square *board.Square, colour board.Colour) *Rook {
 	return &Rook{
 		CurrentSquare: square,
 		Colour:        colour,
@@ -30,7 +30,7 @@ func (r *Rook) Type() Type {
 }
 
 // GetCurrentSquare returns the piece's current square
-func (r *Rook) GetCurrentSquare() board.Square {
+func (r *Rook) GetCurrentSquare() *board.Square {
 	panic("not implemented") // TODO: Implement
 }
 

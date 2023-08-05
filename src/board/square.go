@@ -31,12 +31,15 @@ func NewSquare(sqStr string) (*Square, error) {
 	return ret, nil
 }
 
-func (s Square) String() string {
+func (s *Square) String() string {
 	file := string('a' + s.File - 1)
 	return fmt.Sprintf("%s%d", file, s.Rank)
 }
 
-func (s Square) Valid() error {
+func (s *Square) Valid() error {
+	if s == nil {
+		return fmt.Errorf("Square is nil")
+	}
 	if s.Rank < 1 || s.Rank > 8 {
 		return fmt.Errorf("Invalid rank: %d", s.Rank)
 	}

@@ -7,12 +7,12 @@ import (
 
 // King is a struct representing a king piece
 type King struct {
-	CurrentSquare board.Square
+	CurrentSquare *board.Square
 	Colour        board.Colour
 }
 
 // NewKing returns a new king piece
-func NewKing(currentSquare board.Square, colour board.Colour) *King {
+func NewKing(currentSquare *board.Square, colour board.Colour) *King {
 	return &King{CurrentSquare: currentSquare, Colour: colour}
 }
 
@@ -27,7 +27,7 @@ func (k *King) Type() Type {
 }
 
 // GetCurrentSquare returns the piece's current square
-func (k *King) GetCurrentSquare() board.Square {
+func (k *King) GetCurrentSquare() *board.Square {
 	return k.CurrentSquare
 }
 
@@ -60,7 +60,7 @@ func (k *King) GetMoves(sq board.Square, p *Position) ([]moves.Move, error) {
 			}
 
 			// The square is not occupied by a friendly piece, add it to the list
-			ret = append(ret, moves.Move{From: k.CurrentSquare, To: s})
+			ret = append(ret, moves.Move{From: k.CurrentSquare, To: &s})
 		}
 	}
 	return ret, nil

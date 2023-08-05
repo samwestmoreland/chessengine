@@ -5,8 +5,8 @@ import (
 )
 
 type Move struct {
-	From      board.Square
-	To        board.Square
+	From      *board.Square
+	To        *board.Square
 	PieceType string
 }
 

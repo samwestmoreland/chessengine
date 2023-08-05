@@ -7,12 +7,12 @@ import (
 
 // Pawn is a piece that can move one square forward, or two squares forward if it is on its starting square, and can capture diagonally.
 type Pawn struct {
-	CurrentSquare board.Square
+	CurrentSquare *board.Square
 	Colour        board.Colour
 }
 
 // NewPawn creates a new pawn
-func NewPawn(currentSquare board.Square, colour board.Colour) *Pawn {
+func NewPawn(currentSquare *board.Square, colour board.Colour) *Pawn {
 	return &Pawn{CurrentSquare: currentSquare, Colour: colour}
 }
 
@@ -27,7 +27,7 @@ func (p *Pawn) Type() Type {
 }
 
 // GetCurrentSquare returns the piece's current square
-func (p *Pawn) GetCurrentSquare() board.Square {
+func (p *Pawn) GetCurrentSquare() *board.Square {
 	return p.CurrentSquare
 }
 

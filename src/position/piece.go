@@ -25,12 +25,12 @@ type Piece interface {
 	// Returns the piece's type
 	Type() Type
 	// Returns the piece's current square
-	GetCurrentSquare() board.Square
+	GetCurrentSquare() *board.Square
 	GetMoves(board.Square, *Position) ([]moves.Move, error)
 }
 
 // FromChar returns a piece from a character
-func FromChar(ch rune, sq board.Square) Piece {
+func FromChar(ch rune, sq *board.Square) Piece {
 	switch ch {
 	case 'K':
 		return NewKing(sq, board.White)

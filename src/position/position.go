@@ -25,14 +25,15 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 	whitePieces := make(map[board.Square]Piece)
 	blackPieces := make(map[board.Square]Piece)
 	for _, p := range pieces {
+		fmt.Println("looking at piece: ", p)
 		if err := p.GetCurrentSquare().Valid(); err != nil {
-			fmt.Printf("Failed to add piece %s to square %s", p.Type(), p.GetCurrentSquare())
+			fmt.Printf("Failed to add piece %v to square %s\n", p.Type(), p.GetCurrentSquare())
 			continue
 		}
 		if p.GetColour() == board.White {
-			whitePieces[p.GetCurrentSquare()] = p
+			whitePieces[*p.GetCurrentSquare()] = p
 		} else if p.GetColour() == board.Black {
-			blackPieces[p.GetCurrentSquare()] = p
+			blackPieces[*p.GetCurrentSquare()] = p
 		}
 	}
 	return ret
