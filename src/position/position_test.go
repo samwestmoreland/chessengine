@@ -30,3 +30,27 @@ func TestGetPositionFromFEN(t *testing.T) {
 		t.Error("Error in GetPositionFromFEN")
 	}
 }
+
+func TestGetMovesForKing(t *testing.T) {
+	sqStr := "e4"
+	sq, err := board.NewSquare(sqStr)
+	if err != nil {
+		t.Fatalf("Failed to create square %s: %v", sqStr, err)
+	}
+	whiteKing := NewKing(sq, board.White)
+	sqStrBlack := "h8"
+	sqBlack, err := board.NewSquare(sqStrBlack)
+	if err != nil {
+		t.Errorf("Failed to create square %s", sqStr)
+	}
+	blackKing := NewKing(sqBlack, board.Black)
+
+	pos := NewPosition(board.White, []Piece{whiteKing, blackKing})
+
+	moves, err := whiteKing.GetMoves(*sq, pos)
+	if err != nil {
+		t.Errorf("Error while getting moves")
+	}
+
+	fmt.Printf("moves: %v", moves)
+}
