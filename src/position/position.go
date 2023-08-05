@@ -15,9 +15,27 @@ type Position struct {
 }
 
 // NewPosition returns a new Position.
-func NewPosition(fen *FEN) *Position {
+func NewPositionFromFEN(fen *FEN) *Position {
 	position := getPositionFromFEN(fen)
 	return position
+}
+
+func NewPosition(turn board.Colour, pieces []Piece) *Position {
+	ret := &Position{Turn: turn}
+	whitePieces := make(map[board.Square]Piece)
+	blackPieces := make(map[board.Square]Piece)
+	for _, p := range pieces {
+		if err := p.GetCurrentSquare().Valid(); err != nil {
+			fmt.Printf("Failed to add piece %s to square %s", p.Type(), p.GetCurrentSquare())
+			continue
+		}
+		if p.GetColour() == board.White {
+			whitePieces[p.GetCurrentSquare()] = p
+		} else if p.GetColour() == board.Black {
+			blackPieces[p.GetCurrentSquare()] = p
+		}
+	}
+	return ret
 }
 
 func getPositionFromFEN(fen *FEN) *Position {
