@@ -10,7 +10,7 @@ type Square struct {
 }
 
 // newSquare takes a string representation of a square and returns a Square
-func newSquare(sqStr string) (*Square, error) {
+func NewSquare(sqStr string) (*Square, error) {
 	if len(sqStr) != 2 {
 		return nil, fmt.Errorf("newSquare expects a string of length 2")
 	}
