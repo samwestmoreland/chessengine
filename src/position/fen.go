@@ -29,7 +29,7 @@ var ErrInvalidFEN = errors.New("invalid FEN")
 // FEN is a struct representing a position in Forsyth–Edwards notation.
 type FEN struct {
 	Str            string
-	Colour         string       // w or b
+	Colour         board.Colour // w or b
 	CastlingRights string       // KQkq
 	EnPassant      board.Square // e3
 	HalfMoveClock  int          // the number of half moves since the last capture or pawn advance
@@ -39,6 +39,10 @@ type FEN struct {
 // String returns the FEN as a string.
 func (f FEN) String() string {
 	return f.Str
+}
+
+func (f FEN) GetTurn() board.Colour {
+	return f.Colour
 }
 
 // ParseFEN parses a FEN string, returning a FEN struct.
@@ -61,10 +65,10 @@ func ParseFEN(fenstr string) (*FEN, error) {
 
 	var ret FEN
 	ret.Str = fenstr
-	ret.Colour = parts[1]
+	ret.Colour = board.ColourFromString(parts[1])
 	ret.CastlingRights = parts[2]
 
-	var enPassant = &board.Square{}
+	var enPassant = &board.Square{File: 0, Rank: 0}
 
 	if parts[3] != "-" {
 		var err error
@@ -89,7 +93,7 @@ func ParseFEN(fenstr string) (*FEN, error) {
 		return nil, fmt.Errorf("failed to parse full move number: %w", err)
 	}
 
-	if ret.Colour != "w" && ret.Colour != "b" {
+	if ret.Colour != board.White && ret.Colour != board.Black {
 		return nil, fmt.Errorf("FEN colour must be w or b, got %s: %w", ret.Colour, ErrInvalidFEN)
 	}
 

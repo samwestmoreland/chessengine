@@ -84,7 +84,7 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 func getPositionFromFEN(fen *FEN) *Position {
 	log.Debugf("Creating position from FEN: %s\n", fen.String())
 	white, black := getPiecePositionsFromFEN(fen)
-	ret := Position{White: white, Black: black}
+	ret := Position{White: white, Black: black, Turn: fen.Colour}
 
 	return &ret
 }
