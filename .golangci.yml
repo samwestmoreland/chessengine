@@ -11,3 +11,4 @@ linters:
     - maligned
     - interfacer
     - scopelint
+    - godox
