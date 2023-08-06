@@ -45,16 +45,20 @@ func (f FEN) GetTurn() board.Colour {
 	return f.Colour
 }
 
-// ParseFEN parses a FEN string, returning a FEN struct.
-func ParseFEN(fenstr string) (*FEN, error) {
-	// split the string at the spaces
+func splitFEN(fenstr string) ([]string, error) {
 	parts := strings.Split(fenstr, " ")
 	if len(parts) != 6 {
 		return nil, fmt.Errorf("FEN must have 6 parts: %w", ErrInvalidFEN)
 	}
 
-	if len(fenstr) > 100 {
-		return nil, fmt.Errorf("FEN too long: %w", ErrInvalidFEN)
+	return parts, nil
+}
+
+// ParseFEN parses a FEN string, returning a FEN struct.
+func ParseFEN(fenstr string) (*FEN, error) {
+	parts, err := splitFEN(fenstr)
+	if err != nil {
+		return nil, err
 	}
 
 	// check the first part is valid
@@ -80,8 +84,6 @@ func ParseFEN(fenstr string) (*FEN, error) {
 	}
 
 	ret.EnPassant = *enPassant
-
-	var err error
 
 	ret.HalfMoveClock, err = strconv.Atoi(parts[4])
 	if err != nil {

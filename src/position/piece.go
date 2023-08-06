@@ -4,6 +4,7 @@ import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/piece"
+	"unicode"
 )
 
 // Piece represents a chess piece.
@@ -19,32 +20,34 @@ type Piece interface {
 
 // FromChar returns a piece from a character.
 func FromChar(ch rune, square *board.Square) Piece {
+	colour := getCase(ch)
+
+	ch = unicode.ToLower(ch)
 	switch ch {
-	case 'K':
-		return NewKing(square, board.White)
 	case 'k':
-		return NewKing(square, board.Black)
-	case 'Q':
-		return NewQueen(square, board.White)
+		return NewKing(square, colour)
 	case 'q':
-		return NewQueen(square, board.Black)
-	case 'R':
-		return NewRook(square, board.White)
+		return NewQueen(square, colour)
 	case 'r':
-		return NewRook(square, board.Black)
-	case 'B':
-		return NewBishop(square, board.White)
+		return NewRook(square, colour)
 	case 'b':
-		return NewBishop(square, board.Black)
-	case 'N':
-		return NewKnight(square, board.White)
+		return NewBishop(square, colour)
 	case 'n':
-		return NewKnight(square, board.Black)
-	case 'P':
-		return NewPawn(square, board.White)
+		return NewKnight(square, colour)
 	case 'p':
-		return NewPawn(square, board.Black)
+		return NewPawn(square, colour)
 	default:
 		return nil
 	}
+
+}
+
+func getCase(ch rune) board.Colour {
+	if ch >= 'A' && ch <= 'Z' {
+		return board.White
+	} else if ch >= 'a' && ch <= 'z' {
+		return board.Black
+	}
+
+	return board.Unknown
 }
