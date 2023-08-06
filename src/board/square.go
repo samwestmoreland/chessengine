@@ -2,18 +2,48 @@ package board
 
 import (
 	"fmt"
+	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 type Square struct {
 	Rank, File int
 }
 
-func (s Square) String() string {
-	file := string('a' + s.File - 1)
+// NewSquare takes a string representation of a square and returns a Square.
+func NewSquare(sqStr string) (*Square, error) {
+	if len(sqStr) != 2 {
+		return nil, fmt.Errorf("newSquare expects a string of length 2")
+	}
+
+	// Convert the letter into an int
+	file := int(sqStr[0]) - int('a') + 1
+
+	rank, err := strconv.Atoi(string(sqStr[1]))
+	if err != nil {
+		return nil, fmt.Errorf("Invalid rank %v: %w", sqStr[1], err)
+	}
+
+	ret := &Square{Rank: rank, File: file}
+	if err = ret.Valid(); err != nil {
+		return nil, fmt.Errorf("Invalid square: %w", err)
+	}
+
+	return ret, nil
+}
+
+func (s *Square) String() string {
+	file := fmt.Sprint('a' + s.File - 1)
 	return fmt.Sprintf("%s%d", file, s.Rank)
 }
 
-func (s Square) Valid() error {
+func (s *Square) Valid() error {
+	if s == nil {
+		return fmt.Errorf("Square is nil")
+	}
 	if s.Rank < 1 || s.Rank > 8 {
 		return fmt.Errorf("Invalid rank: %d", s.Rank)
 	}
@@ -52,7 +82,7 @@ func (s Square) IsSameFile(other Square) bool {
 }
 
 func (s Square) IsSameDiagonal(other Square) bool {
-	return s.Rank-other.Rank == int(other.File)-int(s.File)
+	return s.Rank-other.Rank == other.File-s.File
 }
 
 func ParseSquare(s string) (Square, error) {
@@ -65,6 +95,6 @@ func ParseSquare(s string) (Square, error) {
 	rank := int(s[1] - '0')
 	file := int(s[0] - 'a' + 1)
 	square := Square{rank, file}
-	fmt.Printf("Parsed square: %s\n", square)
+	log.Infof("Parsed square: %v\n", square)
 	return square, square.Valid()
 }

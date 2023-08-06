@@ -3,8 +3,10 @@ go_library(
     srcs = glob(["*.go"]),
     visibility = ["PUBLIC"],
     deps = [
+        "///third_party/go/github.com_sirupsen_logrus//:logrus",
         "//src/board",
         "//src/moves",
+        "//src/piece",
     ],
 )
 
@@ -14,5 +16,7 @@ go_test(
     deps = [
         ":position",
         "//src/board",
+        "//src/moves",
+        "//src/piece",
     ],
 )
