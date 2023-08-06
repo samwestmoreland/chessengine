@@ -82,7 +82,7 @@ func (s Square) IsSameFile(other Square) bool {
 }
 
 func (s Square) IsSameDiagonal(other Square) bool {
-	return s.Rank-other.Rank == int(other.File)-int(s.File)
+	return s.Rank-other.Rank == other.File-s.File
 }
 
 func ParseSquare(s string) (Square, error) {
