@@ -59,7 +59,10 @@ func (k *King) GetMoves(sq board.Square, p *Position) ([]moves.Move, error) {
 			if err != nil {
 				return nil, err
 			}
-
+			if piece == nil {
+				ret = append(ret, moves.Move{From: k.CurrentSquare, To: &s})
+				continue
+			}
 			if piece.GetColour() == k.Colour {
 				continue
 			}
