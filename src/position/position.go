@@ -49,7 +49,7 @@ func (p *Position) String() string {
 				continue
 			}
 
-			ret += (*piece).Type().String()
+			ret += piece.Type().String()
 		}
 
 		ret += "\n"
@@ -170,18 +170,19 @@ func (p *Position) getBlackMoves() ([]moves.Move, error) {
 }
 
 // getPiece returns the piece at the given square, or an error if the square is invalid.
-func (p *Position) getPiece(square board.Square) (*Piece, error) {
+func (p *Position) getPiece(square board.Square) (Piece, error) {
 	if err := square.Valid(); err != nil {
 		return nil, fmt.Errorf("invalid square: %s: %w", square.String(), err)
 	}
 
 	if piece, ok := p.White[&square]; ok {
-		return &piece, nil
+		return piece, nil
 	}
 
 	if piece, ok := p.Black[&square]; ok {
-		return &piece, nil
+		return piece, nil
 	}
 
-	return nil, nil
+	piece := NewNoPiece(&square, board.Unknown)
+	return piece, nil
 }

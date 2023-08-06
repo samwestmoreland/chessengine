@@ -58,17 +58,17 @@ func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
 			}
 
 			if pieceAtSquare == nil {
-				ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square, PieceType: (*pieceAtSquare).Type()})
+				ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square, PieceType: (pieceAtSquare).Type()})
 
 				continue
 			}
 
-			if (*pieceAtSquare).GetColour() == k.Colour {
+			if (pieceAtSquare).GetColour() == k.Colour {
 				continue
 			}
 
 			// The square is not occupied by a friendly piece, add it to the list
-			ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square, PieceType: (*pieceAtSquare).Type()})
+			ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square, PieceType: (pieceAtSquare).Type()})
 		}
 	}
 
