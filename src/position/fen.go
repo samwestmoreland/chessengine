@@ -23,7 +23,7 @@ import (
 // And then after 2.Nf3:
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2
 
-// FEN is a struct representing a position in Forsyth–Edwards notation
+// FEN is a struct representing a position in Forsyth–Edwards notation.
 type FEN struct {
 	Str            string
 	Colour         string       // w or b
@@ -33,12 +33,12 @@ type FEN struct {
 	FullMoveNumber int          // the number of full moves, starting at 1 and incrementing after black moves
 }
 
-// String returns the FEN as a string
+// String returns the FEN as a string.
 func (f FEN) String() string {
 	return f.Str
 }
 
-// ParseFEN parses a FEN string, returning a FEN struct
+// ParseFEN parses a FEN string, returning a FEN struct.
 func ParseFEN(s string) (*FEN, error) {
 	// split the string at the spaces
 	parts := strings.Split(s, " ")
@@ -85,7 +85,7 @@ func ParseFEN(s string) (*FEN, error) {
 	return &ret, nil
 }
 
-// GetPiece returns the piece at the given square, given a FEN
+// GetPiece returns the piece at the given square, given a FEN.
 func (f FEN) GetPiece(s board.Square) (Piece, error) {
 	// Given a fen, return the piece at the given square
 	// The first rank is the 8th rank, so we need to reverse the ranks
@@ -137,7 +137,7 @@ func (f FEN) GetPiece(s board.Square) (Piece, error) {
 
 }
 
-// validateCastlingRights checks that the castling rights string is valid, returning an error if not
+// validateCastlingRights checks that the castling rights string is valid, returning an error if not.
 func validateCastlingRights(s string) error {
 	if len(s) > 4 {
 		return fmt.Errorf("Castling rights cannot be longer than 4 characters")

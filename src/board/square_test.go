@@ -1,7 +1,6 @@
 package board
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -29,7 +28,7 @@ func TestIsValidSquare(t *testing.T) {
 			actual = true
 		}
 		if actual != expected {
-			t.Error(fmt.Sprintf("Expected %v, got %v", expected, actual))
+			t.Errorf("Expected %v, got %v", expected, actual)
 		}
 	}
 }
@@ -53,7 +52,7 @@ func TestSquareColour(t *testing.T) {
 	}
 	for _, square := range darkSquares {
 		if dark, err := square.IsDarkSquare(); err != nil || !dark {
-			t.Error(fmt.Sprintf("Expected %v to be dark", square))
+			t.Errorf("Expected %v to be dark", square)
 		}
 	}
 
@@ -75,7 +74,7 @@ func TestSquareColour(t *testing.T) {
 	}
 	for _, square := range lightSquares {
 		if light, err := square.IsLightSquare(); err != nil || !light {
-			t.Error(fmt.Sprintf("Expected %v to be light", square))
+			t.Errorf("Expected %v to be light", square)
 		}
 	}
 }

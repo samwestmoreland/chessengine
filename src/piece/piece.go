@@ -1,6 +1,6 @@
 package piece
 
-// Type represents the type of a piece
+// Type represents the type of a piece.
 type Type int
 
 const (

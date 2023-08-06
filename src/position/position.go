@@ -5,7 +5,10 @@ import (
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 // A Position represents a chess position.
 type Position struct {
@@ -25,9 +28,8 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 	whitePieces := make(map[board.Square]Piece)
 	blackPieces := make(map[board.Square]Piece)
 	for _, p := range pieces {
-		fmt.Println("looking at piece: ", p)
 		if err := p.GetCurrentSquare().Valid(); err != nil {
-			fmt.Printf("Failed to add piece %v to square %s\n", p.Type(), p.GetCurrentSquare())
+			log.Errorf("Failed to add piece %v to square %s\n", p.Type(), p.GetCurrentSquare())
 			continue
 		}
 		if p.GetColour() == board.White {
@@ -50,7 +52,6 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Squar
 	black := make(map[board.Square]Piece)
 
 	for _, square := range board.Squares {
-		fmt.Println("Calling GetPiece with square: ", square)
 		piece, err := fen.GetPiece(square)
 		if err != nil {
 			continue

@@ -13,7 +13,7 @@ type Square struct {
 	Rank, File int
 }
 
-// newSquare takes a string representation of a square and returns a Square
+// NewSquare takes a string representation of a square and returns a Square.
 func NewSquare(sqStr string) (*Square, error) {
 	if len(sqStr) != 2 {
 		return nil, fmt.Errorf("newSquare expects a string of length 2")
@@ -95,6 +95,6 @@ func ParseSquare(s string) (Square, error) {
 	rank := int(s[1] - '0')
 	file := int(s[0] - 'a' + 1)
 	square := Square{rank, file}
-	fmt.Printf("Parsed square: %s\n", square)
+	log.Infof("Parsed square: %s\n", square)
 	return square, square.Valid()
 }

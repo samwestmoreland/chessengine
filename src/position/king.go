@@ -4,11 +4,7 @@ import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/piece"
-
-	"github.com/sirupsen/logrus"
 )
-
-var log = logrus.New()
 
 // King is a struct representing a king piece
 type King struct {

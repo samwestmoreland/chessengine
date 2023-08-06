@@ -1,12 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/integrii/flaggy"
 	"github.com/samwestmoreland/chessengine/src/position"
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 type colour string
 
@@ -26,10 +28,10 @@ func main() {
 	flaggy.String(&fenFlag, "f", "fen", "A FEN string to parse")
 
 	flaggy.Parse()
-	fmt.Println("Starting chess engine")
+	log.Infof("Starting chess engine")
 	_, err := position.ParseFEN(fenFlag)
 	if err != nil {
-		fmt.Println(err)
+		log.Errorf("Error parsing FEN: %s", err)
 		os.Exit(1)
 	}
 
