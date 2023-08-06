@@ -1,22 +1,24 @@
 package board
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
-
-	"github.com/sirupsen/logrus"
 )
-
-var log = logrus.New()
 
 type Square struct {
 	Rank, File int
 }
 
+var ErrInvalidRank = errors.New("invalid rank")
+var ErrInvalidFile = errors.New("invalid file")
+var ErrInvalidSquare = errors.New("invalid square")
+var ErrNilSquare = errors.New("nil square")
+
 // NewSquare takes a string representation of a square and returns a Square.
 func NewSquare(sqStr string) (*Square, error) {
 	if len(sqStr) != 2 {
-		return nil, fmt.Errorf("newSquare expects a string of length 2")
+		return nil, fmt.Errorf("string has incorrect length: %s: %w", sqStr, ErrInvalidSquare)
 	}
 
 	// Convert the letter into an int
@@ -24,12 +26,12 @@ func NewSquare(sqStr string) (*Square, error) {
 
 	rank, err := strconv.Atoi(string(sqStr[1]))
 	if err != nil {
-		return nil, fmt.Errorf("Invalid rank %v: %w", sqStr[1], err)
+		return nil, fmt.Errorf("invalid rank: %s: %w", string(sqStr[1]), ErrInvalidRank)
 	}
 
 	ret := &Square{Rank: rank, File: file}
 	if err = ret.Valid(); err != nil {
-		return nil, fmt.Errorf("Invalid square: %w", err)
+		return nil, fmt.Errorf("invalid square: %s: %w", sqStr, ErrInvalidSquare)
 	}
 
 	return ret, nil
@@ -37,19 +39,23 @@ func NewSquare(sqStr string) (*Square, error) {
 
 func (s *Square) String() string {
 	file := fmt.Sprint('a' + s.File - 1)
+
 	return fmt.Sprintf("%s%d", file, s.Rank)
 }
 
 func (s *Square) Valid() error {
 	if s == nil {
-		return fmt.Errorf("Square is nil")
+		return fmt.Errorf("square is nil: %w", ErrNilSquare)
 	}
+
 	if s.Rank < 1 || s.Rank > 8 {
-		return fmt.Errorf("Invalid rank: %d", s.Rank)
+		return fmt.Errorf("invalid rank: %d: %w", s.Rank, ErrInvalidRank)
 	}
+
 	if s.File < 1 || s.File > 8 {
-		return fmt.Errorf("Invalid file: %d", s.File)
+		return fmt.Errorf("invalid file: %d: %w", s.File, ErrInvalidFile)
 	}
+
 	return nil
 }
 
@@ -66,6 +72,7 @@ func (s Square) IsDarkSquare() (bool, error) {
 	if err != nil {
 		return false, err
 	}
+
 	return !isLight, nil
 }
 
@@ -83,18 +90,4 @@ func (s Square) IsSameFile(other Square) bool {
 
 func (s Square) IsSameDiagonal(other Square) bool {
 	return s.Rank-other.Rank == other.File-s.File
-}
-
-func ParseSquare(s string) (Square, error) {
-	if len(s) != 2 {
-		if s == "-" {
-			return Square{}, nil
-		}
-		return Square{}, fmt.Errorf("Invalid square: %s", s)
-	}
-	rank := int(s[1] - '0')
-	file := int(s[0] - 'a' + 1)
-	square := Square{rank, file}
-	log.Infof("Parsed square: %v\n", square)
-	return square, square.Valid()
 }

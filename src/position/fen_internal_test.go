@@ -28,7 +28,7 @@ func TestParseInvalidFENCastling(t *testing.T) {
 	input := "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 	_, err := ParseFEN(input)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 

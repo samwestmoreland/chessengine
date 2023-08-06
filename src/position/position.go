@@ -1,6 +1,7 @@
 package position
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/samwestmoreland/chessengine/src/board"
@@ -9,18 +10,45 @@ import (
 )
 
 var log = logrus.New()
+var ErrInvalidPosition = errors.New("invalid position")
 
 // A Position represents a chess position.
 type Position struct {
-	White map[board.Square]Piece
-	Black map[board.Square]Piece
+	White map[*board.Square]Piece
+	Black map[*board.Square]Piece
 	Turn  board.Colour
 }
 
 // NewPosition returns a new Position.
 func NewPositionFromFEN(fen *FEN) *Position {
 	position := getPositionFromFEN(fen)
+
 	return position
+}
+
+func (p *Position) String() string {
+	// Print an ascii representation of the board.
+	var ret string
+	for rank := 8; rank >= 1; rank-- {
+		for file := 1; file <= 8; file++ {
+			square := board.Square{File: file, Rank: rank}
+			piece, err := p.getPiece(square)
+			if err != nil {
+				log.Errorf("Failed to get piece on square %s: %v\n", square.String(), err)
+
+				return ""
+			}
+			if piece == nil {
+				ret += "."
+
+				continue
+			}
+			ret += (*piece).Type().String()
+		}
+		ret += "\n"
+	}
+
+	return ret
 }
 
 func NewPosition(turn board.Colour, pieces []Piece) *Position {
@@ -30,6 +58,7 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 	for _, p := range pieces {
 		if err := p.GetCurrentSquare().Valid(); err != nil {
 			log.Errorf("Failed to add piece %v to square %s\n", p.Type(), p.GetCurrentSquare())
+
 			continue
 		}
 		if p.GetColour() == board.White {
@@ -42,14 +71,15 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 }
 
 func getPositionFromFEN(fen *FEN) *Position {
+	log.Debugf("Creating position from FEN: %s\n", fen.String())
 	white, black := getPiecePositionsFromFEN(fen)
 	ret := Position{White: white, Black: black}
 	return &ret
 }
 
-func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Square]Piece) {
-	white := make(map[board.Square]Piece)
-	black := make(map[board.Square]Piece)
+func getPiecePositionsFromFEN(fen *FEN) (map[*board.Square]Piece, map[*board.Square]Piece) {
+	white := make(map[*board.Square]Piece)
+	black := make(map[*board.Square]Piece)
 
 	for _, square := range board.Squares {
 		piece, err := fen.GetPiece(square)
@@ -60,9 +90,9 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Squar
 			continue
 		}
 		if piece.GetColour() == board.White {
-			white[square] = piece
+			white[&square] = piece
 		} else {
-			black[square] = piece
+			black[&square] = piece
 		}
 	}
 
@@ -73,7 +103,7 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Squar
 func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 	if p.White == nil || p.Black == nil {
-		return moves, fmt.Errorf("Position is not valid")
+		return moves, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
 	}
 
 	if p.Turn == board.White {
@@ -84,15 +114,15 @@ func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
 		return p.getBlackMoves()
 	}
 
-	return moves, fmt.Errorf("Position is not valid")
+	return moves, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
 }
 
 func (p *Position) getWhiteMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 	for square, piece := range p.White {
-		pieceMoves, err := piece.GetMoves(square, p)
+		pieceMoves, err := piece.GetMoves(*square, p)
 		if err != nil {
-			return moves, err
+			return moves, fmt.Errorf("Failed to get moves for white piece %v on square %s: %w", piece.Type(), square.String(), err)
 		}
 		moves = append(moves, pieceMoves...)
 	}
@@ -102,9 +132,9 @@ func (p *Position) getWhiteMoves() ([]moves.Move, error) {
 func (p *Position) getBlackMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 	for square, piece := range p.Black {
-		pieceMoves, err := piece.GetMoves(square, p)
+		pieceMoves, err := piece.GetMoves(*square, p)
 		if err != nil {
-			return moves, err
+			return moves, fmt.Errorf("Failed to get moves for black piece %v on square %s: %w", piece.Type(), square.String(), err)
 		}
 		moves = append(moves, pieceMoves...)
 	}
@@ -112,15 +142,15 @@ func (p *Position) getBlackMoves() ([]moves.Move, error) {
 }
 
 // getPiece returns the piece at the given square, or an error if the square is invalid.
-func (p *Position) getPiece(square board.Square) (Piece, error) {
+func (p *Position) getPiece(square board.Square) (*Piece, error) {
 	if err := square.Valid(); err != nil {
-		return nil, fmt.Errorf("Invalid square: %s", square.String())
+		return nil, fmt.Errorf("invalid square: %s: %w", square.String(), err)
 	}
-	if piece, ok := p.White[square]; ok {
-		return piece, nil
+	if piece, ok := p.White[&square]; ok {
+		return &piece, nil
 	}
-	if piece, ok := p.Black[square]; ok {
-		return piece, nil
+	if piece, ok := p.Black[&square]; ok {
+		return &piece, nil
 	}
 	return nil, nil
 }

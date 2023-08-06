@@ -33,7 +33,7 @@ func (k *King) GetCurrentSquare() *board.Square {
 }
 
 // GetMoves returns a list of all possible moves for the king.
-func (k *King) GetMoves(square board.Square, p *Position) ([]moves.Move, error) {
+func (k *King) GetMoves(square board.Square, position *Position) ([]moves.Move, error) {
 	// Get all possible moves assuming no other pieces on the board
 	// The king can move one square in any direction, so there are 8 possible moves
 	ret := make([]moves.Move, 0, 8)
@@ -45,26 +45,27 @@ func (k *King) GetMoves(square board.Square, p *Position) ([]moves.Move, error) 
 			}
 
 			// Get the square
-			s := board.Square{File: k.CurrentSquare.File + i - 1, Rank: k.CurrentSquare.Rank + j - 1}
-			if err := s.Valid(); err != nil {
+			square := board.Square{File: k.CurrentSquare.File + i - 1, Rank: k.CurrentSquare.Rank + j - 1}
+			if err := square.Valid(); err != nil {
 				continue
 			}
 
 			// Check if the square is occupied by a friendly piece
-			piece, err := p.getPiece(square)
+			pieceAtSquare, err := position.getPiece(square)
 			if err != nil {
 				return nil, err
 			}
-			if piece == nil {
-				ret = append(ret, moves.Move{From: k.CurrentSquare, To: &s})
+			if pieceAtSquare == nil {
+				ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square})
+
 				continue
 			}
-			if piece.GetColour() == k.Colour {
+			if (*pieceAtSquare).GetColour() == k.Colour {
 				continue
 			}
 
 			// The square is not occupied by a friendly piece, add it to the list
-			ret = append(ret, moves.Move{From: k.CurrentSquare, To: &s})
+			ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square})
 		}
 	}
 	return ret, nil
