@@ -16,8 +16,8 @@ func NewSquare(sqStr string) (*Square, error) {
 	}
 
 	// Convert the letter into an int
+	file := int(sqStr[0]) - int('a') + 1
 
-	file := int(sqStr[0] + 'a' - 1)
 	rank, err := strconv.Atoi(string(sqStr[1]))
 	if err != nil {
 		return nil, fmt.Errorf("Invalid rank %v: %w", sqStr[1], err)
