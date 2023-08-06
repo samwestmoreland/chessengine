@@ -18,32 +18,32 @@ type Piece interface {
 }
 
 // FromChar returns a piece from a character
-func FromChar(ch rune, sq *board.Square) Piece {
+func FromChar(ch rune, square *board.Square) Piece {
 	switch ch {
 	case 'K':
-		return NewKing(sq, board.White)
+		return NewKing(square, board.White)
 	case 'k':
-		return NewKing(sq, board.Black)
+		return NewKing(square, board.Black)
 	case 'Q':
-		return NewQueen(sq, board.White)
+		return NewQueen(square, board.White)
 	case 'q':
-		return NewQueen(sq, board.Black)
+		return NewQueen(square, board.Black)
 	case 'R':
-		return NewRook(sq, board.White)
+		return NewRook(square, board.White)
 	case 'r':
-		return NewRook(sq, board.Black)
+		return NewRook(square, board.Black)
 	case 'B':
-		return NewBishop(sq, board.White)
+		return NewBishop(square, board.White)
 	case 'b':
-		return NewBishop(sq, board.Black)
+		return NewBishop(square, board.Black)
 	case 'N':
-		return NewKnight(sq, board.White)
+		return NewKnight(square, board.White)
 	case 'n':
-		return NewKnight(sq, board.Black)
+		return NewKnight(square, board.Black)
 	case 'P':
-		return NewPawn(sq, board.White)
+		return NewPawn(square, board.White)
 	case 'p':
-		return NewPawn(sq, board.Black)
+		return NewPawn(square, board.Black)
 	default:
 		return nil
 	}

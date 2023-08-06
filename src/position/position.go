@@ -61,17 +61,17 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 	blackPieces := make(map[*board.Square]Piece)
 	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
 
-	for _, p := range pieces {
-		if err := p.GetCurrentSquare().Valid(); err != nil {
-			log.Errorf("Failed to add piece %v to square %s\n", p.Type(), p.GetCurrentSquare())
+	for _, piece := range pieces {
+		if err := piece.GetCurrentSquare().Valid(); err != nil {
+			log.Errorf("Failed to add piece %v to square %s\n", piece.Type(), piece.GetCurrentSquare())
 
 			continue
 		}
 
-		if p.GetColour() == board.White {
-			whitePieces[p.GetCurrentSquare()] = p
-		} else if p.GetColour() == board.Black {
-			blackPieces[p.GetCurrentSquare()] = p
+		if piece.GetColour() == board.White {
+			whitePieces[piece.GetCurrentSquare()] = piece
+		} else if piece.GetColour() == board.Black {
+			blackPieces[piece.GetCurrentSquare()] = piece
 		}
 	}
 

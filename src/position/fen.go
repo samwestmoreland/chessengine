@@ -101,7 +101,7 @@ func ParseFEN(fenstr string) (*FEN, error) {
 }
 
 // GetPiece returns the piece at the given square, given a FEN.
-func (f FEN) GetPiece(s board.Square) (Piece, error) {
+func (f FEN) GetPiece(square board.Square) (Piece, error) {
 	// Given a fen, return the piece at the given square
 	// The first rank is the 8th rank, so we need to reverse the ranks
 	ranks := strings.Split(f.Str, "/")
@@ -110,35 +110,35 @@ func (f FEN) GetPiece(s board.Square) (Piece, error) {
 	}
 
 	// check the square is valid
-	if err := s.Valid(); err != nil {
+	if err := square.Valid(); err != nil {
 		return nil, fmt.Errorf("got invalid square while getting piece: %w", err)
 	}
 
 	// now we know the square is valid, we can get the rank and file
-	rank := s.Rank
-	file := s.File
+	rank := square.Rank
+	file := square.File
 
 	// reverse the ranks
 	rank = 8 - rank
 
 	// get the rank
-	r := ranks[rank]
+	rankStr := ranks[rank]
 
 	// now we need to iterate through the rank, counting the number of empty squares
 	// until we get to the file we want
 	emptySquares := 0
 
-	for _, c := range r {
-		if c == ' ' {
+	for _, character := range rankStr {
+		if character == ' ' {
 			return nil, fmt.Errorf("FEN contains a space: %w", ErrInvalidFEN)
 		}
 
-		if c == '/' {
+		if character == '/' {
 			return nil, fmt.Errorf("FEN contains a /: %w", ErrInvalidFEN)
 		}
 
-		if c >= '1' && c <= '8' {
-			emptySquares += int(c - '0')
+		if character >= '1' && character <= '8' {
+			emptySquares += int(character - '0')
 		} else {
 			emptySquares++
 		}
@@ -149,21 +149,21 @@ func (f FEN) GetPiece(s board.Square) (Piece, error) {
 
 		if emptySquares == file {
 			// we've found the square we want
-			return FromChar(c, &s), nil
+			return FromChar(character, &square), nil
 		}
 	}
 
-	return nil, fmt.Errorf("Failed to find piece at square %s: %w", s.String(), ErrInvalidFEN)
+	return nil, fmt.Errorf("Failed to find piece at square %s: %w", square.String(), ErrInvalidFEN)
 }
 
 // validateCastlingRights checks that the castling rights string is valid, returning an error if not.
-func validateCastlingRights(s string) error {
-	if len(s) > 4 {
+func validateCastlingRights(castlingStr string) error {
+	if len(castlingStr) > 4 {
 		return fmt.Errorf("castling rights cannot be longer than 4 characters: %w", ErrInvalidFEN)
 	}
 
 	validRegex := "^[K?Q?k?q?]|-"
-	if _, err := regexp.MatchString(validRegex, s); err != nil {
+	if _, err := regexp.MatchString(validRegex, castlingStr); err != nil {
 		return fmt.Errorf("castling rights string is invalid: %w", err)
 	}
 
