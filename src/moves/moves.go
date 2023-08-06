@@ -14,4 +14,7 @@ type Move struct {
 func (m Move) String() string {
 	return m.PieceType.String() + ": " + m.From.String() + " -> " + m.To.String()
 }
+
+func (m Move) Equals(other Move) bool {
+	return *m.From == *other.From && *m.To == *other.To && m.PieceType == other.PieceType
 }
