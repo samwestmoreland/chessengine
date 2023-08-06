@@ -153,7 +153,7 @@ func (f FEN) GetPiece(square board.Square) (Piece, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("Failed to find piece at square %s: %w", square.String(), ErrInvalidFEN)
+	return nil, fmt.Errorf("failed to find piece at square %s: %w", square.String(), ErrInvalidFEN)
 }
 
 // validateCastlingRights checks that the castling rights string is valid, returning an error if not.

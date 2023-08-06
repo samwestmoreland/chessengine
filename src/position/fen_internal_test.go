@@ -41,7 +41,11 @@ func TestParseInvalidFENCastling(t *testing.T) {
 func TestParseInvalidFENEnPassant(t *testing.T) {
 	t.Log("Testing invalid FEN")
 
-	validEnPassantSquares := []string{"a3", "a6", "b3", "b6", "c3", "c6", "d3", "d6", "e3", "e6", "f3", "f6", "g3", "g6", "h3", "h6"}
+	validEnPassantSquares := []string{
+		"a3", "a6", "b3", "b6",
+		"c3", "c6", "d3", "d6",
+		"e3", "e6", "f3", "f6",
+		"g3", "g6", "h3", "h6"}
 
 	for _, square := range validEnPassantSquares {
 		fen := fmt.Sprintf("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq %s 0 1", square)
