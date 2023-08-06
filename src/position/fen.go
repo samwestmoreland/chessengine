@@ -72,7 +72,7 @@ func ParseFEN(fenstr string) (*FEN, error) {
 	ret.Colour = board.ColourFromString(parts[1])
 	ret.CastlingRights = parts[2]
 
-	var enPassant = &board.Square{File: 0, Rank: 0}
+	enPassant := &board.Square{File: 0, Rank: 0}
 
 	if parts[3] != "-" {
 		var err error

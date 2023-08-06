@@ -9,8 +9,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var log = logrus.New()
-var ErrInvalidPosition = errors.New("invalid position")
+var (
+	log                = logrus.New()
+	ErrInvalidPosition = errors.New("invalid position")
+)
 
 // A Position represents a chess position.
 type Position struct {

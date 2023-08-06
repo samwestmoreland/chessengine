@@ -45,7 +45,8 @@ func TestParseInvalidFENEnPassant(t *testing.T) {
 		"a3", "a6", "b3", "b6",
 		"c3", "c6", "d3", "d6",
 		"e3", "e6", "f3", "f6",
-		"g3", "g6", "h3", "h6"}
+		"g3", "g6", "h3", "h6",
+	}
 
 	for _, square := range validEnPassantSquares {
 		fen := fmt.Sprintf("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq %s 0 1", square)

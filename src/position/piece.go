@@ -1,10 +1,11 @@
 package position
 
 import (
+	"unicode"
+
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/piece"
-	"unicode"
 )
 
 // Piece represents a chess piece.
@@ -39,7 +40,6 @@ func FromChar(ch rune, square *board.Square) Piece {
 	default:
 		return nil
 	}
-
 }
 
 func getCase(ch rune) board.Colour {

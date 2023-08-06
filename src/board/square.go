@@ -10,10 +10,12 @@ type Square struct {
 	Rank, File int
 }
 
-var ErrInvalidRank = errors.New("invalid rank")
-var ErrInvalidFile = errors.New("invalid file")
-var ErrInvalidSquare = errors.New("invalid square")
-var ErrNilSquare = errors.New("nil square")
+var (
+	ErrInvalidRank   = errors.New("invalid rank")
+	ErrInvalidFile   = errors.New("invalid file")
+	ErrInvalidSquare = errors.New("invalid square")
+	ErrNilSquare     = errors.New("nil square")
+)
 
 // NewSquare takes a string representation of a square and returns a Square.
 func NewSquare(sqStr string) (*Square, error) {
