@@ -184,5 +184,6 @@ func (p *Position) getPiece(square board.Square) (Piece, error) {
 	}
 
 	piece := NewNoPiece(&square, board.Unknown)
+
 	return piece, nil
 }

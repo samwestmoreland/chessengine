@@ -33,6 +33,6 @@ func (k *NoPiece) GetCurrentSquare() *board.Square {
 }
 
 // GetMoves returns a list of all possible moves for the king.
-func (k *NoPiece) GetMoves(position *Position) ([]moves.Move, error) {
+func (k *NoPiece) GetMoves(_ *Position) ([]moves.Move, error) {
 	return []moves.Move{}, nil
 }

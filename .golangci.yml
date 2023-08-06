@@ -18,6 +18,10 @@ linters:
     - gochecknoglobals
 
 linters-settings:
+  ireturn:
+    allow:
+      - Piece
+      - error
   varnamelen:
     ignore-names:
       - err
