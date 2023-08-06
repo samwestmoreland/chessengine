@@ -3,6 +3,7 @@ package position
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
 // Knight represents a knight piece
@@ -22,8 +23,8 @@ func (k *Knight) GetColour() board.Colour {
 }
 
 // Type returns the piece's type
-func (k *Knight) Type() Type {
-	return KnightType
+func (k *Knight) Type() piece.Type {
+	return piece.KnightType
 }
 
 // GetCurrentSquare returns the piece's current square

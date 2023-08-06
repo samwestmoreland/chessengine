@@ -1,10 +1,11 @@
 package position
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/src/board"
+	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
 func TestGetPositionFromFEN(t *testing.T) {
@@ -22,11 +23,11 @@ func TestGetPositionFromFEN(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error in ParseSquare: %s", err)
 	}
-	piece := pos.White[e4]
-	if piece == nil {
+	p := pos.White[e4]
+	if p == nil {
 		t.Error("Error in GetPositionFromFEN")
 	}
-	if piece.Type() != PawnType {
+	if p.Type() != piece.PawnType {
 		t.Error("Error in GetPositionFromFEN")
 	}
 }

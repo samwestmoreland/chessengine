@@ -3,6 +3,7 @@ package position
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
 // Rook represents a rook piece, which can move horizontally or vertically
@@ -25,8 +26,8 @@ func (r *Rook) GetColour() board.Colour {
 }
 
 // Type returns the piece's type
-func (r *Rook) Type() Type {
-	return RookType
+func (r *Rook) Type() piece.Type {
+	return piece.RookType
 }
 
 // GetCurrentSquare returns the piece's current square

@@ -3,6 +3,7 @@ package position
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
 // Pawn is a piece that can move one square forward, or two squares forward if it is on its starting square, and can capture diagonally.
@@ -22,8 +23,8 @@ func (p *Pawn) GetColour() board.Colour {
 }
 
 // Type returns the piece's type
-func (p *Pawn) Type() Type {
-	return PawnType
+func (p *Pawn) Type() piece.Type {
+	return piece.PawnType
 }
 
 // GetCurrentSquare returns the piece's current square

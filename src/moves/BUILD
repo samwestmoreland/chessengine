@@ -5,5 +5,8 @@ go_library(
         "//src/pieces:all",
         "//src/position:all",
     ],
-    deps = ["//src/board"],
+    deps = [
+        "//src/board",
+        "//src/piece",
+    ],
 )

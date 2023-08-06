@@ -4,6 +4,7 @@ package position
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
 // Bishop represents a bishop piece
@@ -23,8 +24,8 @@ func (b *Bishop) GetColour() board.Colour {
 }
 
 // Type returns the piece's type
-func (b *Bishop) Type() Type {
-	return BishopType
+func (b *Bishop) Type() piece.Type {
+	return piece.BishopType
 }
 
 // GetCurrentSquare returns the piece's current square

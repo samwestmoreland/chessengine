@@ -3,6 +3,7 @@ package position
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
 // Queen is a piece that can move any number of squares diagonally, horizontally, or vertically
@@ -25,8 +26,8 @@ func (q *Queen) GetColour() board.Colour {
 }
 
 // Type returns the piece's type
-func (q *Queen) Type() Type {
-	return QueenType
+func (q *Queen) Type() piece.Type {
+	return piece.QueenType
 }
 
 // GetCurrentSquare returns the piece's current square

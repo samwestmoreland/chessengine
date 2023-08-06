@@ -3,7 +3,12 @@ package position
 import (
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
+
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 // King is a struct representing a king piece
 type King struct {
@@ -22,8 +27,8 @@ func (k *King) GetColour() board.Colour {
 }
 
 // Type returns the piece's type
-func (k *King) Type() Type {
-	return KingType
+func (k *King) Type() piece.Type {
+	return piece.KingType
 }
 
 // GetCurrentSquare returns the piece's current square
