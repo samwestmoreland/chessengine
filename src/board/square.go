@@ -36,7 +36,7 @@ func NewSquare(sqStr string) (*Square, error) {
 }
 
 func (s *Square) String() string {
-	file := string('a' + s.File - 1)
+	file := fmt.Sprint('a' + s.File - 1)
 	return fmt.Sprintf("%s%d", file, s.Rank)
 }
 
@@ -95,6 +95,6 @@ func ParseSquare(s string) (Square, error) {
 	rank := int(s[1] - '0')
 	file := int(s[0] - 'a' + 1)
 	square := Square{rank, file}
-	log.Infof("Parsed square: %s\n", square)
+	log.Infof("Parsed square: %v\n", square)
 	return square, square.Valid()
 }

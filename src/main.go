@@ -10,13 +10,6 @@ import (
 
 var log = logrus.New()
 
-type colour string
-
-const (
-	white colour = "white"
-	black colour = "black"
-)
-
 var version = "v0.0.0"
 
 func main() {
@@ -34,7 +27,4 @@ func main() {
 		log.Errorf("Error parsing FEN: %s", err)
 		os.Exit(1)
 	}
-
-	return
-
 }

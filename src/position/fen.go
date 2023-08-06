@@ -39,13 +39,13 @@ func (f FEN) String() string {
 }
 
 // ParseFEN parses a FEN string, returning a FEN struct.
-func ParseFEN(s string) (*FEN, error) {
+func ParseFEN(fenstr string) (*FEN, error) {
 	// split the string at the spaces
-	parts := strings.Split(s, " ")
+	parts := strings.Split(fenstr, " ")
 	if len(parts) != 6 {
 		return nil, fmt.Errorf("FEN must have 6 parts")
 	}
-	if len(s) > 100 {
+	if len(fenstr) > 100 {
 		return nil, fmt.Errorf("FEN too long")
 	}
 
@@ -56,7 +56,7 @@ func ParseFEN(s string) (*FEN, error) {
 	}
 
 	var ret FEN
-	ret.Str = s
+	ret.Str = fenstr
 	ret.Colour = parts[1]
 	ret.CastlingRights = parts[2]
 	enPassant, err := board.ParseSquare(parts[3])

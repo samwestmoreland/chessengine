@@ -15,7 +15,7 @@ func TestGetPositionFromFEN(t *testing.T) {
 	}
 	pos := getPositionFromFEN(fen)
 	if pos == nil {
-		t.Error("Error in GetPositionFromFEN")
+		t.Fatal("Error in GetPositionFromFEN")
 	}
 
 	// Check that there is a pawn on e4
