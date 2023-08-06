@@ -3,7 +3,11 @@ package board
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 type Square struct {
 	Rank, File int
