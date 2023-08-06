@@ -103,6 +103,8 @@ func getPiecePositionsFromFEN(fen *FEN) (map[*board.Square]Piece, map[*board.Squ
 			continue
 		}
 
+		square := square
+
 		if piece.GetColour() == board.White {
 			white[&square] = piece
 		} else {
@@ -138,7 +140,7 @@ func (p *Position) getWhiteMoves() ([]moves.Move, error) {
 		pieceMoves, err := piece.GetMoves(*square, p)
 		if err != nil {
 			return moves,
-				fmt.Errorf("Failed to get moves for white piece %v on square %s: %w",
+				fmt.Errorf("failed to get moves for white piece %v on square %s: %w",
 					piece.Type(), square.String(), err)
 		}
 
@@ -155,7 +157,7 @@ func (p *Position) getBlackMoves() ([]moves.Move, error) {
 		pieceMoves, err := piece.GetMoves(*square, p)
 		if err != nil {
 			return moves,
-				fmt.Errorf("Failed to get moves for black piece %v on square %s: %w",
+				fmt.Errorf("failed to get moves for black piece %v on square %s: %w",
 					piece.Type(), square.String(), err)
 		}
 

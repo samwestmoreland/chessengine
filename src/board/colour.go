@@ -18,7 +18,10 @@ func (c Colour) String() string {
 		return "White"
 	case Black:
 		return "Black"
+	case Unknown:
+		return "Unknown"
 	}
+
 	return "Unknown"
 }
 
@@ -34,5 +37,6 @@ func ColourFromString(colStr string) Colour {
 	case "b":
 		return Black
 	}
+
 	return Unknown
 }

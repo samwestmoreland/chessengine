@@ -6,7 +6,7 @@ import (
 	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
-// Piece represents a chess piece
+// Piece represents a chess piece.
 type Piece interface {
 	// Returns the piece's color
 	GetColour() board.Colour
@@ -17,7 +17,7 @@ type Piece interface {
 	GetMoves(board.Square, *Position) ([]moves.Move, error)
 }
 
-// FromChar returns a piece from a character
+// FromChar returns a piece from a character.
 func FromChar(ch rune, square *board.Square) Piece {
 	switch ch {
 	case 'K':
