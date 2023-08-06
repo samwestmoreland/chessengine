@@ -13,6 +13,7 @@ func TestGetPositionFromFEN(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error in ParseFEN: %s", err)
 	}
+
 	pos := getPositionFromFEN(fen)
 	if pos == nil {
 		t.Fatal("Error in GetPositionFromFEN")
@@ -26,10 +27,12 @@ func TestGetPositionFromFEN(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error initialising square: %s", err)
 	}
+
 	p := pos.White[e4]
 	if p == nil {
 		t.Fatal("got nil piece but was expecting a pawn")
 	}
+
 	if p.Type() != piece.PawnType {
 		t.Fatal("Error in GetPositionFromFEN")
 	}
@@ -37,10 +40,12 @@ func TestGetPositionFromFEN(t *testing.T) {
 
 func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 	sqStr := "e4"
+
 	square, err := board.NewSquare(sqStr)
 	if err != nil {
 		t.Fatalf("Failed to create square %s: %v", sqStr, err)
 	}
+
 	whiteKing := NewKing(square, board.White)
 	pos := NewPosition(board.White, []Piece{whiteKing})
 
@@ -76,6 +81,7 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 	// Check that the moves are the same, but don't care about order
 	for _, expectedMove := range expectedMoves {
 		found := false
+
 		for _, move := range mov {
 			if expectedMove.Equals(move) {
 				found = true
@@ -83,6 +89,7 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 				break
 			}
 		}
+
 		if !found {
 			t.Errorf("Expected move %v not found", expectedMove)
 		}
@@ -91,10 +98,12 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 
 func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 	sqStr := "a1"
+
 	square, err := board.NewSquare(sqStr)
 	if err != nil {
 		t.Fatalf("Failed to create square %s: %v", sqStr, err)
 	}
+
 	whiteKing := NewKing(square, board.White)
 
 	pos := NewPosition(board.White, []Piece{whiteKing})
@@ -121,6 +130,7 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 	// Check that the moves are the same, but don't care about order
 	for _, expectedMove := range expectedMoves {
 		found := false
+
 		for _, move := range mov {
 			if expectedMove.Equals(move) {
 				found = true
@@ -128,6 +138,7 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 				break
 			}
 		}
+
 		if !found {
 			t.Errorf("Expected move %v not found", expectedMove)
 		}

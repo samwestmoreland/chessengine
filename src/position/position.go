@@ -29,22 +29,27 @@ func NewPositionFromFEN(fen *FEN) *Position {
 func (p *Position) String() string {
 	// Print an ascii representation of the board.
 	var ret string
+
 	for rank := 8; rank >= 1; rank-- {
 		for file := 1; file <= 8; file++ {
 			square := board.Square{File: file, Rank: rank}
+
 			piece, err := p.getPiece(square)
 			if err != nil {
 				log.Errorf("Failed to get piece on square %s: %v\n", square.String(), err)
 
 				return ""
 			}
+
 			if piece == nil {
 				ret += "."
 
 				continue
 			}
+
 			ret += (*piece).Type().String()
 		}
+
 		ret += "\n"
 	}
 
@@ -52,21 +57,27 @@ func (p *Position) String() string {
 }
 
 func NewPosition(turn board.Colour, pieces []Piece) *Position {
-	ret := &Position{Turn: turn}
-	whitePieces := make(map[board.Square]Piece)
-	blackPieces := make(map[board.Square]Piece)
+	whitePieces := make(map[*board.Square]Piece)
+	blackPieces := make(map[*board.Square]Piece)
+	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
+
 	for _, p := range pieces {
 		if err := p.GetCurrentSquare().Valid(); err != nil {
 			log.Errorf("Failed to add piece %v to square %s\n", p.Type(), p.GetCurrentSquare())
 
 			continue
 		}
+
 		if p.GetColour() == board.White {
-			whitePieces[*p.GetCurrentSquare()] = p
+			whitePieces[p.GetCurrentSquare()] = p
 		} else if p.GetColour() == board.Black {
-			blackPieces[*p.GetCurrentSquare()] = p
+			blackPieces[p.GetCurrentSquare()] = p
 		}
 	}
+
+	ret.White = whitePieces
+	ret.Black = blackPieces
+
 	return ret
 }
 
@@ -74,6 +85,7 @@ func getPositionFromFEN(fen *FEN) *Position {
 	log.Debugf("Creating position from FEN: %s\n", fen.String())
 	white, black := getPiecePositionsFromFEN(fen)
 	ret := Position{White: white, Black: black}
+
 	return &ret
 }
 
@@ -86,9 +98,11 @@ func getPiecePositionsFromFEN(fen *FEN) (map[*board.Square]Piece, map[*board.Squ
 		if err != nil {
 			continue
 		}
+
 		if piece == nil {
 			continue
 		}
+
 		if piece.GetColour() == board.White {
 			white[&square] = piece
 		} else {
@@ -119,25 +133,31 @@ func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
 
 func (p *Position) getWhiteMoves() ([]moves.Move, error) {
 	var moves []moves.Move
+
 	for square, piece := range p.White {
 		pieceMoves, err := piece.GetMoves(*square, p)
 		if err != nil {
 			return moves, fmt.Errorf("Failed to get moves for white piece %v on square %s: %w", piece.Type(), square.String(), err)
 		}
+
 		moves = append(moves, pieceMoves...)
 	}
+
 	return moves, nil
 }
 
 func (p *Position) getBlackMoves() ([]moves.Move, error) {
 	var moves []moves.Move
+
 	for square, piece := range p.Black {
 		pieceMoves, err := piece.GetMoves(*square, p)
 		if err != nil {
 			return moves, fmt.Errorf("Failed to get moves for black piece %v on square %s: %w", piece.Type(), square.String(), err)
 		}
+
 		moves = append(moves, pieceMoves...)
 	}
+
 	return moves, nil
 }
 
@@ -146,11 +166,14 @@ func (p *Position) getPiece(square board.Square) (*Piece, error) {
 	if err := square.Valid(); err != nil {
 		return nil, fmt.Errorf("invalid square: %s: %w", square.String(), err)
 	}
+
 	if piece, ok := p.White[&square]; ok {
 		return &piece, nil
 	}
+
 	if piece, ok := p.Black[&square]; ok {
 		return &piece, nil
 	}
+
 	return nil, nil
 }

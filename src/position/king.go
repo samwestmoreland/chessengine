@@ -37,6 +37,7 @@ func (k *King) GetMoves(square board.Square, position *Position) ([]moves.Move, 
 	// Get all possible moves assuming no other pieces on the board
 	// The king can move one square in any direction, so there are 8 possible moves
 	ret := make([]moves.Move, 0, 8)
+
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
 			// Skip the current square
@@ -55,11 +56,13 @@ func (k *King) GetMoves(square board.Square, position *Position) ([]moves.Move, 
 			if err != nil {
 				return nil, err
 			}
+
 			if pieceAtSquare == nil {
 				ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square})
 
 				continue
 			}
+
 			if (*pieceAtSquare).GetColour() == k.Colour {
 				continue
 			}
@@ -68,5 +71,6 @@ func (k *King) GetMoves(square board.Square, position *Position) ([]moves.Move, 
 			ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square})
 		}
 	}
+
 	return ret, nil
 }

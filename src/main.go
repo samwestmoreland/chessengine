@@ -18,10 +18,12 @@ func main() {
 	flaggy.SetVersion(version)
 
 	var fenFlag string
+
 	flaggy.String(&fenFlag, "f", "fen", "A FEN string to parse")
 
 	flaggy.Parse()
 	log.Infof("Starting chess engine")
+
 	_, err := position.ParseFEN(fenFlag)
 	if err != nil {
 		log.Errorf("Error parsing FEN: %s", err)

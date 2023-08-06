@@ -48,6 +48,7 @@ func ParseFEN(fenstr string) (*FEN, error) {
 	if len(parts) != 6 {
 		return nil, fmt.Errorf("FEN must have 6 parts: %w", ErrInvalidFEN)
 	}
+
 	if len(fenstr) > 100 {
 		return nil, fmt.Errorf("FEN too long: %w", ErrInvalidFEN)
 	}
@@ -64,20 +65,25 @@ func ParseFEN(fenstr string) (*FEN, error) {
 	ret.CastlingRights = parts[2]
 
 	var enPassant = &board.Square{}
+
 	if parts[3] != "-" {
 		var err error
+
 		enPassant, err = board.NewSquare(parts[3])
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse en passant square: %w", err)
 		}
 	}
+
 	ret.EnPassant = *enPassant
 
 	var err error
+
 	ret.HalfMoveClock, err = strconv.Atoi(parts[4])
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse half move clock: %w", err)
 	}
+
 	ret.FullMoveNumber, err = strconv.Atoi(parts[5])
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse full move number: %w", err)
@@ -121,29 +127,33 @@ func (f FEN) GetPiece(s board.Square) (Piece, error) {
 	// now we need to iterate through the rank, counting the number of empty squares
 	// until we get to the file we want
 	emptySquares := 0
+
 	for _, c := range r {
 		if c == ' ' {
 			return nil, fmt.Errorf("FEN contains a space: %w", ErrInvalidFEN)
 		}
+
 		if c == '/' {
 			return nil, fmt.Errorf("FEN contains a /: %w", ErrInvalidFEN)
 		}
+
 		if c >= '1' && c <= '8' {
 			emptySquares += int(c - '0')
 		} else {
 			emptySquares++
 		}
+
 		if emptySquares > file {
 			return nil, fmt.Errorf("FEN contains a space: %w", ErrInvalidFEN)
 		}
+
 		if emptySquares == file {
 			// we've found the square we want
 			return FromChar(c, &s), nil
 		}
 	}
 
-	return nil, fmt.Errorf("Failed to find piece at square %s", s.String())
-
+	return nil, fmt.Errorf("Failed to find piece at square %s: %w", s.String(), ErrInvalidFEN)
 }
 
 // validateCastlingRights checks that the castling rights string is valid, returning an error if not.
@@ -151,6 +161,7 @@ func validateCastlingRights(s string) error {
 	if len(s) > 4 {
 		return fmt.Errorf("castling rights cannot be longer than 4 characters: %w", ErrInvalidFEN)
 	}
+
 	validRegex := "^[K?Q?k?q?]|-"
 	if _, err := regexp.MatchString(validRegex, s); err != nil {
 		return fmt.Errorf("castling rights string is invalid: %w", err)
