@@ -48,10 +48,46 @@ func TestGetMovesForKing(t *testing.T) {
 
 	pos := NewPosition(board.White, []Piece{whiteKing, blackKing})
 
-	moves, err := whiteKing.GetMoves(*sq, pos)
+	mov, err := whiteKing.GetMoves(*sq, pos)
 	if err != nil {
 		t.Errorf("Error while getting moves")
 	}
 
-	fmt.Printf("moves: %v", moves)
+	d5, _ := board.NewSquare("d5")
+	e5, _ := board.NewSquare("e5")
+	f5, _ := board.NewSquare("f5")
+	d4, _ := board.NewSquare("d4")
+	f4, _ := board.NewSquare("f4")
+	d3, _ := board.NewSquare("d3")
+	e3, _ := board.NewSquare("e3")
+	f3, _ := board.NewSquare("f3")
+
+	expectedMoves := []moves.Move{
+		{From: sq, To: d5, PieceType: piece.KingType},
+		{From: sq, To: e5, PieceType: piece.KingType},
+		{From: sq, To: f5, PieceType: piece.KingType},
+		{From: sq, To: d4, PieceType: piece.KingType},
+		{From: sq, To: f4, PieceType: piece.KingType},
+		{From: sq, To: d3, PieceType: piece.KingType},
+		{From: sq, To: e3, PieceType: piece.KingType},
+		{From: sq, To: f3, PieceType: piece.KingType},
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Errorf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	// Check that the moves are the same, but don't care about order
+	for _, expectedMove := range expectedMoves {
+		found := false
+		for _, move := range mov {
+			if expectedMove.Equals(move) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Expected move %v not found", expectedMove)
+		}
+	}
 }
