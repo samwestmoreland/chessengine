@@ -33,6 +33,6 @@ func (k *Knight) GetCurrentSquare() *board.Square {
 }
 
 // GetMoves returns a list of valid moves for the piece.
-func (k *Knight) GetMoves(board.Square, *Position) ([]moves.Move, error) {
+func (k *Knight) GetMoves(*Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

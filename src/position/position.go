@@ -137,7 +137,7 @@ func (p *Position) getWhiteMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 
 	for square, piece := range p.White {
-		pieceMoves, err := piece.GetMoves(*square, p)
+		pieceMoves, err := piece.GetMoves(p)
 		if err != nil {
 			return moves,
 				fmt.Errorf("failed to get moves for white piece %v on square %s: %w",
@@ -154,7 +154,7 @@ func (p *Position) getBlackMoves() ([]moves.Move, error) {
 	var moves []moves.Move
 
 	for square, piece := range p.Black {
-		pieceMoves, err := piece.GetMoves(*square, p)
+		pieceMoves, err := piece.GetMoves(p)
 		if err != nil {
 			return moves,
 				fmt.Errorf("failed to get moves for black piece %v on square %s: %w",

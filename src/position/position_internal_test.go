@@ -49,7 +49,7 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 	whiteKing := NewKing(square, board.White)
 	pos := NewPosition(board.White, []Piece{whiteKing})
 
-	mov, err := whiteKing.GetMoves(*square, pos)
+	mov, err := whiteKing.GetMoves(pos)
 	if err != nil {
 		t.Errorf("Error while getting moves")
 	}
@@ -108,7 +108,7 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 
 	pos := NewPosition(board.White, []Piece{whiteKing})
 
-	mov, err := whiteKing.GetMoves(*square, pos)
+	mov, err := whiteKing.GetMoves(pos)
 	if err != nil {
 		t.Errorf("Error while getting moves")
 	}

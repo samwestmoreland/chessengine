@@ -14,7 +14,7 @@ type Piece interface {
 	Type() piece.Type
 	// Returns the piece's current square
 	GetCurrentSquare() *board.Square
-	GetMoves(board.Square, *Position) ([]moves.Move, error)
+	GetMoves(*Position) ([]moves.Move, error)
 }
 
 // FromChar returns a piece from a character.

@@ -36,6 +36,6 @@ func (r *Rook) GetCurrentSquare() *board.Square {
 }
 
 // GetMoves returns the piece's valid moves.
-func (r *Rook) GetMoves(board.Square, *Position) ([]moves.Move, error) {
+func (r *Rook) GetMoves(*Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

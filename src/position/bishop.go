@@ -34,6 +34,6 @@ func (b *Bishop) GetCurrentSquare() *board.Square {
 }
 
 // GetMoves returns the piece's valid moves.
-func (b *Bishop) GetMoves(board.Square, *Position) ([]moves.Move, error) {
+func (b *Bishop) GetMoves(*Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

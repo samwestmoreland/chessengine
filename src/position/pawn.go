@@ -34,7 +34,7 @@ func (p *Pawn) GetCurrentSquare() *board.Square {
 }
 
 // GetMoves returns a list of moves that the piece can make.
-func (p *Pawn) GetMoves(board.Square, *Position) ([]moves.Move, error) {
+func (p *Pawn) GetMoves(*Position) ([]moves.Move, error) {
 	ret := make([]moves.Move, 0, 4)
 
 	return ret, nil

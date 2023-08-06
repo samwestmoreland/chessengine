@@ -33,7 +33,7 @@ func (k *King) GetCurrentSquare() *board.Square {
 }
 
 // GetMoves returns a list of all possible moves for the king.
-func (k *King) GetMoves(square board.Square, position *Position) ([]moves.Move, error) {
+func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
 	// Get all possible moves assuming no other pieces on the board
 	// The king can move one square in any direction, so there are 8 possible moves
 	ret := make([]moves.Move, 0, 8)
