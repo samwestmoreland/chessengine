@@ -16,3 +16,4 @@ preloadsubincludes = ///go//build_defs:go
 Target = //plugins:go
 Importpath = github.com/samwestmoreland/chessengine
 GoTool = //third_party/go:toolchain|go
+CoverageRedesign = true
