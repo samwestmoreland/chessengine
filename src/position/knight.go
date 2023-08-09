@@ -6,33 +6,33 @@ import (
 	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
-// Knight represents a knight piece
+// Knight represents a knight piece.
 type Knight struct {
-	CurrentSquare *board.Square
+	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
-// NewKnight creates a new knight
-func NewKnight(currentSquare *board.Square, colour board.Colour) *Knight {
+// NewKnight creates a new knight.
+func NewKnight(currentSquare board.Square, colour board.Colour) *Knight {
 	return &Knight{CurrentSquare: currentSquare, Colour: colour}
 }
 
-// GetColour returns the piece's color
+// GetColour returns the piece's color.
 func (k *Knight) GetColour() board.Colour {
 	return k.Colour
 }
 
-// Type returns the piece's type
+// Type returns the piece's type.
 func (k *Knight) Type() piece.Type {
 	return piece.KnightType
 }
 
-// GetCurrentSquare returns the piece's current square
-func (k *Knight) GetCurrentSquare() *board.Square {
-	panic("not implemented") // TODO: Implement
+// GetCurrentSquare returns the piece's current square.
+func (k *Knight) GetCurrentSquare() board.Square {
+	return k.CurrentSquare
 }
 
 // GetMoves returns a list of valid moves for the piece.
-func (k *Knight) GetMoves(board.Square, *Position) ([]moves.Move, error) {
+func (k *Knight) GetMoves(*Position) ([]moves.Move, error) {
 	panic("not implemented") // TODO: Implement
 }

@@ -6,8 +6,8 @@ import (
 )
 
 type Move struct {
-	From      *board.Square
-	To        *board.Square
+	From      board.Square
+	To        board.Square
 	PieceType piece.Type
 }
 
@@ -16,5 +16,5 @@ func (m Move) String() string {
 }
 
 func (m Move) Equals(other Move) bool {
-	return *m.From == *other.From && *m.To == *other.To && m.PieceType == other.PieceType
+	return m.From == other.From && m.To == other.To && m.PieceType == other.PieceType
 }

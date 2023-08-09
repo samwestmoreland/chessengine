@@ -1,50 +1,53 @@
 package position
 
 import (
+	"unicode"
+
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
-// Piece represents a chess piece
+// Piece represents a chess piece.
 type Piece interface {
 	// Returns the piece's color
 	GetColour() board.Colour
 	// Returns the piece's type
 	Type() piece.Type
 	// Returns the piece's current square
-	GetCurrentSquare() *board.Square
-	GetMoves(board.Square, *Position) ([]moves.Move, error)
+	GetCurrentSquare() board.Square
+	GetMoves(*Position) ([]moves.Move, error)
 }
 
-// FromChar returns a piece from a character
-func FromChar(ch rune, sq *board.Square) Piece {
+// FromChar returns a piece from a character.
+func FromChar(ch rune, square board.Square) Piece {
+	colour := getCase(ch)
+
+	ch = unicode.ToLower(ch)
 	switch ch {
-	case 'K':
-		return NewKing(sq, board.White)
 	case 'k':
-		return NewKing(sq, board.Black)
-	case 'Q':
-		return NewQueen(sq, board.White)
+		return NewKing(square, colour)
 	case 'q':
-		return NewQueen(sq, board.Black)
-	case 'R':
-		return NewRook(sq, board.White)
+		return NewQueen(square, colour)
 	case 'r':
-		return NewRook(sq, board.Black)
-	case 'B':
-		return NewBishop(sq, board.White)
+		return NewRook(square, colour)
 	case 'b':
-		return NewBishop(sq, board.Black)
-	case 'N':
-		return NewKnight(sq, board.White)
+		return NewBishop(square, colour)
 	case 'n':
-		return NewKnight(sq, board.Black)
-	case 'P':
-		return NewPawn(sq, board.White)
+		return NewKnight(square, colour)
 	case 'p':
-		return NewPawn(sq, board.Black)
+		return NewPawn(square, colour)
 	default:
 		return nil
 	}
+}
+
+func getCase(ch rune) board.Colour {
+	if ch >= 'A' && ch <= 'Z' {
+		return board.White
+	} else if ch >= 'a' && ch <= 'z' {
+		return board.Black
+	}
+
+	return board.Unknown
 }

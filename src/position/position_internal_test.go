@@ -11,44 +11,45 @@ import (
 func TestGetPositionFromFEN(t *testing.T) {
 	fen, err := ParseFEN("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1")
 	if err != nil {
-		t.Errorf("Error in ParseFEN: %s", err)
+		t.Fatalf("Error in ParseFEN: %s", err)
 	}
+
 	pos := getPositionFromFEN(fen)
 	if pos == nil {
 		t.Fatal("Error in GetPositionFromFEN")
 	}
 
+	// Print the position
+	t.Log(pos.String())
+
 	// Check that there is a pawn on e4
-	e4, err := board.ParseSquare("e4")
+	e4, err := board.NewSquare("e4")
 	if err != nil {
-		t.Errorf("Error in ParseSquare: %s", err)
+		t.Fatalf("error initialising square: %s", err)
 	}
+
 	p := pos.White[e4]
 	if p == nil {
-		t.Error("Error in GetPositionFromFEN")
+		t.Fatal("piece should not be nil")
 	}
+
 	if p.Type() != piece.PawnType {
-		t.Error("Error in GetPositionFromFEN")
+		t.Fatal("error in GetPositionFromFEN")
 	}
 }
 
 func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 	sqStr := "e4"
-	sq, err := board.NewSquare(sqStr)
+
+	square, err := board.NewSquare(sqStr)
 	if err != nil {
 		t.Fatalf("Failed to create square %s: %v", sqStr, err)
 	}
-	whiteKing := NewKing(sq, board.White)
-	sqStrBlack := "h8"
-	sqBlack, err := board.NewSquare(sqStrBlack)
-	if err != nil {
-		t.Errorf("Failed to create square %s", sqStr)
-	}
-	blackKing := NewKing(sqBlack, board.Black)
 
-	pos := NewPosition(board.White, []Piece{whiteKing, blackKing})
+	whiteKing := NewKing(square, board.White)
+	pos := NewPosition(board.White, []Piece{whiteKing})
 
-	mov, err := whiteKing.GetMoves(*sq, pos)
+	mov, err := whiteKing.GetMoves(pos)
 	if err != nil {
 		t.Errorf("Error while getting moves")
 	}
@@ -63,29 +64,32 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 	f3, _ := board.NewSquare("f3")
 
 	expectedMoves := []moves.Move{
-		{From: sq, To: d5, PieceType: piece.KingType},
-		{From: sq, To: e5, PieceType: piece.KingType},
-		{From: sq, To: f5, PieceType: piece.KingType},
-		{From: sq, To: d4, PieceType: piece.KingType},
-		{From: sq, To: f4, PieceType: piece.KingType},
-		{From: sq, To: d3, PieceType: piece.KingType},
-		{From: sq, To: e3, PieceType: piece.KingType},
-		{From: sq, To: f3, PieceType: piece.KingType},
+		{From: square, To: d5, PieceType: piece.KingType},
+		{From: square, To: e5, PieceType: piece.KingType},
+		{From: square, To: f5, PieceType: piece.KingType},
+		{From: square, To: d4, PieceType: piece.KingType},
+		{From: square, To: f4, PieceType: piece.KingType},
+		{From: square, To: d3, PieceType: piece.KingType},
+		{From: square, To: e3, PieceType: piece.KingType},
+		{From: square, To: f3, PieceType: piece.KingType},
 	}
 
 	if len(mov) != len(expectedMoves) {
-		t.Errorf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Errorf("expected %d moves, got %d", len(expectedMoves), len(mov))
 	}
 
 	// Check that the moves are the same, but don't care about order
 	for _, expectedMove := range expectedMoves {
 		found := false
+
 		for _, move := range mov {
 			if expectedMove.Equals(move) {
 				found = true
+
 				break
 			}
 		}
+
 		if !found {
 			t.Errorf("Expected move %v not found", expectedMove)
 		}
@@ -94,15 +98,17 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 
 func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 	sqStr := "a1"
-	sq, err := board.NewSquare(sqStr)
+
+	square, err := board.NewSquare(sqStr)
 	if err != nil {
 		t.Fatalf("Failed to create square %s: %v", sqStr, err)
 	}
-	whiteKing := NewKing(sq, board.White)
+
+	whiteKing := NewKing(square, board.White)
 
 	pos := NewPosition(board.White, []Piece{whiteKing})
 
-	mov, err := whiteKing.GetMoves(*sq, pos)
+	mov, err := whiteKing.GetMoves(pos)
 	if err != nil {
 		t.Errorf("Error while getting moves")
 	}
@@ -112,9 +118,9 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 	b2, _ := board.NewSquare("b2")
 
 	expectedMoves := []moves.Move{
-		{From: sq, To: b1, PieceType: piece.KingType},
-		{From: sq, To: a2, PieceType: piece.KingType},
-		{From: sq, To: b2, PieceType: piece.KingType},
+		{From: square, To: b1, PieceType: piece.KingType},
+		{From: square, To: a2, PieceType: piece.KingType},
+		{From: square, To: b2, PieceType: piece.KingType},
 	}
 
 	if len(mov) != len(expectedMoves) {
@@ -124,12 +130,15 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 	// Check that the moves are the same, but don't care about order
 	for _, expectedMove := range expectedMoves {
 		found := false
+
 		for _, move := range mov {
 			if expectedMove.Equals(move) {
 				found = true
+
 				break
 			}
 		}
+
 		if !found {
 			t.Errorf("Expected move %v not found", expectedMove)
 		}

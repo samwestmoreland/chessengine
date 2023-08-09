@@ -1,7 +1,7 @@
 package board
 
-// Just hardcode the squares so we have them at compile time.
-var Squares [64]Square = [64]Square{
+// Squares is a list of all the squares on the chess board. Hard-coded here so we have them at compile time.
+var Squares = [64]Square{
 	{Rank: 1, File: 1},
 	{Rank: 1, File: 2},
 	{Rank: 1, File: 3},

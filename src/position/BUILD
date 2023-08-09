@@ -1,6 +1,9 @@
 go_library(
     name = "position",
-    srcs = glob(["*.go"]),
+    srcs = glob(
+        ["*.go"],
+        exclude = ["*_test.go"],
+    ),
     visibility = ["PUBLIC"],
     deps = [
         "///third_party/go/github.com_sirupsen_logrus//:logrus",
