@@ -8,12 +8,12 @@ import (
 
 // NoPiece is a struct representing an empty square.
 type NoPiece struct {
-	CurrentSquare *board.Square
+	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
 // NewNoPiece returns a new king piece.
-func NewNoPiece(currentSquare *board.Square, colour board.Colour) *NoPiece {
+func NewNoPiece(currentSquare board.Square, colour board.Colour) *NoPiece {
 	return &NoPiece{CurrentSquare: currentSquare, Colour: colour}
 }
 
@@ -28,7 +28,7 @@ func (k *NoPiece) Type() piece.Type {
 }
 
 // GetCurrentSquare returns the piece's current square.
-func (k *NoPiece) GetCurrentSquare() *board.Square {
+func (k *NoPiece) GetCurrentSquare() board.Square {
 	return k.CurrentSquare
 }
 

@@ -16,8 +16,8 @@ var (
 
 // A Position represents a chess position.
 type Position struct {
-	White map[*board.Square]Piece
-	Black map[*board.Square]Piece
+	White map[board.Square]Piece
+	Black map[board.Square]Piece
 	Turn  board.Colour
 }
 
@@ -59,8 +59,8 @@ func (p *Position) String() string {
 }
 
 func NewPosition(turn board.Colour, pieces []Piece) *Position {
-	whitePieces := make(map[*board.Square]Piece)
-	blackPieces := make(map[*board.Square]Piece)
+	whitePieces := make(map[board.Square]Piece)
+	blackPieces := make(map[board.Square]Piece)
 	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
 
 	for _, piece := range pieces {
@@ -91,9 +91,9 @@ func getPositionFromFEN(fen *FEN) *Position {
 	return &ret
 }
 
-func getPiecePositionsFromFEN(fen *FEN) (map[*board.Square]Piece, map[*board.Square]Piece) {
-	white := make(map[*board.Square]Piece)
-	black := make(map[*board.Square]Piece)
+func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Square]Piece) {
+	white := make(map[board.Square]Piece)
+	black := make(map[board.Square]Piece)
 
 	for _, square := range board.Squares {
 		piece, err := fen.GetPiece(square)
@@ -108,9 +108,9 @@ func getPiecePositionsFromFEN(fen *FEN) (map[*board.Square]Piece, map[*board.Squ
 		square := square
 
 		if piece.GetColour() == board.White {
-			white[&square] = piece
+			white[square] = piece
 		} else {
-			black[&square] = piece
+			black[square] = piece
 		}
 	}
 
@@ -175,15 +175,15 @@ func (p *Position) getPiece(square board.Square) (Piece, error) {
 		return nil, fmt.Errorf("invalid square: %s: %w", square.String(), err)
 	}
 
-	if piece, ok := p.White[&square]; ok {
+	if piece, ok := p.White[square]; ok {
 		return piece, nil
 	}
 
-	if piece, ok := p.Black[&square]; ok {
+	if piece, ok := p.Black[square]; ok {
 		return piece, nil
 	}
 
-	piece := NewNoPiece(&square, board.Unknown)
+	piece := NewNoPiece(square, board.Unknown)
 
 	return piece, nil
 }

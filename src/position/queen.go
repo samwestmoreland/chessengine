@@ -8,12 +8,12 @@ import (
 
 // Queen is a piece that can move any number of squares diagonally, horizontally, or vertically.
 type Queen struct {
-	CurrentSquare *board.Square
+	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
 // NewQueen creates a new queen piece.
-func NewQueen(square *board.Square, colour board.Colour) *Queen {
+func NewQueen(square board.Square, colour board.Colour) *Queen {
 	return &Queen{
 		CurrentSquare: square,
 		Colour:        colour,
@@ -31,8 +31,8 @@ func (q *Queen) Type() piece.Type {
 }
 
 // GetCurrentSquare returns the piece's current square.
-func (q *Queen) GetCurrentSquare() *board.Square {
-	panic("not implemented") // TODO: Implement
+func (q *Queen) GetCurrentSquare() board.Square {
+	return q.CurrentSquare
 }
 
 // GetMoves returns a list of valid moves for the piece.

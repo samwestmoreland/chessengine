@@ -25,16 +25,16 @@ func TestGetPositionFromFEN(t *testing.T) {
 	// Check that there is a pawn on e4
 	e4, err := board.NewSquare("e4")
 	if err != nil {
-		t.Fatalf("Error initialising square: %s", err)
+		t.Fatalf("error initialising square: %s", err)
 	}
 
 	p := pos.White[e4]
 	if p == nil {
-		t.Fatal("got nil piece but was expecting a pawn")
+		t.Fatal("piece should not be nil")
 	}
 
 	if p.Type() != piece.PawnType {
-		t.Fatal("Error in GetPositionFromFEN")
+		t.Fatal("error in GetPositionFromFEN")
 	}
 }
 
@@ -75,7 +75,7 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 	}
 
 	if len(mov) != len(expectedMoves) {
-		t.Errorf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Errorf("expected %d moves, got %d", len(expectedMoves), len(mov))
 	}
 
 	// Check that the moves are the same, but don't care about order

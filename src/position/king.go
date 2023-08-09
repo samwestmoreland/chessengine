@@ -8,12 +8,12 @@ import (
 
 // King is a struct representing a king piece.
 type King struct {
-	CurrentSquare *board.Square
+	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
 // NewKing returns a new king piece.
-func NewKing(currentSquare *board.Square, colour board.Colour) *King {
+func NewKing(currentSquare board.Square, colour board.Colour) *King {
 	return &King{CurrentSquare: currentSquare, Colour: colour}
 }
 
@@ -28,7 +28,7 @@ func (k *King) Type() piece.Type {
 }
 
 // GetCurrentSquare returns the piece's current square.
-func (k *King) GetCurrentSquare() *board.Square {
+func (k *King) GetCurrentSquare() board.Square {
 	return k.CurrentSquare
 }
 
@@ -58,7 +58,7 @@ func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
 			}
 
 			if pieceAtSquare == nil {
-				ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square, PieceType: (pieceAtSquare).Type()})
+				ret = append(ret, moves.Move{From: k.CurrentSquare, To: square, PieceType: piece.KingType})
 
 				continue
 			}
@@ -68,7 +68,7 @@ func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
 			}
 
 			// The square is not occupied by a friendly piece, add it to the list
-			ret = append(ret, moves.Move{From: k.CurrentSquare, To: &square, PieceType: (pieceAtSquare).Type()})
+			ret = append(ret, moves.Move{From: k.CurrentSquare, To: square, PieceType: piece.KingType})
 		}
 	}
 

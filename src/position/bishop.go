@@ -9,12 +9,12 @@ import (
 
 // Bishop represents a bishop piece.
 type Bishop struct {
-	CurrentSquare *board.Square
+	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
 // NewBishop creates a new bishop piece.
-func NewBishop(square *board.Square, colour board.Colour) *Bishop {
+func NewBishop(square board.Square, colour board.Colour) *Bishop {
 	return &Bishop{CurrentSquare: square, Colour: colour}
 }
 
@@ -29,8 +29,8 @@ func (b *Bishop) Type() piece.Type {
 }
 
 // GetCurrentSquare returns the piece's current square.
-func (b *Bishop) GetCurrentSquare() *board.Square {
-	panic("not implemented") // TODO: Implement
+func (b *Bishop) GetCurrentSquare() board.Square {
+	return b.CurrentSquare
 }
 
 // GetMoves returns the piece's valid moves.

@@ -18,9 +18,9 @@ var (
 )
 
 // NewSquare takes a string representation of a square and returns a Square.
-func NewSquare(sqStr string) (*Square, error) {
+func NewSquare(sqStr string) (Square, error) {
 	if len(sqStr) != 2 {
-		return nil, fmt.Errorf("string has incorrect length: %s: %w", sqStr, ErrInvalidSquare)
+		return Square{}, fmt.Errorf("string has incorrect length: %s: %w", sqStr, ErrInvalidSquare)
 	}
 
 	// Convert the letter into an int
@@ -28,27 +28,28 @@ func NewSquare(sqStr string) (*Square, error) {
 
 	rank, err := strconv.Atoi(string(sqStr[1]))
 	if err != nil {
-		return nil, fmt.Errorf("invalid rank: %s: %w", string(sqStr[1]), ErrInvalidRank)
+		return Square{}, fmt.Errorf("invalid rank: %s: %w", string(sqStr[1]), ErrInvalidRank)
 	}
 
-	ret := &Square{Rank: rank, File: file}
+	ret := Square{Rank: rank, File: file}
 	if err = ret.Valid(); err != nil {
-		return nil, fmt.Errorf("invalid square: %s: %w", sqStr, ErrInvalidSquare)
+		return Square{}, fmt.Errorf("invalid square: %s: %w", sqStr, ErrInvalidSquare)
 	}
 
 	return ret, nil
 }
 
+// String returns the string representation of a square. So a1, b2, etc.
 func (s *Square) String() string {
-	file := fmt.Sprint('a' + s.File - 1)
+	file := string('a' + s.File - 1)
 
 	return fmt.Sprintf("%s%d", file, s.Rank)
 }
 
-func (s *Square) Valid() error {
-	if s == nil {
-		return fmt.Errorf("square is nil: %w", ErrNilSquare)
-	}
+func (s Square) Valid() error {
+	// if s == nil {
+	// 	return fmt.Errorf("square is nil: %w", ErrNilSquare)
+	// }
 
 	if s.Rank < 1 || s.Rank > 8 {
 		return fmt.Errorf("invalid rank: %d: %w", s.Rank, ErrInvalidRank)

@@ -15,12 +15,12 @@ type Piece interface {
 	// Returns the piece's type
 	Type() piece.Type
 	// Returns the piece's current square
-	GetCurrentSquare() *board.Square
+	GetCurrentSquare() board.Square
 	GetMoves(*Position) ([]moves.Move, error)
 }
 
 // FromChar returns a piece from a character.
-func FromChar(ch rune, square *board.Square) Piece {
+func FromChar(ch rune, square board.Square) Piece {
 	colour := getCase(ch)
 
 	ch = unicode.ToLower(ch)

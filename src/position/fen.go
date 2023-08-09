@@ -72,7 +72,7 @@ func ParseFEN(fenstr string) (*FEN, error) {
 	ret.Colour = board.ColourFromString(parts[1])
 	ret.CastlingRights = parts[2]
 
-	enPassant := &board.Square{File: 0, Rank: 0}
+	enPassant := board.Square{File: 0, Rank: 0}
 
 	if parts[3] != "-" {
 		var err error
@@ -83,7 +83,7 @@ func ParseFEN(fenstr string) (*FEN, error) {
 		}
 	}
 
-	ret.EnPassant = *enPassant
+	ret.EnPassant = enPassant
 
 	ret.HalfMoveClock, err = strconv.Atoi(parts[4])
 	if err != nil {
@@ -155,7 +155,7 @@ func (f FEN) GetPiece(square board.Square) (Piece, error) {
 
 		if emptySquares == file {
 			// we've found the square we want
-			return FromChar(character, &square), nil
+			return FromChar(character, square), nil
 		}
 	}
 

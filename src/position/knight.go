@@ -8,12 +8,12 @@ import (
 
 // Knight represents a knight piece.
 type Knight struct {
-	CurrentSquare *board.Square
+	CurrentSquare board.Square
 	Colour        board.Colour
 }
 
 // NewKnight creates a new knight.
-func NewKnight(currentSquare *board.Square, colour board.Colour) *Knight {
+func NewKnight(currentSquare board.Square, colour board.Colour) *Knight {
 	return &Knight{CurrentSquare: currentSquare, Colour: colour}
 }
 
@@ -28,8 +28,8 @@ func (k *Knight) Type() piece.Type {
 }
 
 // GetCurrentSquare returns the piece's current square.
-func (k *Knight) GetCurrentSquare() *board.Square {
-	panic("not implemented") // TODO: Implement
+func (k *Knight) GetCurrentSquare() board.Square {
+	return k.CurrentSquare
 }
 
 // GetMoves returns a list of valid moves for the piece.
