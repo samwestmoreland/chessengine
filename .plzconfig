@@ -6,8 +6,8 @@
 ; Or you can uncomment the following to pin everyone to a particular version;
 ; when you change it all users will automatically get updated.
  [please]
- version = 17.2.3
- versionchecksum = "800b907a1d91056db2b7d71d672a1d71f90acd021287aefec48e706ae791fccc"
+ version = 17.3.0
+ versionchecksum = "67bf495efbc21c6f23e98d0fb63e3a2668ae2ba90906d4a95d65913942cf8a16"
 
 [parse]
 preloadsubincludes = ///go//build_defs:go
