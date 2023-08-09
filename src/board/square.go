@@ -41,16 +41,12 @@ func NewSquare(sqStr string) (Square, error) {
 
 // String returns the string representation of a square. So a1, b2, etc.
 func (s *Square) String() string {
-	file := string('a' + s.File - 1)
+	file := rune('a' + s.File - 1)
 
-	return fmt.Sprintf("%s%d", file, s.Rank)
+	return fmt.Sprintf("%v%d", file, s.Rank)
 }
 
 func (s Square) Valid() error {
-	// if s == nil {
-	// 	return fmt.Errorf("square is nil: %w", ErrNilSquare)
-	// }
-
 	if s.Rank < 1 || s.Rank > 8 {
 		return fmt.Errorf("invalid rank: %d: %w", s.Rank, ErrInvalidRank)
 	}

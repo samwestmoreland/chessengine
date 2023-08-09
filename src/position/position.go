@@ -65,7 +65,7 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 
 	for _, piece := range pieces {
 		if err := piece.GetCurrentSquare().Valid(); err != nil {
-			log.Errorf("Failed to add piece %v to square %s\n", piece.Type(), piece.GetCurrentSquare())
+			log.Errorf("Failed to add piece %v to square %v\n", piece.Type(), piece.GetCurrentSquare())
 
 			continue
 		}
