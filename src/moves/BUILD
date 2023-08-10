@@ -10,3 +10,13 @@ go_library(
         "//src/piece",
     ],
 )
+
+go_test(
+    name = "moves_test",
+    srcs = ["moves_internal_test.go"],
+    deps = [
+        ":moves",
+        "//src/board",
+        "//src/piece",
+    ],
+)

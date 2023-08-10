@@ -43,7 +43,7 @@ func NewSquare(sqStr string) (Square, error) {
 func (s *Square) String() string {
 	file := rune('a' + s.File - 1)
 
-	return fmt.Sprintf("%v%d", file, s.Rank)
+	return fmt.Sprintf("%v%d", string(file), s.Rank)
 }
 
 func (s Square) Valid() error {
