@@ -29,6 +29,7 @@ var ErrInvalidFEN = errors.New("invalid FEN")
 // FEN is a struct representing a position in Forsyth–Edwards notation.
 type FEN struct {
 	Str            string
+	Position       string
 	Colour         board.Colour // w or b
 	CastlingRights string       // KQkq
 	EnPassant      board.Square // e3
@@ -61,16 +62,21 @@ func ParseFEN(fenstr string) (*FEN, error) {
 		return nil, err
 	}
 
-	// check the first part is valid
-	ranks := strings.Split(parts[0], "/")
-	if len(ranks) != 8 {
-		return nil, fmt.Errorf("FEN must have 8 ranks: %w", ErrInvalidFEN)
+	var ret FEN
+
+	position := parts[0]
+	if err := validatePosition(position); err != nil {
+		return nil, err
 	}
 
-	var ret FEN
 	ret.Str = fenstr
 	ret.Colour = board.ColourFromString(parts[1])
-	ret.CastlingRights = parts[2]
+
+	castlingRights := parts[2]
+	if err := validateCastlingRights(castlingRights); err != nil {
+		return nil, err
+	}
+	ret.CastlingRights = castlingRights
 
 	enPassant := board.Square{File: 0, Rank: 0}
 
@@ -99,11 +105,51 @@ func ParseFEN(fenstr string) (*FEN, error) {
 		return nil, fmt.Errorf("FEN colour must be w or b, got %s: %w", ret.Colour, ErrInvalidFEN)
 	}
 
-	if err := validateCastlingRights(ret.CastlingRights); err != nil {
-		return nil, err
+	return &ret, nil
+}
+
+// validatePosition checks that the position part of the FEN is valid.
+func validatePosition(position string) error {
+	// check the first part is valid
+	ranks := strings.Split(position, "/")
+	if len(ranks) != 8 {
+		return fmt.Errorf("FEN must have 8 ranks: %w", ErrInvalidFEN)
 	}
 
-	return &ret, nil
+	for _, rank := range ranks {
+		// check the rank is valid
+		if err := validateRank(rank); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func validateRank(rank string) error {
+	numFiles := 0
+
+	for _, character := range rank {
+		if character == ' ' {
+			return fmt.Errorf("FEN contains a space: %w", ErrInvalidFEN)
+		}
+
+		if character == '/' {
+			return fmt.Errorf("FEN contains a /: %w", ErrInvalidFEN)
+		}
+
+		if character >= '1' && character <= '8' {
+			numFiles += int(character - '0')
+		} else {
+			numFiles++
+		}
+	}
+
+	if numFiles != 8 {
+		return fmt.Errorf("FEN must have 8 files: %w", ErrInvalidFEN)
+	}
+
+	return nil
 }
 
 // GetPiece returns the piece at the given square, given a FEN.
@@ -168,9 +214,11 @@ func validateCastlingRights(castlingStr string) error {
 		return fmt.Errorf("castling rights cannot be longer than 4 characters: %w", ErrInvalidFEN)
 	}
 
-	validRegex := "^[K?Q?k?q?]|-"
-	if _, err := regexp.MatchString(validRegex, castlingStr); err != nil {
-		return fmt.Errorf("castling rights string is invalid: %w", err)
+	fmt.Println("Checking castling rights string", castlingStr)
+	reg := regexp.MustCompile("^[KQkq]+|-")
+	match := reg.FindString(castlingStr)
+	if match != castlingStr {
+		return fmt.Errorf("castling rights string is invalid: %w", ErrInvalidFEN)
 	}
 
 	return nil
