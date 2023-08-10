@@ -76,8 +76,8 @@ func ParseFEN(fenstr string) (*FEN, error) {
 	if err := validateCastlingRights(castlingRights); err != nil {
 		return nil, err
 	}
-	ret.CastlingRights = castlingRights
 
+	ret.CastlingRights = castlingRights
 	enPassant := board.Square{File: 0, Rank: 0}
 
 	if parts[3] != "-" {
@@ -214,8 +214,8 @@ func validateCastlingRights(castlingStr string) error {
 		return fmt.Errorf("castling rights cannot be longer than 4 characters: %w", ErrInvalidFEN)
 	}
 
-	fmt.Println("Checking castling rights string", castlingStr)
 	reg := regexp.MustCompile("^[KQkq]+|-")
+
 	match := reg.FindString(castlingStr)
 	if match != castlingStr {
 		return fmt.Errorf("castling rights string is invalid: %w", ErrInvalidFEN)
