@@ -30,6 +30,7 @@ func TestMoveStringRepresentation(t *testing.T) {
 	toSquare, _ := board.NewSquare("a2")
 
 	move := NewMove(fromSquare, toSquare, piece.QueenType)
+
 	expected := "Queen: a1 -> a2"
 	if move.String() != expected {
 		t.Errorf("Expected %v, got %v", expected, move.String())
@@ -42,6 +43,7 @@ func TestMoveEquality(t *testing.T) {
 
 	move1 := NewMove(fromSquare, toSquare, piece.QueenType)
 	move2 := NewMove(fromSquare, toSquare, piece.BishopType)
+
 	if move1.Equals(move2) {
 		t.Errorf("Expected %v to not equal %v", move1, move2)
 	}
