@@ -146,14 +146,12 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 }
 
 func TestPrintPosition(t *testing.T) {
-	// Create a position with a white king on e4
 	e4, _ := board.NewSquare("e4")
 	g3, _ := board.NewSquare("g3")
 	whiteKing := NewKing(e4, board.White)
 	blackBishop := NewBishop(g3, board.Black)
 	pos := NewPosition(board.White, []Piece{whiteKing, blackBishop})
 
-	// Print the position
 	output := pos.String()
 
 	expectedOutput := ". . . . . . . . \n" +
