@@ -33,3 +33,24 @@ func (t Type) String() string {
 		return "Unknown"
 	}
 }
+
+func (t Type) Letter() string {
+	switch t {
+	case KingType:
+		return "K"
+	case QueenType:
+		return "Q"
+	case RookType:
+		return "R"
+	case BishopType:
+		return "B"
+	case KnightType:
+		return "N"
+	case PawnType:
+		return "P"
+	case NoneType:
+		return " "
+	default:
+		return "?"
+	}
+}
