@@ -55,7 +55,6 @@ func (p *Position) String() string {
 			} else if piece.GetColour() == board.Black {
 				ret += strings.ToLower(piece.Type().Letter()) + " "
 			}
-
 		}
 
 		ret += "\n"
@@ -189,7 +188,7 @@ func (p *Position) getPiece(square board.Square) (Piece, error) {
 		return piece, nil
 	}
 
-	var piece Piece = nil
+	var piece Piece
 
 	return piece, nil
 }
