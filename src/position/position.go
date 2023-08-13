@@ -3,6 +3,7 @@ package position
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
@@ -44,12 +45,16 @@ func (p *Position) String() string {
 			}
 
 			if piece == nil {
-				ret += "."
+				ret += ". "
 
 				continue
 			}
 
-			ret += piece.Type().String()
+			if piece.GetColour() == board.White {
+				ret += piece.Type().Letter() + " "
+			} else if piece.GetColour() == board.Black {
+				ret += strings.ToLower(piece.Type().Letter()) + " "
+			}
 		}
 
 		ret += "\n"
@@ -183,7 +188,7 @@ func (p *Position) getPiece(square board.Square) (Piece, error) {
 		return piece, nil
 	}
 
-	piece := NewNoPiece(square, board.Unknown)
+	var piece Piece
 
 	return piece, nil
 }
