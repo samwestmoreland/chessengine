@@ -69,7 +69,7 @@ func NewPosition(turn board.Colour, pieces []Piece) *Position {
 	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
 
 	for _, piece := range pieces {
-		if err := piece.GetCurrentSquare().Valid(); err != nil {
+		if !piece.GetCurrentSquare().Valid() {
 			log.Errorf("Failed to add piece %v to square %v\n", piece.Type(), piece.GetCurrentSquare())
 
 			continue
@@ -176,8 +176,8 @@ func (p *Position) getBlackMoves() ([]moves.Move, error) {
 
 // getPiece returns the piece at the given square, or an error if the square is invalid.
 func (p *Position) getPiece(square board.Square) (Piece, error) {
-	if err := square.Valid(); err != nil {
-		return nil, fmt.Errorf("invalid square: %s: %w", square.String(), err)
+	if !square.Valid() {
+		return nil, fmt.Errorf("invalid square: %s", square.String())
 	}
 
 	if piece, ok := p.White[square]; ok {

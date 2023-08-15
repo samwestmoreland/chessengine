@@ -21,8 +21,7 @@ func TestIsValidSquare(t *testing.T) {
 	for square, expected := range squaresToTest {
 		var actual bool
 
-		err := square.Valid()
-		if err != nil {
+		if !square.Valid() {
 			actual = false
 		} else {
 			actual = true
