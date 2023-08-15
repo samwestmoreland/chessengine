@@ -90,3 +90,26 @@ func (s Square) IsSameFile(other Square) bool {
 func (s Square) IsSameDiagonal(other Square) bool {
 	return s.Rank-other.Rank == other.File-s.File
 }
+
+func (s Square) Translate(direction Direction) Square {
+	switch direction {
+	case North:
+		return Square{Rank: s.Rank + 1, File: s.File}
+	case NorthEast:
+		return Square{Rank: s.Rank + 1, File: s.File + 1}
+	case East:
+		return Square{Rank: s.Rank, File: s.File + 1}
+	case SouthEast:
+		return Square{Rank: s.Rank - 1, File: s.File + 1}
+	case South:
+		return Square{Rank: s.Rank - 1, File: s.File}
+	case SouthWest:
+		return Square{Rank: s.Rank - 1, File: s.File - 1}
+	case West:
+		return Square{Rank: s.Rank, File: s.File - 1}
+	case NorthWest:
+		return Square{Rank: s.Rank + 1, File: s.File - 1}
+	default:
+		return Square{}
+	}
+}

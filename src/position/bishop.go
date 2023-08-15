@@ -35,5 +35,15 @@ func (b *Bishop) GetCurrentSquare() board.Square {
 
 // GetMoves returns the piece's valid moves.
 func (b *Bishop) GetMoves(*Position) ([]moves.Move, error) {
-	panic("not implemented") // TODO: Implement
+	ret := make([]moves.Move, 0, 14)
+	// there are 4 directions a bishop can move in
+	// we'll iterate over each direction and add the valid moves
+	// until we hit a piece or the edge of the board
+	for _, direction := range []board.Direction{board.NorthEast, board.NorthWest, board.SouthEast, board.SouthWest} {
+		for square := b.CurrentSquare.Translate(direction); square.Valid(); square = square.Translate(direction) {
+			ret = append(ret, moves.NewMove(b.CurrentSquare, square, piece.BishopType))
+		}
+	}
+
+	return ret, nil
 }

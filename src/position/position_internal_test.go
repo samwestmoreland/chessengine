@@ -78,21 +78,9 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 		t.Errorf("expected %d moves, got %d", len(expectedMoves), len(mov))
 	}
 
-	// Check that the moves are the same, but don't care about order
-	for _, expectedMove := range expectedMoves {
-		found := false
-
-		for _, move := range mov {
-			if expectedMove.Equals(move) {
-				found = true
-
-				break
-			}
-		}
-
-		if !found {
-			t.Errorf("Expected move %v not found", expectedMove)
-		}
+	equal := moves.MoveListsEqual(mov, expectedMoves)
+	if !equal {
+		t.Fatalf("expected moves %v, got %v", expectedMoves, mov)
 	}
 }
 
@@ -124,24 +112,12 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 	}
 
 	if len(mov) != len(expectedMoves) {
-		t.Errorf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
 	}
 
-	// Check that the moves are the same, but don't care about order
-	for _, expectedMove := range expectedMoves {
-		found := false
-
-		for _, move := range mov {
-			if expectedMove.Equals(move) {
-				found = true
-
-				break
-			}
-		}
-
-		if !found {
-			t.Errorf("Expected move %v not found", expectedMove)
-		}
+	equal := moves.MoveListsEqual(mov, expectedMoves)
+	if !equal {
+		t.Fatalf("Expected moves %v, got %v", expectedMoves, mov)
 	}
 }
 
@@ -165,5 +141,96 @@ func TestPrintPosition(t *testing.T) {
 
 	if output != expectedOutput {
 		t.Fatalf("Expected output:\n%s\nGot:\n%s", expectedOutput, output)
+	}
+}
+
+func TestGetMovesForKingWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testing.T) {
+	b3, _ := board.NewSquare("b3")
+	b4, _ := board.NewSquare("b4")
+	whiteKing := NewKing(b3, board.White)
+	whiteBishop := NewBishop(b4, board.White)
+	pos := NewPosition(board.White, []Piece{whiteKing, whiteBishop})
+
+	mov, err := whiteKing.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves")
+	}
+
+	a2, _ := board.NewSquare("a2")
+	b2, _ := board.NewSquare("b2")
+	c2, _ := board.NewSquare("c2")
+	a3, _ := board.NewSquare("a3")
+	c3, _ := board.NewSquare("c3")
+	a4, _ := board.NewSquare("a4")
+	c4, _ := board.NewSquare("c4")
+
+	expectedMoves := []moves.Move{
+		{From: b3, To: a2, PieceType: piece.KingType},
+		{From: b3, To: b2, PieceType: piece.KingType},
+		{From: b3, To: c2, PieceType: piece.KingType},
+		{From: b3, To: a3, PieceType: piece.KingType},
+		{From: b3, To: c3, PieceType: piece.KingType},
+		{From: b3, To: a4, PieceType: piece.KingType},
+		{From: b3, To: c4, PieceType: piece.KingType},
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	equal := moves.MoveListsEqual(mov, expectedMoves)
+	if !equal {
+		t.Fatalf("Expected moves %v, got %v", expectedMoves, mov)
+	}
+}
+
+func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
+	d4, _ := board.NewSquare("d4")
+	whiteBishop := NewBishop(d4, board.White)
+	pos := NewPosition(board.White, []Piece{whiteBishop})
+
+	mov, err := whiteBishop.GetMoves(pos)
+	if err != nil {
+		t.Errorf("Error while getting moves")
+	}
+
+	a1, _ := board.NewSquare("a1")
+	b2, _ := board.NewSquare("b2")
+	c3, _ := board.NewSquare("c3")
+	e5, _ := board.NewSquare("e5")
+	f6, _ := board.NewSquare("f6")
+	g7, _ := board.NewSquare("g7")
+	h8, _ := board.NewSquare("h8")
+	a7, _ := board.NewSquare("a7")
+	b6, _ := board.NewSquare("b6")
+	c5, _ := board.NewSquare("c5")
+	e3, _ := board.NewSquare("e3")
+	f2, _ := board.NewSquare("f2")
+	g1, _ := board.NewSquare("g1")
+
+	expectedMoves := []moves.Move{
+		{From: d4, To: a1, PieceType: piece.BishopType},
+		{From: d4, To: b2, PieceType: piece.BishopType},
+		{From: d4, To: c3, PieceType: piece.BishopType},
+		{From: d4, To: e5, PieceType: piece.BishopType},
+		{From: d4, To: f6, PieceType: piece.BishopType},
+		{From: d4, To: g7, PieceType: piece.BishopType},
+		{From: d4, To: h8, PieceType: piece.BishopType},
+		{From: d4, To: a7, PieceType: piece.BishopType},
+		{From: d4, To: b6, PieceType: piece.BishopType},
+		{From: d4, To: c5, PieceType: piece.BishopType},
+		{From: d4, To: e3, PieceType: piece.BishopType},
+		{From: d4, To: f2, PieceType: piece.BishopType},
+		{From: d4, To: g1, PieceType: piece.BishopType},
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	// Compare move lists
+	equal := moves.MoveListsEqual(mov, expectedMoves)
+	if !equal {
+		t.Errorf("Expected moves %v, got %v", expectedMoves, mov)
 	}
 }
