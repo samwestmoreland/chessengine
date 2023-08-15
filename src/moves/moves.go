@@ -25,3 +25,24 @@ func (m Move) String() string {
 func (m Move) Equals(other Move) bool {
 	return m.From == other.From && m.To == other.To && m.PieceType == other.PieceType
 }
+
+func MoveListsEqual(moves1 []Move, moves2 []Move) bool {
+	// Check that the moves are the same, but don't care about order
+	for _, move1 := range moves1 {
+		found := false
+
+		for _, move2 := range moves2 {
+			if move1.Equals(move2) {
+				found = true
+
+				break
+			}
+		}
+
+		if !found {
+			return false
+		}
+	}
+
+	return true
+}
