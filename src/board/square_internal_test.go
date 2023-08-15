@@ -19,15 +19,7 @@ func TestIsValidSquare(t *testing.T) {
 	}
 
 	for square, expected := range squaresToTest {
-		var actual bool
-
-		err := square.Valid()
-		if err != nil {
-			actual = false
-		} else {
-			actual = true
-		}
-
+		actual := square.Valid()
 		if actual != expected {
 			t.Errorf("Expected %v, got %v", expected, actual)
 		}

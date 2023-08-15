@@ -47,7 +47,7 @@ func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
 
 			// Get the square
 			square := board.Square{File: k.CurrentSquare.File + i - 1, Rank: k.CurrentSquare.Rank + j - 1}
-			if err := square.Valid(); err != nil {
+			if !square.Valid() {
 				continue
 			}
 
