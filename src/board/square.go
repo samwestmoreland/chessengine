@@ -32,7 +32,7 @@ func NewSquare(sqStr string) (Square, error) {
 	}
 
 	ret := Square{Rank: rank, File: file}
-	if err = ret.Valid(); err != nil {
+	if !ret.Valid() {
 		return Square{}, fmt.Errorf("invalid square: %s: %w", sqStr, ErrInvalidSquare)
 	}
 
@@ -46,24 +46,20 @@ func (s *Square) String() string {
 	return fmt.Sprintf("%v%d", string(file), s.Rank)
 }
 
-func (s Square) Valid() error {
+func (s Square) Valid() bool {
 	if s.Rank < 1 || s.Rank > 8 {
-		return fmt.Errorf("invalid rank: %d: %w", s.Rank, ErrInvalidRank)
+		return false
 	}
 
 	if s.File < 1 || s.File > 8 {
-		return fmt.Errorf("invalid file: %d: %w", s.File, ErrInvalidFile)
+		return false
 	}
 
-	return nil
+	return true
 }
 
 func (s Square) IsLightSquare() (bool, error) {
-	if err := s.Valid(); err != nil {
-		return false, err
-	}
-
-	return (s.Rank+s.File)%2 == 1, nil
+	return s.Valid() && (s.Rank+s.File)%2 == 1, nil
 }
 
 func (s Square) IsDarkSquare() (bool, error) {
