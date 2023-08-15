@@ -163,7 +163,7 @@ func (f FEN) GetPiece(square board.Square) (Piece, error) {
 
 	// check the square is valid
 	if !square.Valid() {
-		return nil, fmt.Errorf("got invalid square while getting piece")
+		return nil, fmt.Errorf("got invalid square while getting piece: %w", board.ErrInvalidSquare)
 	}
 
 	// now we know the square is valid, we can get the rank and file
