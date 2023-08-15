@@ -231,6 +231,6 @@ func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
 	// Compare move lists
 	equal := moves.MoveListsEqual(mov, expectedMoves)
 	if !equal {
-		t.Errorf("Expected moves %v, got %v", expectedMoves, mov)
+		t.Errorf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
 }

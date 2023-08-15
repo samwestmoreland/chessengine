@@ -106,6 +106,6 @@ func (s Square) Translate(direction Direction) Square {
 	case NorthWest:
 		return Square{Rank: s.Rank + 1, File: s.File - 1}
 	default:
-		return Square{}
+		return s
 	}
 }
