@@ -46,6 +46,7 @@ func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
 			if !newSquare.Valid() {
 				break
 			}
+
 			pieceOnSquare, err := pos.getPiece(newSquare)
 			if err != nil {
 				return nil, err
@@ -59,7 +60,6 @@ func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
 
 			ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType))
 			oldSquare = newSquare
-
 		}
 	}
 

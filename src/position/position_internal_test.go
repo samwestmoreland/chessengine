@@ -294,9 +294,11 @@ func TestGetMovesForRookWithFriendlyPieceBlocking(t *testing.T) {
 	expectedSquares := []string{
 		"f5", "f6", "f7", "f8",
 		"e4", "d4", "c4", "b4",
-		"a4", "g4", "h4"}
+		"a4", "g4", "h4",
+	}
 
-	var expectedMoves []moves.Move
+	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
+
 	for _, sq := range expectedSquares {
 		square, _ := board.NewSquare(sq)
 		expectedMoves = append(expectedMoves, moves.Move{From: f4, To: square, PieceType: piece.RookType})
@@ -311,5 +313,4 @@ func TestGetMovesForRookWithFriendlyPieceBlocking(t *testing.T) {
 		t.Logf("\n%v", pos.String())
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
-
 }
