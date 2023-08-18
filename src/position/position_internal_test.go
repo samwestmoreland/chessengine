@@ -314,3 +314,44 @@ func TestGetMovesForRookWithFriendlyPieceBlocking(t *testing.T) {
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
 }
+
+func TestGetMovesForQueen(t *testing.T) {
+	h8 := board.NewSquareOrPanic("h8")
+	whiteQueen := NewQueen(h8, board.White)
+
+	h1 := board.NewSquareOrPanic("h1")
+	whitePawn := NewPawn(h1, board.White)
+
+	b2 := board.NewSquareOrPanic("b2")
+	whiteKing := NewKing(b2, board.White)
+
+	pos := NewPosition(board.White, []Piece{whiteQueen, whitePawn, whiteKing})
+
+	mov, err := whiteQueen.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves for queen")
+	}
+
+	expectedSquares := []string{
+		"h7", "h6", "h5", "h4", "h3", "h2",
+		"g7", "f6", "e5", "d4", "c3",
+		"g8", "f8", "e8", "d8", "c8", "b8", "a8",
+	}
+
+	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
+
+	for _, sq := range expectedSquares {
+		square, _ := board.NewSquare(sq)
+		expectedMoves = append(expectedMoves, moves.Move{From: h8, To: square, PieceType: piece.QueenType})
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+	}
+}
