@@ -41,7 +41,7 @@ func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
 
 	for _, direction := range []board.Direction{board.North, board.East, board.South, board.West} {
 		oldSquare := r.CurrentSquare
-		for i := 1; i < 8; i++ {
+		for i := 1; i < 7; i++ {
 			newSquare := oldSquare.Translate(direction)
 			if !newSquare.Valid() {
 				break

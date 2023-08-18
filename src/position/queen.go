@@ -36,6 +36,41 @@ func (q *Queen) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of valid moves for the piece.
-func (q *Queen) GetMoves(*Position) ([]moves.Move, error) {
-	panic("not implemented") // TODO: Implement
+func (q *Queen) GetMoves(pos *Position) ([]moves.Move, error) {
+	ret := make([]moves.Move, 0, 21)
+
+	for _, direction := range []board.Direction{
+		board.North,
+		board.NorthEast,
+		board.East,
+		board.SouthEast,
+		board.South,
+		board.SouthWest,
+		board.West,
+		board.NorthWest,
+	} {
+		oldSquare := q.CurrentSquare
+		for i := 0; i < 7; i++ {
+			newSquare := oldSquare.Translate(direction)
+			if !newSquare.Valid() {
+				break
+			}
+
+			pieceOnSquare, err := pos.getPiece(newSquare)
+			if err != nil {
+				return nil, err
+			}
+
+			if pieceOnSquare != nil {
+				if pieceOnSquare.GetColour() == q.GetColour() {
+					break
+				}
+			}
+
+			ret = append(ret, moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType))
+			oldSquare = newSquare
+		}
+	}
+
+	return ret, nil
 }
