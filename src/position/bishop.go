@@ -34,7 +34,7 @@ func (b *Bishop) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns the piece's valid moves.
-func (b *Bishop) GetMoves(*Position) ([]moves.Move, error) {
+func (b *Bishop) GetMoves(pos *Position) ([]moves.Move, error) {
 	ret := make([]moves.Move, 0, 14)
 	// there are 4 directions a bishop can move in
 	// we'll iterate over each direction and add the valid moves
@@ -45,6 +45,17 @@ func (b *Bishop) GetMoves(*Position) ([]moves.Move, error) {
 			newSquare := oldSquare.Translate(direction)
 			if !newSquare.Valid() {
 				break
+			}
+
+			pieceOnSquare, err := pos.getPiece(newSquare)
+			if err != nil {
+				return nil, err
+			}
+
+			if pieceOnSquare != nil {
+				if pieceOnSquare.GetColour() == b.GetColour() {
+					break
+				}
 			}
 
 			ret = append(ret, moves.Move{From: b.CurrentSquare, To: newSquare, PieceType: piece.BishopType})
