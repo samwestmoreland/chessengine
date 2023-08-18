@@ -39,6 +39,15 @@ func NewSquare(sqStr string) (Square, error) {
 	return ret, nil
 }
 
+func NewSquareOrPanic(sqStr string) Square {
+	sq, err := NewSquare(sqStr)
+	if err != nil {
+		panic(err)
+	}
+
+	return sq
+}
+
 // String returns the string representation of a square. So a1, b2, etc.
 func (s *Square) String() string {
 	file := rune('a' + s.File - 1)

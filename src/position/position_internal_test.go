@@ -276,3 +276,41 @@ func TestGetMovesForBishopWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *tes
 		t.Errorf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
 }
+
+func TestGetMovesForRookWithFriendlyPieceBlocking(t *testing.T) {
+	f4 := board.NewSquareOrPanic("f4")
+	blackRook := NewRook(f4, board.Black)
+
+	f3 := board.NewSquareOrPanic("f3")
+	blackBishop := NewBishop(f3, board.Black)
+
+	pos := NewPosition(board.Black, []Piece{blackRook, blackBishop})
+
+	mov, err := blackRook.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves for rook")
+	}
+
+	expectedSquares := []string{
+		"f5", "f6", "f7", "f8",
+		"e4", "d4", "c4", "b4",
+		"a4", "g4", "h4",
+	}
+
+	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
+
+	for _, sq := range expectedSquares {
+		square, _ := board.NewSquare(sq)
+		expectedMoves = append(expectedMoves, moves.Move{From: f4, To: square, PieceType: piece.RookType})
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+	}
+}

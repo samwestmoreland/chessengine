@@ -36,6 +36,32 @@ func (r *Rook) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns the piece's valid moves.
-func (r *Rook) GetMoves(*Position) ([]moves.Move, error) {
-	panic("not implemented") // TODO: Implement
+func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
+	ret := []moves.Move{}
+
+	for _, direction := range []board.Direction{board.North, board.East, board.South, board.West} {
+		oldSquare := r.CurrentSquare
+		for i := 1; i < 8; i++ {
+			newSquare := oldSquare.Translate(direction)
+			if !newSquare.Valid() {
+				break
+			}
+
+			pieceOnSquare, err := pos.getPiece(newSquare)
+			if err != nil {
+				return nil, err
+			}
+
+			if pieceOnSquare != nil {
+				if pieceOnSquare.GetColour() == r.GetColour() {
+					break
+				}
+			}
+
+			ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType))
+			oldSquare = newSquare
+		}
+	}
+
+	return ret, nil
 }
