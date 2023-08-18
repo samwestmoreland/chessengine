@@ -51,6 +51,7 @@ func (b *Bishop) GetMoves(pos *Position) ([]moves.Move, error) {
 			if err != nil {
 				return nil, err
 			}
+
 			if pieceOnSquare != nil {
 				if pieceOnSquare.GetColour() == b.GetColour() {
 					break
