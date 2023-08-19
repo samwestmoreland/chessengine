@@ -34,8 +34,54 @@ func (p *Pawn) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of moves that the piece can make.
-func (p *Pawn) GetMoves(*Position) ([]moves.Move, error) {
+func (p *Pawn) GetMoves(pos *Position) ([]moves.Move, error) {
 	ret := make([]moves.Move, 0, 4)
 
+	if p.Colour == board.White {
+		ret = append(ret, p.getForwardMovesWhite(pos)...)
+	} else if p.Colour == board.Black {
+		ret = append(ret, p.getForwardMovesBlack(pos)...)
+	}
+
 	return ret, nil
+}
+
+func (p *Pawn) getForwardMovesWhite(pos *Position) []moves.Move {
+	ret := make([]moves.Move, 0, 2)
+
+	// Move one square forward.
+	destination := p.CurrentSquare.Translate(board.North)
+	if destination.Valid() && !pos.squareIsOccupied(destination) {
+		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+	}
+
+	// Move two squares forward.
+	if p.CurrentSquare.Rank == 2 {
+		destination = destination.Translate(board.North)
+		if destination.Valid() && !pos.squareIsOccupied(destination) {
+			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+		}
+	}
+
+	return ret
+}
+
+func (p *Pawn) getForwardMovesBlack(pos *Position) []moves.Move {
+	ret := make([]moves.Move, 0, 2)
+
+	// Move one square forward.
+	destination := p.CurrentSquare.Translate(board.South)
+	if destination.Valid() && !pos.squareIsOccupied(destination) {
+		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+	}
+
+	// Move two squares forward.
+	if p.CurrentSquare.Rank == 7 {
+		destination = destination.Translate(board.South)
+		if destination.Valid() && !pos.squareIsOccupied(destination) {
+			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+		}
+	}
+
+	return ret
 }

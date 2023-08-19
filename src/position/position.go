@@ -192,3 +192,32 @@ func (p *Position) getPiece(square board.Square) (Piece, error) {
 
 	return piece, nil
 }
+
+func (p *Position) squareIsOccupied(square board.Square) bool {
+	if _, ok := p.White[square]; ok {
+		return true
+	}
+
+	if _, ok := p.Black[square]; ok {
+		return true
+	}
+
+	return false
+}
+
+// func (p *Position) squareOccupiedByOpponent(square board.Square, myColour board.Colour) bool {
+// 	piece, err := p.getPiece(square)
+// 	if err != nil {
+// 		return false
+// 	}
+//
+// 	if piece == nil {
+// 		return false
+// 	}
+//
+// 	if piece.GetColour() == myColour {
+// 		return false
+// 	}
+//
+// 	return true
+// }
