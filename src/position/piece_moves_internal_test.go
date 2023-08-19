@@ -283,7 +283,10 @@ func TestGetKnightMoves(t *testing.T) {
 	e6 := board.NewSquareOrPanic("e6")
 	blackKnight := NewKnight(e6, board.Black)
 
-	pos := NewPosition(board.Black, []Piece{blackKnight})
+	g5 := board.NewSquareOrPanic("g5")
+	blackQueen := NewQueen(g5, board.Black)
+
+	pos := NewPosition(board.Black, []Piece{blackKnight, blackQueen})
 
 	mov, err := blackKnight.GetMoves(pos)
 	if err != nil {
@@ -292,7 +295,7 @@ func TestGetKnightMoves(t *testing.T) {
 
 	expectedMoves := []moves.Move{}
 
-	expectedSquares := []string{"f8", "g7", "g5", "f4", "d4", "c5", "c7", "d8"}
+	expectedSquares := []string{"f8", "g7", "f4", "d4", "c5", "c7", "d8"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
 		expectedMoves = append(expectedMoves, moves.Move{From: e6, To: square, PieceType: piece.KnightType})
