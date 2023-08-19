@@ -24,24 +24,12 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 		t.Errorf("Error while getting moves")
 	}
 
-	d5, _ := board.NewSquare("d5")
-	e5, _ := board.NewSquare("e5")
-	f5, _ := board.NewSquare("f5")
-	d4, _ := board.NewSquare("d4")
-	f4, _ := board.NewSquare("f4")
-	d3, _ := board.NewSquare("d3")
-	e3, _ := board.NewSquare("e3")
-	f3, _ := board.NewSquare("f3")
+	expectedSquares := []string{"d5", "e5", "f5", "d4", "f4", "d3", "e3", "f3"}
+	expectedMoves := []moves.Move{}
 
-	expectedMoves := []moves.Move{
-		{From: square, To: d5, PieceType: piece.KingType},
-		{From: square, To: e5, PieceType: piece.KingType},
-		{From: square, To: f5, PieceType: piece.KingType},
-		{From: square, To: d4, PieceType: piece.KingType},
-		{From: square, To: f4, PieceType: piece.KingType},
-		{From: square, To: d3, PieceType: piece.KingType},
-		{From: square, To: e3, PieceType: piece.KingType},
-		{From: square, To: f3, PieceType: piece.KingType},
+	for _, sqStr := range expectedSquares {
+		sq := board.NewSquareOrPanic(sqStr)
+		expectedMoves = append(expectedMoves, moves.Move{From: square, To: sq, PieceType: piece.KingType})
 	}
 
 	if len(mov) != len(expectedMoves) {
@@ -55,14 +43,8 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 }
 
 func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
-	sqStr := "a1"
-
-	square, err := board.NewSquare(sqStr)
-	if err != nil {
-		t.Fatalf("Failed to create square %s: %v", sqStr, err)
-	}
-
-	whiteKing := NewKing(square, board.White)
+	a1 := board.NewSquareOrPanic("a1")
+	whiteKing := NewKing(a1, board.White)
 
 	pos := NewPosition(board.White, []Piece{whiteKing})
 
@@ -71,14 +53,11 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 		t.Errorf("Error while getting moves")
 	}
 
-	b1, _ := board.NewSquare("b1")
-	a2, _ := board.NewSquare("a2")
-	b2, _ := board.NewSquare("b2")
-
-	expectedMoves := []moves.Move{
-		{From: square, To: b1, PieceType: piece.KingType},
-		{From: square, To: a2, PieceType: piece.KingType},
-		{From: square, To: b2, PieceType: piece.KingType},
+	expectedSquares := []string{"b1", "b2", "a2"}
+	expectedMoves := []moves.Move{}
+	for _, sqStr := range expectedSquares {
+		sq := board.NewSquareOrPanic(sqStr)
+		expectedMoves = append(expectedMoves, moves.Move{From: a1, To: sq, PieceType: piece.KingType})
 	}
 
 	if len(mov) != len(expectedMoves) {
@@ -92,10 +71,12 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 }
 
 func TestGetMovesForKingWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testing.T) {
-	b3, _ := board.NewSquare("b3")
-	b4, _ := board.NewSquare("b4")
+	b3 := board.NewSquareOrPanic("b3")
 	whiteKing := NewKing(b3, board.White)
+
+	b4 := board.NewSquareOrPanic("b4")
 	whiteBishop := NewBishop(b4, board.White)
+
 	pos := NewPosition(board.White, []Piece{whiteKing, whiteBishop})
 
 	mov, err := whiteKing.GetMoves(pos)
@@ -103,22 +84,11 @@ func TestGetMovesForKingWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testi
 		t.Fatalf("Error while getting moves")
 	}
 
-	a2, _ := board.NewSquare("a2")
-	b2, _ := board.NewSquare("b2")
-	c2, _ := board.NewSquare("c2")
-	a3, _ := board.NewSquare("a3")
-	c3, _ := board.NewSquare("c3")
-	a4, _ := board.NewSquare("a4")
-	c4, _ := board.NewSquare("c4")
-
-	expectedMoves := []moves.Move{
-		{From: b3, To: a2, PieceType: piece.KingType},
-		{From: b3, To: b2, PieceType: piece.KingType},
-		{From: b3, To: c2, PieceType: piece.KingType},
-		{From: b3, To: a3, PieceType: piece.KingType},
-		{From: b3, To: c3, PieceType: piece.KingType},
-		{From: b3, To: a4, PieceType: piece.KingType},
-		{From: b3, To: c4, PieceType: piece.KingType},
+	expectedSquares := []string{"a2", "b2", "c2", "a3", "c3", "a4", "c4"}
+	expectedMoves := []moves.Move{}
+	for _, sqStr := range expectedSquares {
+		sq := board.NewSquareOrPanic(sqStr)
+		expectedMoves = append(expectedMoves, moves.Move{From: b3, To: sq, PieceType: piece.KingType})
 	}
 
 	if len(mov) != len(expectedMoves) {
@@ -132,8 +102,9 @@ func TestGetMovesForKingWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testi
 }
 
 func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
-	d4, _ := board.NewSquare("d4")
+	d4 := board.NewSquareOrPanic("d4")
 	whiteBishop := NewBishop(d4, board.White)
+
 	pos := NewPosition(board.White, []Piece{whiteBishop})
 
 	mov, err := whiteBishop.GetMoves(pos)
@@ -141,34 +112,16 @@ func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
 		t.Errorf("Error while getting moves")
 	}
 
-	a1, _ := board.NewSquare("a1")
-	b2, _ := board.NewSquare("b2")
-	c3, _ := board.NewSquare("c3")
-	e5, _ := board.NewSquare("e5")
-	f6, _ := board.NewSquare("f6")
-	g7, _ := board.NewSquare("g7")
-	h8, _ := board.NewSquare("h8")
-	a7, _ := board.NewSquare("a7")
-	b6, _ := board.NewSquare("b6")
-	c5, _ := board.NewSquare("c5")
-	e3, _ := board.NewSquare("e3")
-	f2, _ := board.NewSquare("f2")
-	g1, _ := board.NewSquare("g1")
-
-	expectedMoves := []moves.Move{
-		{From: d4, To: a1, PieceType: piece.BishopType},
-		{From: d4, To: b2, PieceType: piece.BishopType},
-		{From: d4, To: c3, PieceType: piece.BishopType},
-		{From: d4, To: e5, PieceType: piece.BishopType},
-		{From: d4, To: f6, PieceType: piece.BishopType},
-		{From: d4, To: g7, PieceType: piece.BishopType},
-		{From: d4, To: h8, PieceType: piece.BishopType},
-		{From: d4, To: a7, PieceType: piece.BishopType},
-		{From: d4, To: b6, PieceType: piece.BishopType},
-		{From: d4, To: c5, PieceType: piece.BishopType},
-		{From: d4, To: e3, PieceType: piece.BishopType},
-		{From: d4, To: f2, PieceType: piece.BishopType},
-		{From: d4, To: g1, PieceType: piece.BishopType},
+	expectedMoves := []moves.Move{}
+	expectedSquares := []string{
+		"a1", "b2", "c3", "e5",
+		"f6", "g7", "h8", "a7",
+		"b6", "c5", "e3", "f2",
+		"g1",
+	}
+	for _, sqStr := range expectedSquares {
+		sq := board.NewSquareOrPanic(sqStr)
+		expectedMoves = append(expectedMoves, moves.Move{From: d4, To: sq, PieceType: piece.BishopType})
 	}
 
 	if len(mov) != len(expectedMoves) {
@@ -183,10 +136,12 @@ func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
 }
 
 func TestGetMovesForBishopWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testing.T) {
-	b2, _ := board.NewSquare("b2")
-	a1, _ := board.NewSquare("a1")
+	b2 := board.NewSquareOrPanic("b2")
 	whiteBishop := NewBishop(b2, board.White)
+
+	a1 := board.NewSquareOrPanic("a1")
 	whitePawn := NewPawn(a1, board.White)
+
 	pos := NewPosition(board.White, []Piece{whiteBishop, whitePawn})
 
 	mov, err := whiteBishop.GetMoves(pos)
@@ -194,24 +149,11 @@ func TestGetMovesForBishopWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *tes
 		t.Fatalf("Error while getting moves")
 	}
 
-	c3, _ := board.NewSquare("c3")
-	d4, _ := board.NewSquare("d4")
-	e5, _ := board.NewSquare("e5")
-	f6, _ := board.NewSquare("f6")
-	g7, _ := board.NewSquare("g7")
-	h8, _ := board.NewSquare("h8")
-	c1, _ := board.NewSquare("c1")
-	a3, _ := board.NewSquare("a3")
-
-	expectedMoves := []moves.Move{
-		{From: b2, To: c3, PieceType: piece.BishopType},
-		{From: b2, To: d4, PieceType: piece.BishopType},
-		{From: b2, To: e5, PieceType: piece.BishopType},
-		{From: b2, To: f6, PieceType: piece.BishopType},
-		{From: b2, To: g7, PieceType: piece.BishopType},
-		{From: b2, To: h8, PieceType: piece.BishopType},
-		{From: b2, To: c1, PieceType: piece.BishopType},
-		{From: b2, To: a3, PieceType: piece.BishopType},
+	expectedMoves := []moves.Move{}
+	expectedSquares := []string{"c3", "d4", "e5", "f6", "g7", "h8", "a3", "c1"}
+	for _, sqStr := range expectedSquares {
+		sq := board.NewSquareOrPanic(sqStr)
+		expectedMoves = append(expectedMoves, moves.Move{From: b2, To: sq, PieceType: piece.BishopType})
 	}
 
 	if len(mov) != len(expectedMoves) {
