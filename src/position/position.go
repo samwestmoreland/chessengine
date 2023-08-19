@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
@@ -27,6 +28,84 @@ func NewPositionFromFEN(fen *FEN) *Position {
 	position := getPositionFromFEN(fen)
 
 	return position
+}
+
+func NewPosition(turn board.Colour, pieces []Piece) *Position {
+	whitePieces := make(map[board.Square]Piece)
+	blackPieces := make(map[board.Square]Piece)
+	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
+
+	for _, piece := range pieces {
+		if !piece.GetCurrentSquare().Valid() {
+			log.Errorf("Failed to add piece %v to square %v\n", piece.Type(), piece.GetCurrentSquare())
+
+			continue
+		}
+
+		if piece.GetColour() == board.White {
+			whitePieces[piece.GetCurrentSquare()] = piece
+		} else if piece.GetColour() == board.Black {
+			blackPieces[piece.GetCurrentSquare()] = piece
+		}
+	}
+
+	ret.White = whitePieces
+	ret.Black = blackPieces
+
+	return ret
+}
+
+func (p *Position) GetTurn() board.Colour {
+	return p.Turn
+}
+
+func (p *Position) GetWhitePieces() map[board.Square]Piece {
+	return p.White
+}
+
+func (p *Position) GetBlackPieces() map[board.Square]Piece {
+	return p.Black
+}
+
+func (p *Position) GetAllWhiteMoves() ([]moves.Move, error) {
+	log.Infof("Getting all white moves")
+	log.Infof("There are %d white pieces", len(p.White))
+	moves := make([]moves.Move, 0, len(p.White)*20)
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(p.White))
+
+	for _, piece := range p.White {
+		go func(piece Piece) {
+			defer wg.Done()
+
+			pieceMoves, err := piece.GetMoves(p)
+			if err != nil {
+				log.Errorf("Failed to get moves for white piece %v: %v\n", piece.Type(), err)
+			}
+
+			moves = append(moves, pieceMoves...)
+		}(piece)
+	}
+
+	wg.Wait()
+
+	return moves, nil
+}
+
+func (p *Position) GetAllBlackMoves() ([]moves.Move, error) {
+	var moves []moves.Move
+
+	for _, piece := range p.Black {
+		pieceMoves, err := piece.GetMoves(p)
+		if err != nil {
+			return moves, fmt.Errorf("failed to get moves for black piece %v: %w", piece.Type(), err)
+		}
+
+		moves = append(moves, pieceMoves...)
+	}
+
+	return moves, nil
 }
 
 func (p *Position) String() string {
@@ -59,31 +138,6 @@ func (p *Position) String() string {
 
 		ret += "\n"
 	}
-
-	return ret
-}
-
-func NewPosition(turn board.Colour, pieces []Piece) *Position {
-	whitePieces := make(map[board.Square]Piece)
-	blackPieces := make(map[board.Square]Piece)
-	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
-
-	for _, piece := range pieces {
-		if !piece.GetCurrentSquare().Valid() {
-			log.Errorf("Failed to add piece %v to square %v\n", piece.Type(), piece.GetCurrentSquare())
-
-			continue
-		}
-
-		if piece.GetColour() == board.White {
-			whitePieces[piece.GetCurrentSquare()] = piece
-		} else if piece.GetColour() == board.Black {
-			blackPieces[piece.GetCurrentSquare()] = piece
-		}
-	}
-
-	ret.White = whitePieces
-	ret.Black = blackPieces
 
 	return ret
 }
