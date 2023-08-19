@@ -36,7 +36,6 @@ func (k *Knight) GetCurrentSquare() board.Square {
 func (k *Knight) GetMoves(pos *Position) ([]moves.Move, error) {
 	ret := make([]moves.Move, 0, 8)
 
-	// we can iterate over 2 and -2 and 1 and -1 to get all the possible moves
 	for _, xOffset := range []int{2, -2} {
 		for _, yOffset := range []int{1, -1} {
 			newSquare := board.Square{Rank: k.CurrentSquare.Rank + xOffset, File: k.CurrentSquare.File + yOffset}
