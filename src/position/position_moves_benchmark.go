@@ -1,8 +1,9 @@
 package position
 
 import (
-	"github.com/samwestmoreland/chessengine/src/board"
 	"testing"
+
+	"github.com/samwestmoreland/chessengine/src/board"
 )
 
 func BenchmarkGetAllWhiteMoves(b *testing.B) {
