@@ -89,6 +89,7 @@ func TestGetAllWhiteMoves(t *testing.T) {
 	}
 
 	expectedMoves := []moves.Move{}
+
 	expectedSquaresForKing := []string{"e5", "f5", "f4", "f3", "e3", "d3", "d4", "d5"}
 	for _, sq := range expectedSquaresForKing {
 		s, _ := board.NewSquare(sq)
