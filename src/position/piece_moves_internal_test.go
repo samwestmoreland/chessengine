@@ -260,15 +260,75 @@ func TestGetPawnMoves(t *testing.T) {
 		t.Fatalf("Error while getting moves for pawn")
 	}
 
-	expectedSquares := []string{
-		"a3", "a4",
-	}
+	expectedMoves := []moves.Move{}
 
-	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
-
+	expectedSquares := []string{"a3", "a4"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
 		expectedMoves = append(expectedMoves, moves.Move{From: a2, To: square, PieceType: piece.PawnType})
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+	}
+}
+
+func TestGetKnightMoves(t *testing.T) {
+	e6 := board.NewSquareOrPanic("e6")
+	blackKnight := NewKnight(e6, board.Black)
+
+	g5 := board.NewSquareOrPanic("g5")
+	blackQueen := NewQueen(g5, board.Black)
+
+	pos := NewPosition(board.Black, []Piece{blackKnight, blackQueen})
+
+	mov, err := blackKnight.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves for knight")
+	}
+
+	expectedMoves := []moves.Move{}
+
+	expectedSquares := []string{"f8", "g7", "f4", "d4", "c5", "c7", "d8"}
+	for _, sq := range expectedSquares {
+		square := board.NewSquareOrPanic(sq)
+		expectedMoves = append(expectedMoves, moves.Move{From: e6, To: square, PieceType: piece.KnightType})
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+	}
+}
+
+func TestGetKnightMovesWithKnightInCorner(t *testing.T) {
+	a1 := board.NewSquareOrPanic("a1")
+	whiteKnight := NewKnight(a1, board.White)
+
+	pos := NewPosition(board.White, []Piece{whiteKnight})
+
+	mov, err := whiteKnight.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves for knight")
+	}
+
+	expectedMoves := []moves.Move{}
+
+	expectedSquares := []string{"b3", "c2"}
+	for _, sq := range expectedSquares {
+		square := board.NewSquareOrPanic(sq)
+		expectedMoves = append(expectedMoves, moves.Move{From: a1, To: square, PieceType: piece.KnightType})
 	}
 
 	if len(mov) != len(expectedMoves) {

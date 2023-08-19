@@ -22,6 +22,7 @@ linters-settings:
     allow:
       - Piece
       - error
+
   varnamelen:
     ignore-names:
       - err
@@ -91,3 +92,7 @@ linters-settings:
       - h8
       - i
       - j
+
+  dupl:
+    # token count to trigger issue. 150 by default
+    threshold: 200
