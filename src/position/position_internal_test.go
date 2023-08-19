@@ -388,3 +388,18 @@ func TestGetPawnMoves(t *testing.T) {
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
 }
+
+func TestSquareIsOccupied(t *testing.T) {
+	a2 := board.NewSquareOrPanic("a2")
+	pawn1 := NewPawn(a2, board.White)
+
+	pos := NewPosition(board.White, []Piece{pawn1})
+
+	if occ, col := pos.squareIsOccupied(a2); !occ || col != board.White {
+		t.Fatalf("Expected square %v to be occupied by white piece", a2)
+	}
+
+	if occ, _ := pos.squareIsOccupied(board.NewSquareOrPanic("a3")); occ {
+		t.Fatalf("Expected square %v to be unoccupied", a2)
+	}
+}
