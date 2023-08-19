@@ -53,8 +53,9 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 		t.Errorf("Error while getting moves")
 	}
 
-	expectedSquares := []string{"b1", "b2", "a2"}
 	expectedMoves := []moves.Move{}
+
+	expectedSquares := []string{"b1", "b2", "a2"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
 		expectedMoves = append(expectedMoves, moves.Move{From: a1, To: sq, PieceType: piece.KingType})
@@ -84,8 +85,9 @@ func TestGetMovesForKingWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testi
 		t.Fatalf("Error while getting moves")
 	}
 
-	expectedSquares := []string{"a2", "b2", "c2", "a3", "c3", "a4", "c4"}
 	expectedMoves := []moves.Move{}
+
+	expectedSquares := []string{"a2", "b2", "c2", "a3", "c3", "a4", "c4"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
 		expectedMoves = append(expectedMoves, moves.Move{From: b3, To: sq, PieceType: piece.KingType})
@@ -113,6 +115,7 @@ func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
 	}
 
 	expectedMoves := []moves.Move{}
+
 	expectedSquares := []string{
 		"a1", "b2", "c3", "e5",
 		"f6", "g7", "h8", "a7",
@@ -150,6 +153,7 @@ func TestGetMovesForBishopWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *tes
 	}
 
 	expectedMoves := []moves.Move{}
+
 	expectedSquares := []string{"c3", "d4", "e5", "f6", "g7", "h8", "a3", "c1"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
