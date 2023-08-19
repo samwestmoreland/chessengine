@@ -110,5 +110,4 @@ func TestGetAllMoves(t *testing.T) {
 		t.Log(pos.String())
 		t.Fatalf("Expected moves %v, got %v", expectedMoves, movs)
 	}
-
 }
