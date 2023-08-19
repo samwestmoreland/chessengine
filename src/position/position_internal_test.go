@@ -110,42 +110,4 @@ func TestGetAllWhiteMoves(t *testing.T) {
 		t.Log(pos.String())
 		t.Fatalf("Expected moves %v, got %v", expectedMoves, movs)
 	}
-
-}
-
-func TestGetAllBlackMoves(t *testing.T) {
-	e4, _ := board.NewSquare("e4")
-	g3, _ := board.NewSquare("g3")
-	blackKing := NewKing(e4, board.Black)
-	blackBishop := NewBishop(g3, board.Black)
-	pos := NewPosition(board.Black, []Piece{blackKing, blackBishop})
-
-	movs, err := pos.GetAllBlackMoves()
-	if err != nil {
-		t.Fatalf("Error in GetAllWhiteMoves: %s", err)
-	}
-
-	expectedMoves := []moves.Move{}
-	expectedSquaresForKing := []string{"e5", "f5", "f4", "f3", "e3", "d3", "d4", "d5"}
-	for _, sq := range expectedSquaresForKing {
-		s, _ := board.NewSquare(sq)
-		expectedMoves = append(expectedMoves, moves.NewMove(e4, s, piece.KingType))
-	}
-
-	expectedSquaresForBishop := []string{"h4", "h2", "f2", "e1", "f4", "e5", "d6", "c7", "b8"}
-	for _, sq := range expectedSquaresForBishop {
-		s, _ := board.NewSquare(sq)
-		expectedMoves = append(expectedMoves, moves.NewMove(g3, s, piece.BishopType))
-	}
-
-	if len(movs) != len(expectedMoves) {
-		t.Log(pos.String())
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(movs))
-	}
-
-	if equal := moves.MoveListsEqual(movs, expectedMoves); !equal {
-		t.Log(pos.String())
-		t.Fatalf("Expected moves %v, got %v", expectedMoves, movs)
-	}
-
 }

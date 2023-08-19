@@ -14,7 +14,10 @@ func BenchmarkGetAllWhiteMoves(b *testing.B) {
 	pos := NewPosition(board.White, []Piece{whiteKing, whiteBishop})
 
 	for i := 0; i < b.N; i++ {
-		pos.GetAllWhiteMoves()
+		_, err := pos.GetAllWhiteMoves()
+		if err != nil {
+			b.Error(err)
+		}
 	}
 }
 
@@ -26,6 +29,9 @@ func BenchmarkGetAllBlackMoves(b *testing.B) {
 	pos := NewPosition(board.Black, []Piece{blackKing, blackBishop})
 
 	for i := 0; i < b.N; i++ {
-		pos.GetAllBlackMoves()
+		_, err := pos.GetAllBlackMoves()
+		if err != nil {
+			b.Error(err)
+		}
 	}
 }
