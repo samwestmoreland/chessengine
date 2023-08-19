@@ -308,3 +308,33 @@ func TestGetKnightMoves(t *testing.T) {
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
 }
+
+func TestGetKnightMovesWithKnightInCorner(t *testing.T) {
+	a1 := board.NewSquareOrPanic("a1")
+	whiteKnight := NewKnight(a1, board.White)
+
+	pos := NewPosition(board.White, []Piece{whiteKnight})
+
+	mov, err := whiteKnight.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves for knight")
+	}
+
+	expectedMoves := []moves.Move{}
+
+	expectedSquares := []string{"b3", "c2"}
+	for _, sq := range expectedSquares {
+		square := board.NewSquareOrPanic(sq)
+		expectedMoves = append(expectedMoves, moves.Move{From: a1, To: square, PieceType: piece.KnightType})
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+	}
+}
