@@ -341,7 +341,7 @@ func TestGetMovesForQueen(t *testing.T) {
 	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
 
 	for _, sq := range expectedSquares {
-		square, _ := board.NewSquare(sq)
+		square := board.NewSquareOrPanic(sq)
 		expectedMoves = append(expectedMoves, moves.Move{From: h8, To: square, PieceType: piece.QueenType})
 	}
 
@@ -353,5 +353,53 @@ func TestGetMovesForQueen(t *testing.T) {
 	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
 		t.Logf("\n%v", pos.String())
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+	}
+}
+
+func TestGetPawnMoves(t *testing.T) {
+	a2 := board.NewSquareOrPanic("a2")
+	pawn1 := NewPawn(a2, board.White)
+
+	pos := NewPosition(board.White, []Piece{pawn1})
+
+	mov, err := pawn1.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves for pawn")
+	}
+
+	expectedSquares := []string{
+		"a3", "a4",
+	}
+
+	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
+
+	for _, sq := range expectedSquares {
+		square := board.NewSquareOrPanic(sq)
+		expectedMoves = append(expectedMoves, moves.Move{From: a2, To: square, PieceType: piece.PawnType})
+	}
+
+	if len(mov) != len(expectedMoves) {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	}
+
+	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+		t.Logf("\n%v", pos.String())
+		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+	}
+}
+
+func TestSquareIsOccupied(t *testing.T) {
+	a2 := board.NewSquareOrPanic("a2")
+	pawn1 := NewPawn(a2, board.White)
+
+	pos := NewPosition(board.White, []Piece{pawn1})
+
+	if occ, col := pos.squareIsOccupied(a2); !occ || col != board.White {
+		t.Fatalf("Expected square %v to be occupied by white piece", a2)
+	}
+
+	if occ, _ := pos.squareIsOccupied(board.NewSquareOrPanic("a3")); occ {
+		t.Fatalf("Expected square %v to be unoccupied", a2)
 	}
 }
