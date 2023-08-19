@@ -23,3 +23,12 @@ go_test(
         "//src/piece",
     ],
 )
+
+go_benchmark(
+    name = "position_benchmark",
+    srcs = glob(["*_benchmark.go"]),
+    deps = [
+        ":position",
+        "//src/board",
+    ],
+)

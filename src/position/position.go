@@ -68,8 +68,6 @@ func (p *Position) GetBlackPieces() map[board.Square]Piece {
 }
 
 func (p *Position) GetAllWhiteMoves() ([]moves.Move, error) {
-	log.Infof("Getting all white moves")
-	log.Infof("There are %d white pieces", len(p.White))
 	moves := make([]moves.Move, 0, len(p.White)*20)
 
 	wg := sync.WaitGroup{}
