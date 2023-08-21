@@ -76,16 +76,16 @@ func TestSquareIsOccupied(t *testing.T) {
 	}
 }
 
-func TestGetAllWhiteMoves(t *testing.T) {
+func TestGetAllMovesConcurrent(t *testing.T) {
 	e4, _ := board.NewSquare("e4")
 	g3, _ := board.NewSquare("g3")
 	whiteKing := NewKing(e4, board.White)
 	whiteBishop := NewBishop(g3, board.White)
 	pos := NewPosition(board.White, []Piece{whiteKing, whiteBishop})
 
-	movs, err := pos.GetAllWhiteMoves()
+	movs, err := pos.GetAllMovesConcurrent(board.White)
 	if err != nil {
-		t.Fatalf("Error in GetAllWhiteMoves: %s", err)
+		t.Fatalf("Error in GetAllMovesConcurrent: %s", err)
 	}
 
 	expectedMoves := []moves.Move{}

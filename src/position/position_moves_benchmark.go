@@ -6,30 +6,52 @@ import (
 	"github.com/samwestmoreland/chessengine/src/board"
 )
 
-func BenchmarkGetAllWhiteMoves(b *testing.B) {
-	e4, _ := board.NewSquare("e4")
-	g3, _ := board.NewSquare("g3")
-	whiteKing := NewKing(e4, board.White)
-	whiteBishop := NewBishop(g3, board.White)
-	pos := NewPosition(board.White, []Piece{whiteKing, whiteBishop})
+func BenchmarkGetAllMovesConcurrent(b *testing.B) {
+	e4 := board.NewSquareOrPanic("e4")
+	blackKing := NewKing(e4, board.Black)
+
+	g3 := board.NewSquareOrPanic("g3")
+	blackBishop := NewBishop(g3, board.Black)
+
+	a8 := board.NewSquareOrPanic("a8")
+	blackRook := NewRook(a8, board.Black)
+
+	c1 := board.NewSquareOrPanic("c1")
+	blackQueen := NewQueen(c1, board.Black)
+
+	g4 := board.NewSquareOrPanic("g4")
+	blackBishop2 := NewBishop(g4, board.Black)
+
+	pos := NewPosition(board.Black, []Piece{blackKing, blackBishop, blackRook, blackQueen, blackBishop2})
 
 	for i := 0; i < b.N; i++ {
-		_, err := pos.GetAllWhiteMoves()
+		_, err := pos.GetAllMovesConcurrent(board.Black)
 		if err != nil {
 			b.Error(err)
 		}
 	}
 }
 
-func BenchmarkGetAllBlackMoves(b *testing.B) {
-	e4, _ := board.NewSquare("e4")
-	g3, _ := board.NewSquare("g3")
+func BenchmarkGetAllMovesSerial(b *testing.B) {
+	e4 := board.NewSquareOrPanic("e4")
 	blackKing := NewKing(e4, board.Black)
+
+	g3 := board.NewSquareOrPanic("g3")
 	blackBishop := NewBishop(g3, board.Black)
-	pos := NewPosition(board.Black, []Piece{blackKing, blackBishop})
+
+	a8 := board.NewSquareOrPanic("a8")
+	blackRook := NewRook(a8, board.Black)
+
+	c1 := board.NewSquareOrPanic("c1")
+	blackQueen := NewQueen(c1, board.Black)
+
+	g4 := board.NewSquareOrPanic("g4")
+	blackBishop2 := NewBishop(g4, board.Black)
+
+	pos := NewPosition(board.Black, []Piece{blackKing, blackBishop, blackRook, blackQueen, blackBishop2})
 
 	for i := 0; i < b.N; i++ {
-		_, err := pos.GetAllBlackMoves()
+		_, err := pos.GetAllMovesSerial(board.Black)
 		if err != nil {
 			b.Error(err)
 		}

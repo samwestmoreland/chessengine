@@ -67,11 +67,19 @@ func (p *Position) GetBlackPieces() map[board.Square]Piece {
 	return p.Black
 }
 
-func (p *Position) GetAllWhiteMoves() ([]moves.Move, error) {
-	moves := make([]moves.Move, 0, len(p.White)*20)
-
+func (p *Position) GetAllMovesConcurrent(turn board.Colour) ([]moves.Move, error) {
 	wg := sync.WaitGroup{}
-	wg.Add(len(p.White))
+	var numPieces int
+	if turn == board.White {
+		numPieces = len(p.White)
+		wg.Add(len(p.White))
+	} else if turn == board.Black {
+		numPieces = len(p.Black)
+		wg.Add(len(p.Black))
+	}
+
+	// Use 20 as a rough estimate of the number of moves a piece can make.
+	moves := make([]moves.Move, 0, numPieces*20)
 
 	for _, piece := range p.White {
 		go func(piece Piece) {
@@ -91,10 +99,18 @@ func (p *Position) GetAllWhiteMoves() ([]moves.Move, error) {
 	return moves, nil
 }
 
-func (p *Position) GetAllBlackMoves() ([]moves.Move, error) {
+// GetAllMovesSerial returns all possible moves for the current position without any concurrency. This is just for benchmarking, really.
+func (p *Position) GetAllMovesSerial(turn board.Colour) ([]moves.Move, error) {
 	var moves []moves.Move
+	var pieces *map[board.Square]Piece
 
-	for _, piece := range p.Black {
+	if turn == board.White {
+		pieces = &p.White
+	} else if turn == board.Black {
+		pieces = &p.Black
+	}
+
+	for _, piece := range *pieces {
 		pieceMoves, err := piece.GetMoves(p)
 		if err != nil {
 			return moves, fmt.Errorf("failed to get moves for black piece %v: %w", piece.Type(), err)
