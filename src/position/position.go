@@ -69,6 +69,7 @@ func (p *Position) GetBlackPieces() map[board.Square]Piece {
 
 func (p *Position) GetAllMovesConcurrent(turn board.Colour) ([]moves.Move, error) {
 	wg := sync.WaitGroup{}
+
 	var numPieces int
 	if turn == board.White {
 		numPieces = len(p.White)
@@ -99,9 +100,11 @@ func (p *Position) GetAllMovesConcurrent(turn board.Colour) ([]moves.Move, error
 	return moves, nil
 }
 
-// GetAllMovesSerial returns all possible moves for the current position without any concurrency. This is just for benchmarking, really.
+// GetAllMovesSerial returns all possible moves for the current position
+// without any concurrency. This is just for benchmarking, really.
 func (p *Position) GetAllMovesSerial(turn board.Colour) ([]moves.Move, error) {
 	var moves []moves.Move
+
 	var pieces *map[board.Square]Piece
 
 	if turn == board.White {
