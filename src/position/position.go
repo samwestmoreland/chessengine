@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
@@ -27,6 +28,101 @@ func NewPositionFromFEN(fen *FEN) *Position {
 	position := getPositionFromFEN(fen)
 
 	return position
+}
+
+func NewPosition(turn board.Colour, pieces []Piece) *Position {
+	whitePieces := make(map[board.Square]Piece)
+	blackPieces := make(map[board.Square]Piece)
+	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
+
+	for _, piece := range pieces {
+		if !piece.GetCurrentSquare().Valid() {
+			log.Errorf("Failed to add piece %v to square %v\n", piece.Type(), piece.GetCurrentSquare())
+
+			continue
+		}
+
+		if piece.GetColour() == board.White {
+			whitePieces[piece.GetCurrentSquare()] = piece
+		} else if piece.GetColour() == board.Black {
+			blackPieces[piece.GetCurrentSquare()] = piece
+		}
+	}
+
+	ret.White = whitePieces
+	ret.Black = blackPieces
+
+	return ret
+}
+
+func (p *Position) GetTurn() board.Colour {
+	return p.Turn
+}
+
+func (p *Position) GetWhitePieces() map[board.Square]Piece {
+	return p.White
+}
+
+func (p *Position) GetBlackPieces() map[board.Square]Piece {
+	return p.Black
+}
+
+func (p *Position) GetAllMovesConcurrent(turn board.Colour) ([]moves.Move, error) {
+	wg := sync.WaitGroup{}
+
+	var numPieces int
+	if turn == board.White {
+		numPieces = len(p.White)
+		wg.Add(len(p.White))
+	} else if turn == board.Black {
+		numPieces = len(p.Black)
+		wg.Add(len(p.Black))
+	}
+
+	// Use 20 as a rough estimate of the number of moves a piece can make.
+	moves := make([]moves.Move, 0, numPieces*20)
+
+	for _, piece := range p.White {
+		go func(piece Piece) {
+			defer wg.Done()
+
+			pieceMoves, err := piece.GetMoves(p)
+			if err != nil {
+				log.Errorf("Failed to get moves for white piece %v: %v\n", piece.Type(), err)
+			}
+
+			moves = append(moves, pieceMoves...)
+		}(piece)
+	}
+
+	wg.Wait()
+
+	return moves, nil
+}
+
+// GetAllMovesSerial returns all possible moves for the current position
+// without any concurrency. This is just for benchmarking, really.
+func (p *Position) GetAllMovesSerial(turn board.Colour) ([]moves.Move, error) {
+	var moves []moves.Move
+
+	var pieces *map[board.Square]Piece
+
+	if turn == board.White {
+		pieces = &p.White
+	} else if turn == board.Black {
+		pieces = &p.Black
+	}
+
+	for _, piece := range *pieces {
+		pieceMoves, err := piece.GetMoves(p)
+		if err != nil {
+			return moves, fmt.Errorf("failed to get moves for black piece %v: %w", piece.Type(), err)
+		}
+
+		moves = append(moves, pieceMoves...)
+	}
+
+	return moves, nil
 }
 
 func (p *Position) String() string {
@@ -59,31 +155,6 @@ func (p *Position) String() string {
 
 		ret += "\n"
 	}
-
-	return ret
-}
-
-func NewPosition(turn board.Colour, pieces []Piece) *Position {
-	whitePieces := make(map[board.Square]Piece)
-	blackPieces := make(map[board.Square]Piece)
-	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
-
-	for _, piece := range pieces {
-		if !piece.GetCurrentSquare().Valid() {
-			log.Errorf("Failed to add piece %v to square %v\n", piece.Type(), piece.GetCurrentSquare())
-
-			continue
-		}
-
-		if piece.GetColour() == board.White {
-			whitePieces[piece.GetCurrentSquare()] = piece
-		} else if piece.GetColour() == board.Black {
-			blackPieces[piece.GetCurrentSquare()] = piece
-		}
-	}
-
-	ret.White = whitePieces
-	ret.Black = blackPieces
 
 	return ret
 }

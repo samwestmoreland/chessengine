@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/src/board"
+	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
@@ -72,5 +73,42 @@ func TestSquareIsOccupied(t *testing.T) {
 
 	if occ, _ := pos.squareIsOccupied(board.NewSquareOrPanic("a3")); occ {
 		t.Fatalf("Expected square %v to be unoccupied", a2)
+	}
+}
+
+func TestGetAllMovesConcurrent(t *testing.T) {
+	e4, _ := board.NewSquare("e4")
+	g3, _ := board.NewSquare("g3")
+	whiteKing := NewKing(e4, board.White)
+	whiteBishop := NewBishop(g3, board.White)
+	pos := NewPosition(board.White, []Piece{whiteKing, whiteBishop})
+
+	movs, err := pos.GetAllMovesConcurrent(board.White)
+	if err != nil {
+		t.Fatalf("Error in GetAllMovesConcurrent: %s", err)
+	}
+
+	expectedMoves := []moves.Move{}
+
+	expectedSquaresForKing := []string{"e5", "f5", "f4", "f3", "e3", "d3", "d4", "d5"}
+	for _, sq := range expectedSquaresForKing {
+		s, _ := board.NewSquare(sq)
+		expectedMoves = append(expectedMoves, moves.NewMove(e4, s, piece.KingType))
+	}
+
+	expectedSquaresForBishop := []string{"h4", "h2", "f2", "e1", "f4", "e5", "d6", "c7", "b8"}
+	for _, sq := range expectedSquaresForBishop {
+		s, _ := board.NewSquare(sq)
+		expectedMoves = append(expectedMoves, moves.NewMove(g3, s, piece.BishopType))
+	}
+
+	if len(movs) != len(expectedMoves) {
+		t.Log(pos.String())
+		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(movs))
+	}
+
+	if equal := moves.MoveListsEqual(movs, expectedMoves); !equal {
+		t.Log(pos.String())
+		t.Fatalf("Expected moves %v, got %v", expectedMoves, movs)
 	}
 }
