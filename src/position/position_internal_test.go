@@ -118,10 +118,10 @@ func TestGetAllMovesConcurrentRealGame(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error in ParseFEN: %s", err)
 	}
+
 	pos := NewPositionFromFEN(fen)
 
 	movs, err := pos.GetAllMovesConcurrent(pos.GetTurn())
-
 	if err != nil {
 		t.Fatalf("Error in GetAllMovesConcurrent: %s", err)
 	}
@@ -148,9 +148,11 @@ func TestGetAllMovesConcurrentRealGame(t *testing.T) {
 	}
 
 	expectedMoves := []moves.Move{}
+
 	for pieceType, expectedMovesForPieceType := range allExpectedMoves {
 		for fromSquare, toSquares := range expectedMovesForPieceType {
 			sq := board.NewSquareOrPanic(fromSquare)
+
 			for _, toSquare := range toSquares {
 				toSq := board.NewSquareOrPanic(toSquare)
 				m := moves.NewMove(sq, toSq, pieceType)
