@@ -47,15 +47,11 @@ func (b *Bishop) GetMoves(pos *Position) ([]moves.Move, error) {
 				break
 			}
 
-			pieceOnSquare, err := pos.getPiece(newSquare)
-			if err != nil {
-				return nil, err
-			}
-
-			if pieceOnSquare != nil {
-				if pieceOnSquare.GetColour() == b.GetColour() {
-					break
-				}
+			squareIsOccupied, col := pos.squareIsOccupied(newSquare)
+			if squareIsOccupied && col == b.GetColour() {
+				break
+			} else if squareIsOccupied && col != b.GetColour() {
+				break
 			}
 
 			ret = append(ret, moves.Move{From: b.CurrentSquare, To: newSquare, PieceType: piece.BishopType})
