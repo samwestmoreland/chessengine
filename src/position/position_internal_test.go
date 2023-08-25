@@ -166,3 +166,63 @@ func TestGetAllMovesConcurrentRealGame(t *testing.T) {
 		t.Fatalf("Expected moves\n%v\ngot\n%v", expectedMoves, movs)
 	}
 }
+
+func TestGetAllMovesWithCaptures(t *testing.T) {
+	fen, err := ParseFEN("8/8/K1k2p2/8/P4bpP/8/7P/8 b - - 1 48")
+	if err != nil {
+		t.Fatalf("Error in ParseFEN: %s", err)
+	}
+
+	pos := NewPositionFromFEN(fen)
+
+	movs, err := pos.GetAllMovesConcurrent(pos.GetTurn())
+	if err != nil {
+		t.Fatalf("Error in GetAllMovesConcurrent: %s", err)
+	}
+
+	allExpectedMoves := map[piece.Type]map[string][]map[string]bool{
+		piece.PawnType: {
+			"f6": {{"f5": false}},
+			"g4": {{"g3": false}},
+		},
+		piece.BishopType: {
+			"f4": {
+				{"e3": false},
+				{"d2": false},
+				{"c1": false},
+				{"g3": false},
+				{"h2": true},
+				{"g5": false},
+				{"h6": false},
+				{"e5": false},
+				{"d6": false},
+				{"c7": false},
+				{"b8": false},
+			},
+		},
+		piece.KingType: {
+			"c6": {
+				{"c5": false},
+				{"d5": false},
+				{"d6": false},
+				{"d7": false},
+				{"c7": false},
+			},
+		},
+	}
+
+	expectedMoves := []moves.Move{}
+
+	for pieceType, expectedMovesForPieceType := range allExpectedMoves {
+		for fromSquare, toSquares := range expectedMovesForPieceType {
+			sq := board.NewSquareOrPanic(fromSquare)
+
+			for toSquare, isCapture := range toSquares {
+				toSq := board.NewSquareOrPanic(toSquare)
+				m := moves.NewMove(sq, toSq, pieceType, isCapture)
+				expectedMoves = append(expectedMoves, m)
+			}
+		}
+	}
+
+}
