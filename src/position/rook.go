@@ -47,15 +47,11 @@ func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
 				break
 			}
 
-			pieceOnSquare, err := pos.getPiece(newSquare)
-			if err != nil {
-				return nil, err
-			}
-
-			if pieceOnSquare != nil {
-				if pieceOnSquare.GetColour() == r.GetColour() {
-					break
-				}
+			squareIsOccupied, col := pos.squareIsOccupied(newSquare)
+			if squareIsOccupied && col == r.GetColour() {
+				break
+			} else if squareIsOccupied && col != r.GetColour() {
+				break
 			}
 
 			ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType))
