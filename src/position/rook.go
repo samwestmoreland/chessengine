@@ -51,10 +51,11 @@ func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
 			if squareIsOccupied && col == r.GetColour() {
 				break
 			} else if squareIsOccupied && col != r.GetColour() {
+				ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType, true))
 				break
 			}
 
-			ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType))
+			ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType, false))
 			oldSquare = newSquare
 		}
 	}

@@ -56,18 +56,15 @@ func (q *Queen) GetMoves(pos *Position) ([]moves.Move, error) {
 				break
 			}
 
-			pieceOnSquare, err := pos.getPiece(newSquare)
-			if err != nil {
-				return nil, err
+			squareIsOccupied, col := pos.squareIsOccupied(newSquare)
+			if squareIsOccupied && col == q.GetColour() {
+				break
+			} else if squareIsOccupied && col != q.GetColour() {
+				ret = append(ret, moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType, true))
+				break
 			}
 
-			if pieceOnSquare != nil {
-				if pieceOnSquare.GetColour() == q.GetColour() {
-					break
-				}
-			}
-
-			ret = append(ret, moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType))
+			ret = append(ret, moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType, false))
 			oldSquare = newSquare
 		}
 	}

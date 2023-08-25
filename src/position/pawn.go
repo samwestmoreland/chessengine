@@ -52,14 +52,14 @@ func (p *Pawn) getForwardMovesWhite(pos *Position) []moves.Move {
 	// Move one square forward.
 	destination := p.CurrentSquare.Translate(board.North)
 	if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 	}
 
 	// Move two squares forward.
 	if p.CurrentSquare.Rank == 2 {
 		destination = destination.Translate(board.North)
 		if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 		}
 	}
 
@@ -72,14 +72,14 @@ func (p *Pawn) getForwardMovesBlack(pos *Position) []moves.Move {
 	// Move one square forward.
 	destination := p.CurrentSquare.Translate(board.South)
 	if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 	}
 
 	// Move two squares forward.
 	if p.CurrentSquare.Rank == 7 {
 		destination = destination.Translate(board.South)
 		if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 		}
 	}
 
