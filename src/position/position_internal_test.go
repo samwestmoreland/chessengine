@@ -93,13 +93,13 @@ func TestGetAllMovesConcurrent(t *testing.T) {
 	expectedSquaresForKing := []string{"e5", "f5", "f4", "f3", "e3", "d3", "d4", "d5"}
 	for _, sq := range expectedSquaresForKing {
 		s, _ := board.NewSquare(sq)
-		expectedMoves = append(expectedMoves, moves.NewMove(e4, s, piece.KingType))
+		expectedMoves = append(expectedMoves, moves.NewMove(e4, s, piece.KingType, false))
 	}
 
 	expectedSquaresForBishop := []string{"h4", "h2", "f2", "e1", "f4", "e5", "d6", "c7", "b8"}
 	for _, sq := range expectedSquaresForBishop {
 		s, _ := board.NewSquare(sq)
-		expectedMoves = append(expectedMoves, moves.NewMove(g3, s, piece.BishopType))
+		expectedMoves = append(expectedMoves, moves.NewMove(g3, s, piece.BishopType, false))
 	}
 
 	if len(movs) != len(expectedMoves) {
@@ -155,7 +155,7 @@ func TestGetAllMovesConcurrentRealGame(t *testing.T) {
 
 			for _, toSquare := range toSquares {
 				toSq := board.NewSquareOrPanic(toSquare)
-				m := moves.NewMove(sq, toSq, pieceType)
+				m := moves.NewMove(sq, toSq, pieceType, false)
 				expectedMoves = append(expectedMoves, m)
 			}
 		}
@@ -175,7 +175,7 @@ func TestGetAllMovesWithCaptures(t *testing.T) {
 
 	pos := NewPositionFromFEN(fen)
 
-	movs, err := pos.GetAllMovesConcurrent(pos.GetTurn())
+	_, err = pos.GetAllMovesConcurrent(pos.GetTurn())
 	if err != nil {
 		t.Fatalf("Error in GetAllMovesConcurrent: %s", err)
 	}
@@ -217,10 +217,12 @@ func TestGetAllMovesWithCaptures(t *testing.T) {
 		for fromSquare, toSquares := range expectedMovesForPieceType {
 			sq := board.NewSquareOrPanic(fromSquare)
 
-			for toSquare, isCapture := range toSquares {
-				toSq := board.NewSquareOrPanic(toSquare)
-				m := moves.NewMove(sq, toSq, pieceType, isCapture)
-				expectedMoves = append(expectedMoves, m)
+			for _, toSquare := range toSquares {
+				for toSquareStr, isCapture := range toSquare {
+					toSq := board.NewSquareOrPanic(toSquareStr)
+					m := moves.NewMove(sq, toSq, pieceType, isCapture)
+					expectedMoves = append(expectedMoves, m)
+				}
 			}
 		}
 	}
