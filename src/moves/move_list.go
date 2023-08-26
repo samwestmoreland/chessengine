@@ -33,15 +33,16 @@ func (ml *MoveList) GetMoves() []Move {
 	return ml.moves
 }
 
-func (ml *MoveList) GetMovesForPieceType(pieceType piece.Type) []Move {
-	var moves []Move
+func (ml *MoveList) GetMovesForPieceType(pieceType piece.Type) MoveList {
+	var ret MoveList
+
 	for _, move := range ml.moves {
 		if move.GetPieceType() == pieceType {
-			moves = append(moves, move)
+			ret.AddMove(move)
 		}
 	}
 
-	return moves
+	return ret
 }
 
 // Equals checks if two MoveLists are equal, without worrying about order.
