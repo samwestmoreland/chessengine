@@ -33,14 +33,12 @@ func (k *King) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of all possible moves for the king.
-func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
-	// Get all possible moves assuming no other pieces on the board
+func (k *King) GetMoves(position *Position) (moves.MoveList, error) {
 	// The king can move one square in any direction, so there are 8 possible moves
-	ret := make([]moves.Move, 0, 8)
+	ret := moves.MoveList{}
 
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
-			// Skip the current square
 			if i == 1 && j == 1 {
 				continue
 			}
@@ -54,11 +52,12 @@ func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
 			// Check if the square is occupied by a friendly piece
 			pieceAtSquare, err := position.getPiece(square)
 			if err != nil {
-				return nil, err
+				return moves.MoveList{}, err
 			}
 
 			if pieceAtSquare == nil {
-				ret = append(ret, moves.Move{From: k.CurrentSquare, To: square, PieceType: piece.KingType})
+				m := moves.NewMove(k.CurrentSquare, square, piece.KingType, false)
+				ret.AddMove(m)
 
 				continue
 			}
@@ -68,7 +67,8 @@ func (k *King) GetMoves(position *Position) ([]moves.Move, error) {
 			}
 
 			// The square is not occupied by a friendly piece, add it to the list
-			ret = append(ret, moves.Move{From: k.CurrentSquare, To: square, PieceType: piece.KingType})
+			m := moves.NewMove(k.CurrentSquare, square, piece.KingType, false)
+			ret.AddMove(m)
 		}
 	}
 

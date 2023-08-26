@@ -33,30 +33,28 @@ func (k *Knight) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of valid moves for the piece.
-func (k *Knight) GetMoves(pos *Position) ([]moves.Move, error) {
-	ret := make([]moves.Move, 0, 8)
+func (k *Knight) GetMoves(pos *Position) (moves.MoveList, error) {
+	ret := moves.MoveList{}
 
 	for _, xOffset := range []int{2, -2} {
 		for _, yOffset := range []int{1, -1} {
-			newSquare := board.Square{Rank: k.CurrentSquare.Rank + xOffset, File: k.CurrentSquare.File + yOffset}
-			if !newSquare.Valid() {
-				continue
+			maybeAddMove := func(xOffset, yOffset int) {
+				newSquare := board.Square{Rank: k.CurrentSquare.Rank + xOffset, File: k.CurrentSquare.File + yOffset}
+				if !newSquare.Valid() {
+					return
+				}
+
+				if occ, col := pos.squareIsOccupied(newSquare); !occ {
+					m := moves.NewMove(k.CurrentSquare, newSquare, piece.KnightType, false)
+					ret.AddMove(m)
+				} else if col != k.Colour {
+					m := moves.NewMove(k.CurrentSquare, newSquare, piece.KnightType, true)
+					ret.AddMove(m)
+				}
 			}
 
-			if occ, col := pos.squareIsOccupied(newSquare); !occ || col != k.Colour {
-				m := moves.NewMove(k.CurrentSquare, newSquare, piece.KnightType)
-				ret = append(ret, m)
-			}
-
-			newSquare = board.Square{Rank: k.CurrentSquare.Rank + yOffset, File: k.CurrentSquare.File + xOffset}
-			if !newSquare.Valid() {
-				continue
-			}
-
-			if occ, col := pos.squareIsOccupied(newSquare); !occ || col != k.Colour {
-				m := moves.NewMove(k.CurrentSquare, newSquare, piece.KnightType)
-				ret = append(ret, m)
-			}
+			maybeAddMove(xOffset, yOffset)
+			maybeAddMove(yOffset, xOffset)
 		}
 	}
 

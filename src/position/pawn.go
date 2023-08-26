@@ -34,13 +34,13 @@ func (p *Pawn) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of moves that the piece can make.
-func (p *Pawn) GetMoves(pos *Position) ([]moves.Move, error) {
-	ret := make([]moves.Move, 0, 4)
+func (p *Pawn) GetMoves(pos *Position) (moves.MoveList, error) {
+	ret := moves.MoveList{}
 
 	if p.Colour == board.White {
-		ret = append(ret, p.getForwardMovesWhite(pos)...)
+		ret.AddMoves(p.getForwardMovesWhite(pos))
 	} else if p.Colour == board.Black {
-		ret = append(ret, p.getForwardMovesBlack(pos)...)
+		ret.AddMoves(p.getForwardMovesBlack(pos))
 	}
 
 	return ret, nil
@@ -52,14 +52,14 @@ func (p *Pawn) getForwardMovesWhite(pos *Position) []moves.Move {
 	// Move one square forward.
 	destination := p.CurrentSquare.Translate(board.North)
 	if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 	}
 
 	// Move two squares forward.
 	if p.CurrentSquare.Rank == 2 {
 		destination = destination.Translate(board.North)
 		if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 		}
 	}
 
@@ -72,14 +72,14 @@ func (p *Pawn) getForwardMovesBlack(pos *Position) []moves.Move {
 	// Move one square forward.
 	destination := p.CurrentSquare.Translate(board.South)
 	if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+		ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 	}
 
 	// Move two squares forward.
 	if p.CurrentSquare.Rank == 7 {
 		destination = destination.Translate(board.South)
 		if occ, _ := pos.squareIsOccupied(destination); destination.Valid() && !occ {
-			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType))
+			ret = append(ret, moves.NewMove(p.CurrentSquare, destination, piece.PawnType, false))
 		}
 	}
 
