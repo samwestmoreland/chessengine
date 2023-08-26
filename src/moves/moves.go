@@ -23,6 +23,7 @@ func (m Move) String() string {
 	if m.Capture {
 		ret += " (capture)"
 	}
+
 	return ret
 }
 

@@ -29,7 +29,7 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves.AddMove(moves.Move{From: square, To: sq, PieceType: piece.KingType})
+		expectedMoves.AddMove(moves.NewMove(square, sq, piece.KingType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -57,7 +57,7 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 	expectedSquares := []string{"b1", "b2", "a2"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves.AddMove(moves.Move{From: a1, To: sq, PieceType: piece.KingType})
+		expectedMoves.AddMove(moves.NewMove(a1, sq, piece.KingType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -88,7 +88,7 @@ func TestGetMovesForKingWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testi
 	expectedSquares := []string{"a2", "b2", "c2", "a3", "c3", "a4", "c4"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves.AddMove(moves.Move{From: b3, To: sq, PieceType: piece.KingType})
+		expectedMoves.AddMove(moves.NewMove(b3, sq, piece.KingType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -121,7 +121,7 @@ func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
 	}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves.AddMove(moves.Move{From: d4, To: sq, PieceType: piece.BishopType})
+		expectedMoves.AddMove(moves.NewMove(d4, sq, piece.BishopType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -153,7 +153,7 @@ func TestGetMovesForBishopWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *tes
 	expectedSquares := []string{"c3", "d4", "e5", "f6", "g7", "h8", "a3", "c1"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves.AddMove(moves.Move{From: b2, To: sq, PieceType: piece.BishopType})
+		expectedMoves.AddMove(moves.NewMove(b2, sq, piece.BishopType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -189,7 +189,7 @@ func TestGetMovesForRookWithFriendlyPieceBlocking(t *testing.T) {
 
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves.AddMove(moves.Move{From: f4, To: square, PieceType: piece.RookType})
+		expectedMoves.AddMove(moves.NewMove(f4, square, piece.RookType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -230,7 +230,7 @@ func TestGetMovesForQueen(t *testing.T) {
 
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves.AddMove(moves.Move{From: h8, To: square, PieceType: piece.QueenType})
+		expectedMoves.AddMove(moves.NewMove(h8, square, piece.QueenType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -260,7 +260,7 @@ func TestGetPawnMoves(t *testing.T) {
 	expectedSquares := []string{"a3", "a4"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves.AddMove(moves.Move{From: a2, To: square, PieceType: piece.PawnType})
+		expectedMoves.AddMove(moves.NewMove(a2, square, piece.PawnType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -293,7 +293,7 @@ func TestGetKnightMoves(t *testing.T) {
 	expectedSquares := []string{"f8", "g7", "f4", "d4", "c5", "c7", "d8"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves.AddMove(moves.Move{From: e6, To: square, PieceType: piece.KnightType})
+		expectedMoves.AddMove(moves.NewMove(e6, square, piece.KnightType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {
@@ -323,7 +323,7 @@ func TestGetKnightMovesWithKnightInCorner(t *testing.T) {
 	expectedSquares := []string{"b3", "c2"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves.AddMove(moves.Move{From: a1, To: square, PieceType: piece.KnightType})
+		expectedMoves.AddMove(moves.NewMove(a1, square, piece.KnightType, false))
 	}
 
 	if mov.Len() != expectedMoves.Len() {

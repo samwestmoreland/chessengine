@@ -54,7 +54,7 @@ func (b *Bishop) GetMoves(pos *Position) (moves.MoveList, error) {
 				break
 			}
 
-			ret.AddMove(moves.Move{From: b.CurrentSquare, To: newSquare, PieceType: piece.BishopType})
+			ret.AddMove(moves.NewMove(b.CurrentSquare, newSquare, piece.BishopType, false))
 			oldSquare = newSquare
 		}
 	}

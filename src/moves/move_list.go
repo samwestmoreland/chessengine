@@ -1,8 +1,9 @@
 package moves
 
 import (
-	"github.com/samwestmoreland/chessengine/src/piece"
 	"strings"
+
+	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
 // MoveList is a list of moves.
@@ -39,42 +40,47 @@ func (ml *MoveList) GetMovesForPieceType(pieceType piece.Type) []Move {
 			moves = append(moves, move)
 		}
 	}
+
 	return moves
 }
 
-// Equals checks if two MoveLists are equal, without worrying about order
+// Equals checks if two MoveLists are equal, without worrying about order.
 func (ml *MoveList) Equals(other MoveList) bool {
 	if len(ml.moves) != len(other.moves) {
 		return false
 	}
+
 	for _, move := range ml.moves {
 		if !other.Contains(move) {
 			return false
 		}
 	}
+
 	return true
 }
 
-// Contains checks if a MoveList contains a given move
+// Contains checks if a MoveList contains a given move.
 func (ml *MoveList) Contains(move Move) bool {
 	for _, m := range ml.moves {
 		if m.Equals(move) {
 			return true
 		}
 	}
+
 	return false
 }
 
-// String returns the MoveList in an easy to read format
+// String returns the MoveList in an easy to read format.
 func (ml *MoveList) String() string {
-	sb := strings.Builder{}
+	builder := strings.Builder{}
 	for _, move := range ml.moves {
-		sb.WriteString(move.String())
-		sb.WriteString("\n")
+		builder.WriteString(move.String())
+		builder.WriteString("\n")
 	}
-	sb.WriteString("\n")
 
-	return sb.String()
+	builder.WriteString("\n")
+
+	return builder.String()
 }
 
 // func (ml *MoveList) sort() {

@@ -52,6 +52,7 @@ func (r *Rook) GetMoves(pos *Position) (moves.MoveList, error) {
 				break
 			} else if squareIsOccupied && col != r.GetColour() {
 				ret.AddMove(moves.NewMove(r.CurrentSquare, newSquare, piece.RookType, true))
+
 				break
 			}
 

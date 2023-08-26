@@ -171,5 +171,4 @@ func TestGetAllMovesWithCaptures(t *testing.T) {
 			}
 		}
 	}
-
 }

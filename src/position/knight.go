@@ -55,7 +55,6 @@ func (k *Knight) GetMoves(pos *Position) (moves.MoveList, error) {
 
 			maybeAddMove(xOffset, yOffset)
 			maybeAddMove(yOffset, xOffset)
-
 		}
 	}
 

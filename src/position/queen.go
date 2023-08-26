@@ -61,6 +61,7 @@ func (q *Queen) GetMoves(pos *Position) (moves.MoveList, error) {
 				break
 			} else if squareIsOccupied && col != q.GetColour() {
 				ret.AddMove(moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType, true))
+
 				break
 			}
 
