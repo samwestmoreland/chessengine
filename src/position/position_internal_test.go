@@ -172,3 +172,14 @@ func TestGetAllMovesWithCaptures(t *testing.T) {
 		}
 	}
 }
+
+func TestGetPieceInvalidSquare(t *testing.T) {
+	pos := NewPosition(board.White, []Piece{})
+
+	invalidSquare, _ := board.NewSquare("j4")
+
+	p, err := pos.getPiece(invalidSquare)
+	if err == nil {
+		t.Fatalf("Expected error, got piece %v", p)
+	}
+}
