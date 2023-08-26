@@ -16,7 +16,10 @@ go_library(
 
 go_test(
     name = "moves_test",
-    srcs = ["moves_internal_test.go"],
+    srcs = [
+        "move_list_internal_test.go",
+        "moves_internal_test.go",
+    ],
     deps = [
         ":moves",
         "//src/board",
