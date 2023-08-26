@@ -1,6 +1,9 @@
 go_library(
     name = "moves",
-    srcs = ["moves.go"],
+    srcs = [
+        "move_list.go",
+        "moves.go",
+    ],
     visibility = [
         "//src/pieces:all",
         "//src/position:all",

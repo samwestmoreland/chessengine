@@ -34,6 +34,14 @@ func (m Move) Equals(other Move) bool {
 		m.Capture == other.Capture
 }
 
+func (m Move) IsCapture() bool {
+	return m.Capture
+}
+
+func (m Move) GetPieceType() piece.Type {
+	return m.PieceType
+}
+
 func MoveListsEqual(moves1 []Move, moves2 []Move) bool {
 	// Check that the moves are the same, but don't care about order
 	for _, move1 := range moves1 {
