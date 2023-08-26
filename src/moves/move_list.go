@@ -2,6 +2,7 @@ package moves
 
 import (
 	"github.com/samwestmoreland/chessengine/src/piece"
+	"strings"
 )
 
 // MoveList is a list of moves.
@@ -13,6 +14,18 @@ type MoveList struct {
 
 func (ml *MoveList) AddMove(m Move) {
 	ml.moves = append(ml.moves, m)
+}
+
+func (ml *MoveList) AddMoves(moves []Move) {
+	ml.moves = append(ml.moves, moves...)
+}
+
+func (ml *MoveList) AddMoveList(moveList MoveList) {
+	ml.moves = append(ml.moves, moveList.moves...)
+}
+
+func (ml *MoveList) Len() int {
+	return len(ml.moves)
 }
 
 func (ml *MoveList) GetMoves() []Move {
@@ -51,3 +64,28 @@ func (ml *MoveList) Contains(move Move) bool {
 	}
 	return false
 }
+
+// String returns the MoveList in an easy to read format
+func (ml *MoveList) String() string {
+	sb := strings.Builder{}
+	for _, move := range ml.moves {
+		sb.WriteString(move.String())
+		sb.WriteString("\n")
+	}
+	sb.WriteString("\n")
+
+	return sb.String()
+}
+
+// func (ml *MoveList) sort() {
+// 	cmp := func(i, j Move) bool {
+// 		if i.GetPieceType() == j.GetPieceType() {
+// 			if i.From == j.getFrom() {
+// 				return i.GetTo() < j.GetTo()
+// 			}
+// 			return i.GetFrom() < j.GetFrom()
+// 		}
+// 		return i.GetPieceType() < j.GetPieceType()
+// 	}
+// 	quickSort(ml.moves, cmp)
+// }

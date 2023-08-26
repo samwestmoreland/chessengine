@@ -34,13 +34,13 @@ func (p *Pawn) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of moves that the piece can make.
-func (p *Pawn) GetMoves(pos *Position) ([]moves.Move, error) {
-	ret := make([]moves.Move, 0, 4)
+func (p *Pawn) GetMoves(pos *Position) (moves.MoveList, error) {
+	ret := moves.MoveList{}
 
 	if p.Colour == board.White {
-		ret = append(ret, p.getForwardMovesWhite(pos)...)
+		ret.AddMoves(p.getForwardMovesWhite(pos))
 	} else if p.Colour == board.Black {
-		ret = append(ret, p.getForwardMovesBlack(pos)...)
+		ret.AddMoves(p.getForwardMovesBlack(pos))
 	}
 
 	return ret, nil

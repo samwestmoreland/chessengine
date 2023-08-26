@@ -33,8 +33,8 @@ func (k *Knight) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of valid moves for the piece.
-func (k *Knight) GetMoves(pos *Position) ([]moves.Move, error) {
-	ret := make([]moves.Move, 0, 8)
+func (k *Knight) GetMoves(pos *Position) (moves.MoveList, error) {
+	ret := moves.MoveList{}
 
 	for _, xOffset := range []int{2, -2} {
 		for _, yOffset := range []int{1, -1} {
@@ -46,10 +46,10 @@ func (k *Knight) GetMoves(pos *Position) ([]moves.Move, error) {
 
 				if occ, col := pos.squareIsOccupied(newSquare); !occ {
 					m := moves.NewMove(k.CurrentSquare, newSquare, piece.KnightType, false)
-					ret = append(ret, m)
+					ret.AddMove(m)
 				} else if col != k.Colour {
 					m := moves.NewMove(k.CurrentSquare, newSquare, piece.KnightType, true)
-					ret = append(ret, m)
+					ret.AddMove(m)
 				}
 			}
 

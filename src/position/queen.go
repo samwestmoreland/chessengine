@@ -36,8 +36,8 @@ func (q *Queen) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns a list of valid moves for the piece.
-func (q *Queen) GetMoves(pos *Position) ([]moves.Move, error) {
-	ret := make([]moves.Move, 0, 21)
+func (q *Queen) GetMoves(pos *Position) (moves.MoveList, error) {
+	ret := moves.MoveList{}
 
 	for _, direction := range []board.Direction{
 		board.North,
@@ -60,11 +60,11 @@ func (q *Queen) GetMoves(pos *Position) ([]moves.Move, error) {
 			if squareIsOccupied && col == q.GetColour() {
 				break
 			} else if squareIsOccupied && col != q.GetColour() {
-				ret = append(ret, moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType, true))
+				ret.AddMove(moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType, true))
 				break
 			}
 
-			ret = append(ret, moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType, false))
+			ret.AddMove(moves.NewMove(q.CurrentSquare, newSquare, piece.QueenType, false))
 			oldSquare = newSquare
 		}
 	}

@@ -36,8 +36,8 @@ func (r *Rook) GetCurrentSquare() board.Square {
 }
 
 // GetMoves returns the piece's valid moves.
-func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
-	ret := []moves.Move{}
+func (r *Rook) GetMoves(pos *Position) (moves.MoveList, error) {
+	ret := moves.MoveList{}
 
 	for _, direction := range []board.Direction{board.North, board.East, board.South, board.West} {
 		oldSquare := r.CurrentSquare
@@ -51,11 +51,11 @@ func (r *Rook) GetMoves(pos *Position) ([]moves.Move, error) {
 			if squareIsOccupied && col == r.GetColour() {
 				break
 			} else if squareIsOccupied && col != r.GetColour() {
-				ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType, true))
+				ret.AddMove(moves.NewMove(r.CurrentSquare, newSquare, piece.RookType, true))
 				break
 			}
 
-			ret = append(ret, moves.NewMove(r.CurrentSquare, newSquare, piece.RookType, false))
+			ret.AddMove(moves.NewMove(r.CurrentSquare, newSquare, piece.RookType, false))
 			oldSquare = newSquare
 		}
 	}

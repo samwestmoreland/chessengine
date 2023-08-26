@@ -67,20 +67,17 @@ func (p *Position) GetBlackPieces() map[board.Square]Piece {
 	return p.Black
 }
 
-func (p *Position) GetAllMovesConcurrent(turn board.Colour) ([]moves.Move, error) {
+func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, error) {
 	wg := sync.WaitGroup{}
 
-	var numPieces int
 	if turn == board.White {
-		numPieces = len(p.White)
 		wg.Add(len(p.White))
 	} else if turn == board.Black {
-		numPieces = len(p.Black)
 		wg.Add(len(p.Black))
 	}
 
 	// Use 20 as a rough estimate of the number of moves a piece can make.
-	moves := make([]moves.Move, 0, numPieces*20)
+	movs := moves.MoveList{}
 
 	for _, piece := range p.White {
 		go func(piece Piece) {
@@ -91,19 +88,19 @@ func (p *Position) GetAllMovesConcurrent(turn board.Colour) ([]moves.Move, error
 				log.Errorf("Failed to get moves for white piece %v: %v\n", piece.Type(), err)
 			}
 
-			moves = append(moves, pieceMoves...)
+			movs.AddMoveList(pieceMoves)
 		}(piece)
 	}
 
 	wg.Wait()
 
-	return moves, nil
+	return movs, nil
 }
 
 // GetAllMovesSerial returns all possible moves for the current position
 // without any concurrency. This is just for benchmarking, really.
-func (p *Position) GetAllMovesSerial(turn board.Colour) ([]moves.Move, error) {
-	var moves []moves.Move
+func (p *Position) GetAllMovesSerial(turn board.Colour) (moves.MoveList, error) {
+	var movs moves.MoveList
 
 	var pieces *map[board.Square]Piece
 
@@ -116,13 +113,13 @@ func (p *Position) GetAllMovesSerial(turn board.Colour) ([]moves.Move, error) {
 	for _, piece := range *pieces {
 		pieceMoves, err := piece.GetMoves(p)
 		if err != nil {
-			return moves, fmt.Errorf("failed to get moves for black piece %v: %w", piece.Type(), err)
+			return movs, fmt.Errorf("failed to get moves for black piece %v: %w", piece.Type(), err)
 		}
 
-		moves = append(moves, pieceMoves...)
+		movs.AddMoveList(pieceMoves)
 	}
 
-	return moves, nil
+	return movs, nil
 }
 
 func (p *Position) String() string {
@@ -194,10 +191,10 @@ func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Squar
 }
 
 // GetAllPossibleMoves returns all possible moves for the current position.
-func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
-	var moves []moves.Move
+func (p *Position) GetAllPossibleMoves() (moves.MoveList, error) {
+	ret := moves.MoveList{}
 	if p.White == nil || p.Black == nil {
-		return moves, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
+		return ret, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
 	}
 
 	if p.Turn == board.White {
@@ -208,41 +205,41 @@ func (p *Position) GetAllPossibleMoves() ([]moves.Move, error) {
 		return p.getBlackMoves()
 	}
 
-	return moves, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
+	return ret, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
 }
 
-func (p *Position) getWhiteMoves() ([]moves.Move, error) {
-	var moves []moves.Move
+func (p *Position) getWhiteMoves() (moves.MoveList, error) {
+	var movs moves.MoveList
 
 	for square, piece := range p.White {
 		pieceMoves, err := piece.GetMoves(p)
 		if err != nil {
-			return moves,
+			return movs,
 				fmt.Errorf("failed to get moves for white piece %v on square %s: %w",
 					piece.Type(), square.String(), err)
 		}
 
-		moves = append(moves, pieceMoves...)
+		movs.AddMoveList(pieceMoves)
 	}
 
-	return moves, nil
+	return movs, nil
 }
 
-func (p *Position) getBlackMoves() ([]moves.Move, error) {
-	var moves []moves.Move
+func (p *Position) getBlackMoves() (moves.MoveList, error) {
+	ret := moves.MoveList{}
 
 	for square, piece := range p.Black {
 		pieceMoves, err := piece.GetMoves(p)
 		if err != nil {
-			return moves,
+			return ret,
 				fmt.Errorf("failed to get moves for black piece %v on square %s: %w",
 					piece.Type(), square.String(), err)
 		}
 
-		moves = append(moves, pieceMoves...)
+		ret.AddMoveList(pieceMoves)
 	}
 
-	return moves, nil
+	return ret, nil
 }
 
 // getPiece returns the piece at the given square, or an error if the square is invalid.

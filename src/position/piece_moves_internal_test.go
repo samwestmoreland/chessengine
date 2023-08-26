@@ -25,19 +25,18 @@ func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
 	}
 
 	expectedSquares := []string{"d5", "e5", "f5", "d4", "f4", "d3", "e3", "f3"}
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves = append(expectedMoves, moves.Move{From: square, To: sq, PieceType: piece.KingType})
+		expectedMoves.AddMove(moves.Move{From: square, To: sq, PieceType: piece.KingType})
 	}
 
-	if len(mov) != len(expectedMoves) {
-		t.Errorf("expected %d moves, got %d", len(expectedMoves), len(mov))
+	if mov.Len() != expectedMoves.Len() {
+		t.Errorf("expected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	equal := moves.MoveListsEqual(mov, expectedMoves)
-	if !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Fatalf("expected moves %v, got %v", expectedMoves, mov)
 	}
 }
@@ -53,20 +52,19 @@ func TestGetMovesForKingOnEmptyBoardInCorner(t *testing.T) {
 		t.Errorf("Error while getting moves")
 	}
 
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	expectedSquares := []string{"b1", "b2", "a2"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves = append(expectedMoves, moves.Move{From: a1, To: sq, PieceType: piece.KingType})
+		expectedMoves.AddMove(moves.Move{From: a1, To: sq, PieceType: piece.KingType})
 	}
 
-	if len(mov) != len(expectedMoves) {
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	if mov.Len() != expectedMoves.Len() {
+		t.Fatalf("Expected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	equal := moves.MoveListsEqual(mov, expectedMoves)
-	if !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Fatalf("Expected moves %v, got %v", expectedMoves, mov)
 	}
 }
@@ -85,20 +83,19 @@ func TestGetMovesForKingWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *testi
 		t.Fatalf("Error while getting moves")
 	}
 
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	expectedSquares := []string{"a2", "b2", "c2", "a3", "c3", "a4", "c4"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves = append(expectedMoves, moves.Move{From: b3, To: sq, PieceType: piece.KingType})
+		expectedMoves.AddMove(moves.Move{From: b3, To: sq, PieceType: piece.KingType})
 	}
 
-	if len(mov) != len(expectedMoves) {
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	if mov.Len() != expectedMoves.Len() {
+		t.Fatalf("Expected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	equal := moves.MoveListsEqual(mov, expectedMoves)
-	if !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Fatalf("Expected moves %v, got %v", expectedMoves, mov)
 	}
 }
@@ -114,7 +111,7 @@ func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
 		t.Errorf("Error while getting moves")
 	}
 
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	expectedSquares := []string{
 		"a1", "b2", "c3", "e5",
@@ -124,16 +121,15 @@ func TestGetMovesForBishopOnEmptyBoard(t *testing.T) {
 	}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves = append(expectedMoves, moves.Move{From: d4, To: sq, PieceType: piece.BishopType})
+		expectedMoves.AddMove(moves.Move{From: d4, To: sq, PieceType: piece.BishopType})
 	}
 
-	if len(mov) != len(expectedMoves) {
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	if mov.Len() != expectedMoves.Len() {
+		t.Errorf("Expected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
 	// Compare move lists
-	equal := moves.MoveListsEqual(mov, expectedMoves)
-	if !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Errorf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
 }
@@ -152,20 +148,19 @@ func TestGetMovesForBishopWhenAnotherPieceOccupiesOneOfThePossibleSquares(t *tes
 		t.Fatalf("Error while getting moves")
 	}
 
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	expectedSquares := []string{"c3", "d4", "e5", "f6", "g7", "h8", "a3", "c1"}
 	for _, sqStr := range expectedSquares {
 		sq := board.NewSquareOrPanic(sqStr)
-		expectedMoves = append(expectedMoves, moves.Move{From: b2, To: sq, PieceType: piece.BishopType})
+		expectedMoves.AddMove(moves.Move{From: b2, To: sq, PieceType: piece.BishopType})
 	}
 
-	if len(mov) != len(expectedMoves) {
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+	if mov.Len() != expectedMoves.Len() {
+		t.Fatalf("Expected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	equal := moves.MoveListsEqual(mov, expectedMoves)
-	if !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Errorf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
 }
@@ -190,19 +185,19 @@ func TestGetMovesForRookWithFriendlyPieceBlocking(t *testing.T) {
 		"a4", "g4", "h4",
 	}
 
-	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
+	expectedMoves := moves.MoveList{}
 
 	for _, sq := range expectedSquares {
-		square, _ := board.NewSquare(sq)
-		expectedMoves = append(expectedMoves, moves.Move{From: f4, To: square, PieceType: piece.RookType})
+		square := board.NewSquareOrPanic(sq)
+		expectedMoves.AddMove(moves.Move{From: f4, To: square, PieceType: piece.RookType})
 	}
 
-	if len(mov) != len(expectedMoves) {
+	if mov.Len() != expectedMoves.Len() {
 		t.Logf("\n%v", pos.String())
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Fatalf("\nExpected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Logf("\n%v", pos.String())
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
@@ -231,19 +226,19 @@ func TestGetMovesForQueen(t *testing.T) {
 		"g8", "f8", "e8", "d8", "c8", "b8", "a8",
 	}
 
-	expectedMoves := make([]moves.Move, 0, len(expectedSquares))
+	expectedMoves := moves.MoveList{}
 
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves = append(expectedMoves, moves.Move{From: h8, To: square, PieceType: piece.QueenType})
+		expectedMoves.AddMove(moves.Move{From: h8, To: square, PieceType: piece.QueenType})
 	}
 
-	if len(mov) != len(expectedMoves) {
+	if mov.Len() != expectedMoves.Len() {
 		t.Logf("\n%v", pos.String())
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Fatalf("\nExpected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Logf("\n%v", pos.String())
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
@@ -260,20 +255,20 @@ func TestGetPawnMoves(t *testing.T) {
 		t.Fatalf("Error while getting moves for pawn")
 	}
 
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	expectedSquares := []string{"a3", "a4"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves = append(expectedMoves, moves.Move{From: a2, To: square, PieceType: piece.PawnType})
+		expectedMoves.AddMove(moves.Move{From: a2, To: square, PieceType: piece.PawnType})
 	}
 
-	if len(mov) != len(expectedMoves) {
+	if mov.Len() != expectedMoves.Len() {
 		t.Logf("\n%v", pos.String())
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Fatalf("\nExpected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Logf("\n%v", pos.String())
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
@@ -293,20 +288,20 @@ func TestGetKnightMoves(t *testing.T) {
 		t.Fatalf("Error while getting moves for knight")
 	}
 
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	expectedSquares := []string{"f8", "g7", "f4", "d4", "c5", "c7", "d8"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves = append(expectedMoves, moves.Move{From: e6, To: square, PieceType: piece.KnightType})
+		expectedMoves.AddMove(moves.Move{From: e6, To: square, PieceType: piece.KnightType})
 	}
 
-	if len(mov) != len(expectedMoves) {
+	if mov.Len() != expectedMoves.Len() {
 		t.Logf("\n%v", pos.String())
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Fatalf("\nExpected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Logf("\n%v", pos.String())
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
@@ -323,20 +318,20 @@ func TestGetKnightMovesWithKnightInCorner(t *testing.T) {
 		t.Fatalf("Error while getting moves for knight")
 	}
 
-	expectedMoves := []moves.Move{}
+	expectedMoves := moves.MoveList{}
 
 	expectedSquares := []string{"b3", "c2"}
 	for _, sq := range expectedSquares {
 		square := board.NewSquareOrPanic(sq)
-		expectedMoves = append(expectedMoves, moves.Move{From: a1, To: square, PieceType: piece.KnightType})
+		expectedMoves.AddMove(moves.Move{From: a1, To: square, PieceType: piece.KnightType})
 	}
 
-	if len(mov) != len(expectedMoves) {
+	if mov.Len() != expectedMoves.Len() {
 		t.Logf("\n%v", pos.String())
-		t.Fatalf("Expected %d moves, got %d", len(expectedMoves), len(mov))
+		t.Fatalf("\nExpected %d moves, got %d", expectedMoves.Len(), mov.Len())
 	}
 
-	if equal := moves.MoveListsEqual(mov, expectedMoves); !equal {
+	if equal := mov.Equals(expectedMoves); !equal {
 		t.Logf("\n%v", pos.String())
 		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
 	}
