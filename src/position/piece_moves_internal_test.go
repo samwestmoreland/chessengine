@@ -246,31 +246,43 @@ func TestGetMovesForQueen(t *testing.T) {
 
 func TestGetPawnMoves(t *testing.T) {
 	a2 := board.NewSquareOrPanic("a2")
-	pawn1 := NewPawn(a2, board.White)
+	whitePawn := NewPawn(a2, board.White)
 
-	pos := NewPosition(board.White, []Piece{pawn1})
+	a7 := board.NewSquareOrPanic("a7")
+	blackPawn := NewPawn(a7, board.Black)
 
-	mov, err := pawn1.GetMoves(pos)
+	pos := NewPosition(board.White, []Piece{whitePawn, blackPawn})
+
+	movs, err := whitePawn.GetMoves(pos)
 	if err != nil {
-		t.Fatalf("Error while getting moves for pawn")
+		t.Fatalf("Error while getting moves for white pawn")
 	}
+
+	movesBlack, err := blackPawn.GetMoves(pos)
+	if err != nil {
+		t.Fatalf("Error while getting moves for black pawn")
+	}
+
+	movs.AddMoveList(movesBlack)
 
 	expectedMoves := moves.MoveList{}
 
-	expectedSquares := []string{"a3", "a4"}
-	for _, sq := range expectedSquares {
+	expectedSquaresForWhitePawn := []string{"a3", "a4"}
+	expectedSquaresForBlackPawn := []string{"a6", "a5"}
+
+	for _, sq := range expectedSquaresForWhitePawn {
 		square := board.NewSquareOrPanic(sq)
 		expectedMoves.AddMove(moves.NewMove(a2, square, piece.PawnType, false))
 	}
 
-	if mov.Len() != expectedMoves.Len() {
-		t.Logf("\n%v", pos.String())
-		t.Fatalf("\nExpected %d moves, got %d", expectedMoves.Len(), mov.Len())
+	for _, sq := range expectedSquaresForBlackPawn {
+		square := board.NewSquareOrPanic(sq)
+		expectedMoves.AddMove(moves.NewMove(a7, square, piece.PawnType, false))
 	}
 
-	if equal := mov.Equals(expectedMoves); !equal {
+	if equal := movs.Equals(expectedMoves); !equal {
 		t.Logf("\n%v", pos.String())
-		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, mov)
+		t.Fatalf("\nExpected moves:\n%v\nGot:\n%v", expectedMoves, movs)
 	}
 }
 
