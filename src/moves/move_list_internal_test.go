@@ -45,7 +45,7 @@ func TestAddMoves(t *testing.T) {
 		piece.PawnType,
 		false,
 	)
-	aMoveList := MoveList{}
+	aMoveList := MoveList{[]Move{}}
 	aMoveList.AddMoves([]Move{aMove, anotherMove})
 
 	expectedMoveList := MoveList{[]Move{aMove, anotherMove}}
@@ -103,6 +103,7 @@ func TestMoveListEquals(t *testing.T) {
 		false,
 	)
 	aMoveList := MoveList{[]Move{aMove}}
+	aMoveListCopy := MoveList{[]Move{aMove}}
 
 	anotherMove := NewMove(
 		board.NewSquareOrPanic("b4"),
@@ -127,7 +128,7 @@ func TestMoveListEquals(t *testing.T) {
 		t.Errorf("Expected move lists to not be equal")
 	}
 
-	if !aMoveList.Equals(aMoveList) {
+	if !aMoveList.Equals(aMoveListCopy) {
 		t.Errorf("Expected move lists to be equal")
 	}
 }

@@ -35,6 +35,7 @@ func (ml *MoveList) GetMoves() []Move {
 
 func (ml *MoveList) GetMovesForPieceType(pieceType piece.Type) MoveList {
 	var ret MoveList
+
 	for _, move := range ml.moves {
 		if move.GetPieceType() == pieceType {
 			ret.AddMove(move)
