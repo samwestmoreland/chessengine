@@ -11,6 +11,7 @@ linters:
     - maligned
     - interfacer
     - scopelint
+      # --- linters above this line are deprecated
     - godox
     - paralleltest
     - gomnd
