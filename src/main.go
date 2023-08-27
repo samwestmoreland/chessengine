@@ -31,6 +31,7 @@ func main() {
 		}
 
 		resp, quit := handleCommand(cmd)
+
 		_, err = resp.WriteTo(writer)
 		if err != nil {
 			panic(err)
@@ -46,6 +47,7 @@ func main() {
 
 func handleCommand(cmd string) (*bytes.Buffer, bool) {
 	var resp bytes.Buffer
+
 	var quit bool
 
 	// Process command
@@ -60,7 +62,6 @@ func handleCommand(cmd string) (*bytes.Buffer, bool) {
 		if err != nil {
 			panic(err)
 		}
-
 	case "quit\n":
 		_, err := resp.WriteString("Bye!\n")
 		if err != nil {
@@ -68,7 +69,6 @@ func handleCommand(cmd string) (*bytes.Buffer, bool) {
 		}
 
 		quit = true
-
 	default:
 		_, err := resp.WriteString("Unknown command\n")
 		if err != nil {
