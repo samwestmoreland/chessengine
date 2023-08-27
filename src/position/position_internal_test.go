@@ -183,3 +183,57 @@ func TestGetPieceInvalidSquare(t *testing.T) {
 		t.Fatalf("Expected error, got piece %v", p)
 	}
 }
+
+func TestGetAllMovesInStartingPosition(t *testing.T) {
+	fen, err := ParseFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	if err != nil {
+		t.Fatalf("Error in ParseFEN: %s", err)
+	}
+
+	pos := NewPositionFromFEN(fen)
+
+	movs, err := pos.GetAllMovesConcurrent(pos.GetTurn())
+	if err != nil {
+		t.Fatalf("Error in GetAllMovesConcurrent: %s", err)
+	}
+
+	expectedMoveList := moves.MoveList{}
+
+	expectedMoves := map[piece.Type]map[string][]string{
+		piece.PawnType: {
+			"a2": {"a3", "a4"},
+			"b2": {"b3", "b4"},
+			"c2": {"c3", "c4"},
+			"d2": {"d3", "d4"},
+			"e2": {"e3", "e4"},
+			"f2": {"f3", "f4"},
+			"g2": {"g3", "g4"},
+			"h2": {"h3", "h4"},
+		},
+		piece.KnightType: {
+			"b1": {"a3", "c3"},
+			"g1": {"f3", "h3"},
+		},
+	}
+
+	for pieceType, moveArray := range expectedMoves {
+		for fromSquare, toSquares := range moveArray {
+			sq := board.NewSquareOrPanic(fromSquare)
+
+			for _, toSquare := range toSquares {
+				toSq := board.NewSquareOrPanic(toSquare)
+				expectedMoveList.AddMove(moves.NewMove(sq, toSq, pieceType, false))
+			}
+		}
+	}
+
+	if movs.Len() != expectedMoveList.Len() {
+		t.Log(pos.String())
+		t.Fatalf("Expected %d moves, got %d", expectedMoveList.Len(), movs.Len())
+	}
+
+	if equal := movs.Equals(expectedMoveList); !equal {
+		t.Log(pos.String())
+		t.Fatalf("Expected moves %v, got %v", expectedMoves, movs)
+	}
+}
