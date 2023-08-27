@@ -4,7 +4,13 @@ import (
 	"bufio"
 	"bytes"
 	"os"
+	"strings"
 )
+
+type command struct {
+	name string
+	args []string
+}
 
 func main() {
 	writer := bufio.NewWriter(os.Stdout)
@@ -30,7 +36,8 @@ func main() {
 			continue
 		}
 
-		resp, quit := handleCommand(cmd)
+		parsed := parseCmd(cmd)
+		resp, quit := handleCommand(parsed)
 
 		_, err = resp.WriteTo(writer)
 		if err != nil {
@@ -45,14 +52,25 @@ func main() {
 	}
 }
 
-func handleCommand(cmd string) (*bytes.Buffer, bool) {
+func parseCmd(cmd string) *command {
+	cmd = strings.Trim(cmd, "\n")
+
+	parts := strings.Split(cmd, " ")
+
+	return &command{
+		name: parts[0],
+		args: parts[1:],
+	}
+}
+
+func handleCommand(cmd *command) (*bytes.Buffer, bool) {
 	var resp bytes.Buffer
 
 	var quit bool
 
 	// Process command
-	switch cmd {
-	case "uci\n":
+	switch cmd.name {
+	case "uci":
 		_, err := resp.WriteString("id name Toto Chess Engine\n")
 		if err != nil {
 			panic(err)
@@ -62,13 +80,42 @@ func handleCommand(cmd string) (*bytes.Buffer, bool) {
 		if err != nil {
 			panic(err)
 		}
-	case "quit\n":
+	case "quit":
 		_, err := resp.WriteString("Bye!\n")
 		if err != nil {
 			panic(err)
 		}
 
 		quit = true
+	case "position":
+		posResp, posQuit := handlePositionCmd(cmd)
+		quit = posQuit
+
+		_, err := resp.Write(posResp.Bytes())
+		if err != nil {
+			panic(err)
+		}
+	default:
+		_, err := resp.WriteString("Unknown command\n")
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return &resp, quit
+}
+
+func handlePositionCmd(cmd *command) (*bytes.Buffer, bool) {
+	var resp bytes.Buffer
+
+	var quit bool
+
+	switch cmd.args[0] {
+	case "startpos":
+		_, err := resp.WriteString("set up starting position\n")
+		if err != nil {
+			panic(err)
+		}
 	default:
 		_, err := resp.WriteString("Unknown command\n")
 		if err != nil {
