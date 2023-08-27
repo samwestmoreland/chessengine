@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/samwestmoreland/chessengine/src/engine"
 	"github.com/samwestmoreland/chessengine/src/position"
 )
 
@@ -15,6 +16,8 @@ type command struct {
 }
 
 func main() {
+	eng := engine.NewEngine()
+
 	writer := bufio.NewWriter(os.Stdout)
 	reader := bufio.NewReader(os.Stdin)
 
@@ -39,7 +42,7 @@ func main() {
 		}
 
 		parsed := parseCmd(cmd)
-		resp, quit := handleCommand(parsed)
+		resp, quit := handleCommand(parsed, eng)
 
 		_, err = resp.WriteTo(writer)
 		if err != nil {
@@ -65,7 +68,7 @@ func parseCmd(cmd string) *command {
 	}
 }
 
-func handleCommand(cmd *command) (*bytes.Buffer, bool) {
+func handleCommand(cmd *command, eng *engine.Engine) (*bytes.Buffer, bool) {
 	var resp bytes.Buffer
 
 	var quit bool
@@ -75,12 +78,12 @@ func handleCommand(cmd *command) (*bytes.Buffer, bool) {
 	case "uci":
 		mustWrite(&resp, "id name Toto Chess Engine\n")
 		mustWrite(&resp, "id author Sam Westmoreland\n")
-	case "quit":
+	case "quit", "exit", "bye", "q":
 		mustWrite(&resp, "bye!\n")
 
 		quit = true
 	case "position":
-		posResp := handlePositionCmd(cmd)
+		posResp := handlePositionCmd(cmd, eng)
 
 		_, err := resp.Write(posResp.Bytes())
 		if err != nil {
@@ -93,7 +96,7 @@ func handleCommand(cmd *command) (*bytes.Buffer, bool) {
 	return &resp, quit
 }
 
-func handlePositionCmd(cmd *command) *bytes.Buffer {
+func handlePositionCmd(cmd *command, eng *engine.Engine) *bytes.Buffer {
 	var resp bytes.Buffer
 
 	if len(cmd.args) == 0 || cmd.args == nil {
@@ -109,10 +112,15 @@ func handlePositionCmd(cmd *command) *bytes.Buffer {
 	}
 
 	// try to parse FEN
-	_, err := position.ParseFEN(cmd.args[0])
+	fen, err := position.ParseFEN(strings.Join(cmd.args, " "))
 	if err != nil {
 		mustWrite(&resp, "invalid FEN\n")
+
+		return &resp
 	}
+
+	pos := position.NewPositionFromFEN(fen)
+	eng.SetPosition(pos)
 
 	return &resp
 }

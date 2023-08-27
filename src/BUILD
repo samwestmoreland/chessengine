@@ -6,5 +6,8 @@ go_binary(
             "*_test.go",
         ],
     ),
-    deps = ["//src/position"],
+    deps = [
+        "//src/engine",
+        "//src/position",
+    ],
 )
