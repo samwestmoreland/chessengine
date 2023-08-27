@@ -1,32 +1,80 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"os"
-
-	"github.com/integrii/flaggy"
-	"github.com/samwestmoreland/chessengine/src/position"
-	"github.com/sirupsen/logrus"
 )
 
-var log = logrus.New()
-
-var version = "v0.0.0"
-
 func main() {
-	flaggy.SetName("Chess Engine")
-	flaggy.SetDescription("A chess engine written in Go")
-	flaggy.SetVersion(version)
+	writer := bufio.NewWriter(os.Stdout)
+	reader := bufio.NewReader(os.Stdin)
 
-	var fenFlag string
+	for {
+		_, err := writer.WriteString("engine ready\n") // send initial ready message
+		if err != nil {
+			panic(err)
+		}
 
-	flaggy.String(&fenFlag, "f", "fen", "A FEN string to parse")
+		writer.Flush()
 
-	flaggy.Parse()
-	log.Infof("Starting chess engine")
+		cmd, err := reader.ReadString('\n')
+		if err != nil {
+			_, err := writer.WriteString("Error reading input\n")
+			if err != nil {
+				panic(err)
+			}
 
-	_, err := position.ParseFEN(fenFlag)
-	if err != nil {
-		log.Errorf("Error parsing FEN: %s", err)
-		os.Exit(1)
+			writer.Flush()
+
+			continue
+		}
+
+		resp, quit := handleCommand(cmd)
+		_, err = resp.WriteTo(writer)
+		if err != nil {
+			panic(err)
+		}
+
+		writer.Flush()
+
+		if quit {
+			break
+		}
 	}
+}
+
+func handleCommand(cmd string) (*bytes.Buffer, bool) {
+	var resp bytes.Buffer
+	var quit bool
+
+	// Process command
+	switch cmd {
+	case "uci\n":
+		_, err := resp.WriteString("id name Toto Chess Engine\n")
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = resp.WriteString("id author Sam Westmoreland\n")
+		if err != nil {
+			panic(err)
+		}
+
+	case "quit\n":
+		_, err := resp.WriteString("Bye!\n")
+		if err != nil {
+			panic(err)
+		}
+
+		quit = true
+
+	default:
+		_, err := resp.WriteString("Unknown command\n")
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return &resp, quit
 }

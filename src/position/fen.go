@@ -37,6 +37,19 @@ type FEN struct {
 	FullMoveNumber int          // the number of full moves, starting at 1 and incrementing after black moves
 }
 
+// NewFEN returns a new FEN struct with the starting position.
+func NewFEN() *FEN {
+	return &FEN{
+		Str:            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w",
+		Position:       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+		Colour:         board.White,
+		CastlingRights: "KQkq",
+		EnPassant:      board.Square{File: 0, Rank: 0},
+		HalfMoveClock:  0,
+		FullMoveNumber: 1,
+	}
+}
+
 // String returns the FEN as a string.
 func (f FEN) String() string {
 	return f.Str

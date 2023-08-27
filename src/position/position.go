@@ -30,6 +30,12 @@ func NewPositionFromFEN(fen *FEN) *Position {
 	return position
 }
 
+func NewStartingPosition() *Position {
+	fen := NewFEN()
+
+	return getPositionFromFEN(fen)
+}
+
 func NewPosition(turn board.Colour, pieces []Piece) *Position {
 	whitePieces := make(map[board.Square]Piece)
 	blackPieces := make(map[board.Square]Piece)

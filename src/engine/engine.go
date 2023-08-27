@@ -14,7 +14,11 @@ type Engine struct {
 }
 
 func NewEngine() *Engine {
-	return &Engine{}
+	return &Engine{
+		Position: position.NewStartingPosition(),
+		Depth:    0,
+		MaxDepth: 1,
+	}
 }
 
 func (e *Engine) SetPosition(pos *position.Position) {
