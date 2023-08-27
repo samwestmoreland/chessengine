@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"os"
 	"strings"
+
+	"github.com/samwestmoreland/chessengine/src/position"
 )
 
 type command struct {
@@ -71,57 +73,53 @@ func handleCommand(cmd *command) (*bytes.Buffer, bool) {
 	// Process command
 	switch cmd.name {
 	case "uci":
-		_, err := resp.WriteString("id name Toto Chess Engine\n")
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = resp.WriteString("id author Sam Westmoreland\n")
-		if err != nil {
-			panic(err)
-		}
+		mustWrite(&resp, "id name Toto Chess Engine\n")
+		mustWrite(&resp, "id author Sam Westmoreland\n")
 	case "quit":
-		_, err := resp.WriteString("Bye!\n")
-		if err != nil {
-			panic(err)
-		}
+		mustWrite(&resp, "bye!\n")
 
 		quit = true
 	case "position":
-		posResp, posQuit := handlePositionCmd(cmd)
-		quit = posQuit
+		posResp := handlePositionCmd(cmd)
 
 		_, err := resp.Write(posResp.Bytes())
 		if err != nil {
 			panic(err)
 		}
 	default:
-		_, err := resp.WriteString("Unknown command\n")
-		if err != nil {
-			panic(err)
-		}
+		mustWrite(&resp, "unknown command\n")
 	}
 
 	return &resp, quit
 }
 
-func handlePositionCmd(cmd *command) (*bytes.Buffer, bool) {
+func handlePositionCmd(cmd *command) *bytes.Buffer {
 	var resp bytes.Buffer
 
-	var quit bool
+	if len(cmd.args) == 0 || cmd.args == nil {
+		mustWrite(&resp, "too few arguments. expected `position <fen>` or `position startpos`\n")
 
-	switch cmd.args[0] {
-	case "startpos":
-		_, err := resp.WriteString("set up starting position\n")
-		if err != nil {
-			panic(err)
-		}
-	default:
-		_, err := resp.WriteString("Unknown command\n")
-		if err != nil {
-			panic(err)
-		}
+		return &resp
 	}
 
-	return &resp, quit
+	if cmd.args[0] == "startpos" {
+		mustWrite(&resp, "set up starting position\n")
+
+		return &resp
+	}
+
+	// try to parse FEN
+	_, err := position.ParseFEN(cmd.args[0])
+	if err != nil {
+		mustWrite(&resp, "invalid FEN\n")
+	}
+
+	return &resp
+}
+
+func mustWrite(buf *bytes.Buffer, s string) {
+	_, err := buf.WriteString(s)
+	if err != nil {
+		panic(err)
+	}
 }
