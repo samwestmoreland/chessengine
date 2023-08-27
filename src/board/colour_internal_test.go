@@ -15,15 +15,20 @@ func TestColourString(t *testing.T) {
 }
 
 func TestColourFromString(t *testing.T) {
-	if ColourFromString("Black") != Black {
-		t.Errorf("Expected Black, got %s", ColourFromString("Black"))
+	testCases := map[string]Colour{
+		"Black": Black,
+		"White": White,
+		"black": Black,
+		"white": White,
+		"b":     Black,
+		"w":     White,
+		"foo":   Unknown,
 	}
 
-	if ColourFromString("White") != White {
-		t.Errorf("Expected White, got %s", ColourFromString("White"))
-	}
-
-	if ColourFromString("Invalid") != Unknown {
-		t.Errorf("Expected InvalidColour, got %s", ColourFromString("Invalid"))
+	for input, expected := range testCases {
+		actual := ColourFromString(input)
+		if actual != expected {
+			t.Errorf("Expected %s, got %s", expected, actual)
+		}
 	}
 }
