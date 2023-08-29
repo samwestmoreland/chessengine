@@ -62,3 +62,18 @@ go_repo(
     module = "github.com/sirupsen/logrus",
     version = "v1.9.3",
 )
+
+remote_file(
+    name = "golangci-lint_install_script",
+    url = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh",
+    binary = True,
+    out = "install.sh",
+)
+
+genrule(
+    name = "golangci-lint",
+    srcs = [":golangci-lint_install_script"],
+    outs = ["golangci-lint"],
+    cmd = "cat $(location :golangci-lint_install_script) | sh -s -- -b . v1.54.2",
+    binary = True,
+)

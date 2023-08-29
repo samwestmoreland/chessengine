@@ -12,8 +12,12 @@
 [parse]
 preloadsubincludes = ///go//build_defs:go
 
-[Plugin "go"]
-Target = //plugins:go
-Importpath = github.com/samwestmoreland/chessengine
-GoTool = //third_party/go:toolchain|go
-CoverageRedesign = true
+[plugin "go"]
+target = //plugins:go
+importpath = github.com/samwestmoreland/chessengine
+goTool = //third_party/go:toolchain|go
+coverageRedesign = true
+
+[alias "lint"]
+cmd = "run //third_party/go:golangci-lint -- run"
+desc = "Runs golangci-lint on all Go code"
