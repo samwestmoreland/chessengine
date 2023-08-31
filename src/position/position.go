@@ -74,18 +74,24 @@ func (p *Position) GetBlackPieces() map[board.Square]Piece {
 }
 
 func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, error) {
-	wg := sync.WaitGroup{}
-
+	var numPieces int
 	if turn == board.White {
-		wg.Add(len(p.White))
+		numPieces = len(p.White)
+		log.Infof("Getting moves for %d white pieces\n", len(p.White))
 	} else if turn == board.Black {
-		wg.Add(len(p.Black))
+		numPieces = len(p.Black)
+		log.Infof("Getting moves for %d white pieces\n", len(p.White))
 	}
 
-	// Use 20 as a rough estimate of the number of moves a piece can make.
-	movs := moves.MoveList{}
+	ret := moves.MoveList{}
+	movesChan := make(chan moves.MoveList, numPieces)
 
+	var wg sync.WaitGroup
+
+	// start goroutines to get moves for each piece
 	for _, piece := range p.White {
+		wg.Add(1)
+
 		go func(piece Piece) {
 			defer wg.Done()
 
@@ -94,13 +100,18 @@ func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, err
 				log.Errorf("Failed to get moves for white piece %v: %v\n", piece.Type(), err)
 			}
 
-			movs.AddMoveList(pieceMoves)
+			movesChan <- pieceMoves
 		}(piece)
 	}
 
 	wg.Wait()
+	close(movesChan)
 
-	return movs, nil
+	for moveList := range movesChan {
+		ret.AddMoveList(moveList)
+	}
+
+	return ret, nil
 }
 
 // GetAllMovesSerial returns all possible moves for the current position

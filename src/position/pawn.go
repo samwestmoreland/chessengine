@@ -6,6 +6,8 @@ import (
 	"github.com/samwestmoreland/chessengine/src/piece"
 )
 
+// var log = logrus.New()
+
 // Pawn is a piece that can move one square forward, or two squares forward
 // if it is on its starting square, and can capture diagonally.
 type Pawn struct {
