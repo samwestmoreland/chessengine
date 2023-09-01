@@ -1,9 +1,10 @@
 package engine
 
 import (
+	"math/rand"
+
 	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/position"
-	"math/rand"
 )
 
 type Engine struct {
