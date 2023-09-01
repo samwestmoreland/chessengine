@@ -58,7 +58,5 @@ func (k *Knight) GetMoves(pos *Position) (moves.MoveList, error) {
 		}
 	}
 
-	log.Infof("Returning with %d moves for knight at %s", ret.Len(), k.CurrentSquare.String())
-
 	return ret, nil
 }

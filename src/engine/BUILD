@@ -2,7 +2,10 @@ go_library(
     name = "engine",
     srcs = ["engine.go"],
     visibility = ["//src:all"],
-    deps = ["//src/position"],
+    deps = [
+        "//src/moves",
+        "//src/position",
+    ],
 )
 
 go_test(

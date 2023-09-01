@@ -89,6 +89,8 @@ func handleCommand(cmd *command, eng *engine.Engine) (*bytes.Buffer, bool) {
 		if err != nil {
 			panic(err)
 		}
+	case "isready":
+		mustWrite(&resp, "readyok\n")
 	default:
 		mustWrite(&resp, "unknown command\n")
 	}

@@ -1,7 +1,9 @@
 package engine
 
 import (
+	"github.com/samwestmoreland/chessengine/src/moves"
 	"github.com/samwestmoreland/chessengine/src/position"
+	"math/rand"
 )
 
 type Engine struct {
@@ -23,4 +25,15 @@ func NewEngine() *Engine {
 
 func (e *Engine) SetPosition(pos *position.Position) {
 	e.Position = pos
+}
+
+func (e *Engine) FindBestMove() (moves.Move, error) {
+	allPossibleMoves, err := e.Position.GetAllPossibleMoves()
+	if err != nil {
+		return moves.Move{}, err
+	}
+
+	// pick one at random for now
+	randomNumber := rand.Intn(allPossibleMoves.Len())
+	return allPossibleMoves.GetMoves()[randomNumber], nil
 }
