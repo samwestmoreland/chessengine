@@ -5,6 +5,7 @@ go_library(
         "moves.go",
     ],
     visibility = [
+        "//src/engine:all",
         "//src/pieces:all",
         "//src/position:all",
     ],

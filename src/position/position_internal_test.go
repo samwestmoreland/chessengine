@@ -228,7 +228,9 @@ func TestGetAllMovesInStartingPosition(t *testing.T) {
 	}
 
 	if movs.Len() != expectedMoveList.Len() {
-		t.Log(pos.String())
+		t.Logf("\n%s", pos.String())
+		t.Logf("Expected moves:\n%s", expectedMoveList.String())
+		t.Logf("Got moves:\n%s", movs.String())
 		t.Fatalf("Expected %d moves, got %d", expectedMoveList.Len(), movs.Len())
 	}
 
