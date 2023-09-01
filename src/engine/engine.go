@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/samwestmoreland/chessengine/src/moves"
@@ -31,10 +32,11 @@ func (e *Engine) SetPosition(pos *position.Position) {
 func (e *Engine) FindBestMove() (moves.Move, error) {
 	allPossibleMoves, err := e.Position.GetAllPossibleMoves()
 	if err != nil {
-		return moves.Move{}, err
+		return moves.Move{}, fmt.Errorf("failed to get all possible moves: %w", err)
 	}
 
-	// pick one at random for now
+	/* #nosec G404 */
 	randomNumber := rand.Intn(allPossibleMoves.Len())
+
 	return allPossibleMoves.GetMoves()[randomNumber], nil
 }
