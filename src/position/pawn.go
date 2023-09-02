@@ -85,3 +85,21 @@ func (p *Pawn) getForwardMovesBlack(pos *Position) []moves.Move {
 
 	return ret
 }
+
+func (p *Pawn) IsDoubled(pos *Position) bool {
+	piecesOfSameColour := map[board.Square]Piece{}
+
+	if p.Colour == board.White {
+		piecesOfSameColour = pos.GetWhitePieces()
+	} else if p.Colour == board.Black {
+		piecesOfSameColour = pos.GetBlackPieces()
+	}
+
+	for square, pi := range piecesOfSameColour {
+		if pi.Type() == piece.PawnType && square.File == p.CurrentSquare.File {
+			return true
+		}
+	}
+
+	return false
+}

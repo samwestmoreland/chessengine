@@ -8,6 +8,7 @@ import (
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 	"github.com/sirupsen/logrus"
 )
 
@@ -289,4 +290,24 @@ func (p *Position) squareIsOccupied(square board.Square) (bool, board.Colour) {
 	}
 
 	return false, board.Unknown
+}
+
+func (p *Position) GetNumPiecesForColour(pieceType piece.Type, col board.Colour) int {
+	var pieces *map[board.Square]Piece
+
+	if col == board.White {
+		pieces = &p.White
+	} else if col == board.Black {
+		pieces = &p.Black
+	}
+
+	var ret int
+
+	for _, piece := range *pieces {
+		if piece.Type() == pieceType {
+			ret++
+		}
+	}
+
+	return ret
 }
