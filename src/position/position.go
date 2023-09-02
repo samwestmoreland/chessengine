@@ -311,3 +311,23 @@ func (p *Position) GetNumPiecesForColour(pieceType piece.Type, col board.Colour)
 
 	return ret
 }
+
+func (p *Position) GetPiecesForColour(pieceType piece.Type, col board.Colour) *map[board.Square]Piece {
+	var pieces *map[board.Square]Piece
+
+	if col == board.White {
+		pieces = &p.White
+	} else if col == board.Black {
+		pieces = &p.Black
+	}
+
+	ret := make(map[board.Square]Piece)
+
+	for square, piece := range *pieces {
+		if piece.Type() == pieceType {
+			ret[square] = piece
+		}
+	}
+
+	return &ret
+}

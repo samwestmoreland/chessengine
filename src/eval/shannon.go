@@ -24,6 +24,16 @@ func (e ShannonEvaluator) Evaluate(pos *position.Position) float64 {
 	pawnDifference := pos.GetNumPiecesForColour(piece.PawnType, board.White) -
 		pos.GetNumPiecesForColour(piece.PawnType, board.Black)
 
+	whitePawns := pos.GetPiecesForColour(piece.PawnType, board.White)
+
+	for _, file := range board.Files {
+		found := false
+		for _, pawn := range whitePawns {
+			if !found && pawn.File == file {
+				found = true
+			} else if found && pawn.File == file {
+
+
 	score := float64(
 		queenDifference*9 +
 			rookDifference*5 +
