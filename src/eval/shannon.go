@@ -6,8 +6,6 @@ import (
 	"github.com/samwestmoreland/chessengine/src/position"
 )
 
-// Based on Claude Shannon's paper "Programming a Computer for Playing Chess"
-
 type ShannonEvaluator struct{}
 
 func (e ShannonEvaluator) Evaluate(pos *position.Position) float64 {
