@@ -312,7 +312,7 @@ func (p *Position) GetNumPiecesForColour(pieceType piece.Type, col board.Colour)
 	return ret
 }
 
-func (p *Position) GetPiecesForColour(pieceType piece.Type, col board.Colour) *map[board.Square]Piece {
+func (p *Position) GetPiecesForColour(pieceType piece.Type, col board.Colour) map[board.Square]Piece {
 	var pieces *map[board.Square]Piece
 
 	if col == board.White {
@@ -329,5 +329,5 @@ func (p *Position) GetPiecesForColour(pieceType piece.Type, col board.Colour) *m
 		}
 	}
 
-	return &ret
+	return ret
 }
