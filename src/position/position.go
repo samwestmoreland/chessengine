@@ -81,7 +81,7 @@ func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, err
 		log.Debugf("Getting moves for %d white pieces\n", len(p.White))
 	} else if turn == board.Black {
 		numPieces = len(p.Black)
-		log.Debugf("Getting moves for %d white pieces\n", len(p.White))
+		log.Debugf("Getting moves for %d black pieces\n", len(p.Black))
 	}
 
 	ret := moves.MoveList{}
