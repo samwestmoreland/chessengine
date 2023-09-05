@@ -76,7 +76,9 @@ func (p *Position) GetBlackPieces() map[board.Square]Piece {
 
 func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, error) {
 	var numPieces int
+
 	var pieces map[board.Square]Piece
+
 	if turn == board.White {
 		pieces = p.White
 		numPieces = len(p.White)
@@ -95,6 +97,7 @@ func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, err
 	// start goroutines to get moves for each piece
 	for _, piece := range pieces {
 		wg.Add(1)
+
 		go func(piece Piece) {
 			defer wg.Done()
 
