@@ -13,12 +13,9 @@ func TestClearlyWinningPositionForWhite(t *testing.T) {
 	}
 
 	pos := position.NewPositionFromFEN(fen)
-
 	evaluator := NewShannonEvaluator()
 
-	score := evaluator.Evaluate(pos)
-
-	if score < 0 {
+	if score := evaluator.Evaluate(pos); score < 0 {
 		t.Errorf("Expected score to be positive, got %v", score)
 	}
 }
