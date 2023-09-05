@@ -10,6 +10,10 @@ import (
 // Currently we ignore the backward pawn penalty because I haven't figured out how to calculate it yet.
 type ShannonEvaluator struct{}
 
+func NewShannonEvaluator() ShannonEvaluator {
+	return ShannonEvaluator{}
+}
+
 func (e ShannonEvaluator) Evaluate(pos *position.Position) float64 {
 	materialScore := e.getMaterialScore(pos)
 	pawnScore := e.getPawnScore(pos)

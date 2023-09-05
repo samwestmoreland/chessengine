@@ -11,3 +11,12 @@ go_library(
         "//src/position",
     ],
 )
+
+go_test(
+    name = "eval_test",
+    srcs = ["shannon_internal_test.go"],
+    deps = [
+        ":eval",
+        "//src/position",
+    ],
+)
