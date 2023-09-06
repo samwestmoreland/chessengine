@@ -52,7 +52,6 @@ func TestMaterialScore(t *testing.T) {
 			t.Errorf("Expected material score to be %v, got %v", expectedScore, score)
 		}
 	}
-
 }
 
 func TestGetPawnScore(t *testing.T) {

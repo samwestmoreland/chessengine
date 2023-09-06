@@ -7,7 +7,6 @@ import (
 )
 
 func TestPawnIsDoubled(t *testing.T) {
-
 	sq1 := board.NewSquareOrPanic("a2")
 	pawn1 := NewPawn(sq1, board.Black)
 
