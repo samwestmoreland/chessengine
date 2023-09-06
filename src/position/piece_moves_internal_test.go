@@ -9,9 +9,7 @@ import (
 )
 
 func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
-	sqStr := "e4"
-
-	square := board.NewSquareOrPanic(sqStr)
+	square := board.NewSquareOrPanic("e4")
 
 	whiteKing := NewKing(square, board.White)
 	pos := NewPosition(board.White, []Piece{whiteKing})
