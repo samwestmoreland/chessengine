@@ -54,3 +54,19 @@ func TestMaterialScore(t *testing.T) {
 	}
 
 }
+
+func TestGetPawnScore(t *testing.T) {
+	expectedResults := map[string]int{
+		"8/8/2BPnk2/b1P3p1/2K2pp1/6P1/5B1P/4q3 w - - 0 50": 0,
+	}
+
+	ev := NewShannonEvaluator()
+
+	for fen, expectedScore := range expectedResults {
+		parsed, _ := position.ParseFEN(fen)
+		pos := position.NewPositionFromFEN(parsed)
+		if score := ev.getPawnScore(pos); score != expectedScore {
+			t.Errorf("Expected pawn score to be %v, got %v", expectedScore, score)
+		}
+	}
+}
