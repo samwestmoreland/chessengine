@@ -7,7 +7,7 @@ import (
 )
 
 // ShannonEvaluator is an implementation of the Evaluator interface. It uses the Shannon evaluation function.
-// Currently we ignore the backward pawn penalty because I haven't figured out how to calculate it yet.
+// Currently we ignore the backward pawn penalty because I haven't figured out how to calculate it.
 type ShannonEvaluator struct{}
 
 func NewShannonEvaluator() ShannonEvaluator {
