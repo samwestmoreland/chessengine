@@ -57,3 +57,49 @@ func BenchmarkGetAllMovesSerial(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkGetAllMovesConcurrentStartingPosition(b *testing.B) {
+	pos := NewStartingPosition()
+
+	for i := 0; i < b.N; i++ {
+		_, err := pos.GetAllMovesConcurrent(board.White)
+		if err != nil {
+			b.Error(err)
+		}
+	}
+}
+
+func BenchmarkGetAllMovesSerialStartingPosition(b *testing.B) {
+	pos := NewStartingPosition()
+
+	for i := 0; i < b.N; i++ {
+		_, err := pos.GetAllMovesSerial(board.White)
+		if err != nil {
+			b.Error(err)
+		}
+	}
+}
+
+func BenchmarkGetAllMovesConcurrentOpeningPosition(b *testing.B) {
+	fen, _ := ParseFEN("r2qk2r/ppp1bppp/1nn1p3/4P3/2PP4/4BP2/PP2B2P/RN1Q1RK1 b kq - 3 11")
+	pos := NewPositionFromFEN(fen)
+
+	for i := 0; i < b.N; i++ {
+		_, err := pos.GetAllMovesConcurrent(board.White)
+		if err != nil {
+			b.Error(err)
+		}
+	}
+}
+
+func BenchmarkGetAllMovesSerialOpeningPosition(b *testing.B) {
+	fen, _ := ParseFEN("r2qk2r/ppp1bppp/1nn1p3/4P3/2PP4/4BP2/PP2B2P/RN1Q1RK1 b kq - 3 11")
+	pos := NewPositionFromFEN(fen)
+
+	for i := 0; i < b.N; i++ {
+		_, err := pos.GetAllMovesSerial(board.White)
+		if err != nil {
+			b.Error(err)
+		}
+	}
+}
