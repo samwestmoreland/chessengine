@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
@@ -92,29 +91,20 @@ func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, err
 	ret := moves.MoveList{}
 	movesChan := make(chan moves.MoveList, numPieces)
 
-	var wg sync.WaitGroup
-
 	// start goroutines to get moves for each piece
-	for _, piece := range pieces {
-		wg.Add(1)
-
-		go func(piece Piece) {
-			defer wg.Done()
-
-			pieceMoves, err := piece.GetMoves(p)
+	for _, pce := range pieces {
+		go func(myPiece Piece, myChan chan<- moves.MoveList, pos Position) {
+			pieceMoves, err := myPiece.GetMoves(&pos)
 			if err != nil {
-				log.Errorf("Failed to get moves for white piece %v: %v\n", piece.Type(), err)
+				log.Errorf("Failed to get moves for white piece %v: %v\n", myPiece.Type(), err)
 			}
 
-			movesChan <- pieceMoves
-		}(piece)
+			myChan <- pieceMoves
+		}(pce, movesChan, *p)
 	}
 
-	wg.Wait()
-	close(movesChan)
-
-	for moveList := range movesChan {
-		ret.AddMoveList(moveList)
+	for range pieces {
+		ret.AddMoveList(<-movesChan)
 	}
 
 	return ret, nil
