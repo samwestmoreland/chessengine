@@ -21,3 +21,6 @@ coverageRedesign = true
 [alias "lint"]
 cmd = "run //third_party/go:golangci-lint -- run"
 desc = "Runs golangci-lint on all Go code"
+
+[alias "benchmark"]
+cmd = "run //src/position:position_benchmark"
