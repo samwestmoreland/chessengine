@@ -8,6 +8,7 @@ import (
 
 	"github.com/samwestmoreland/chessengine/src/board"
 	"github.com/samwestmoreland/chessengine/src/moves"
+	"github.com/samwestmoreland/chessengine/src/piece"
 	"github.com/sirupsen/logrus"
 )
 
@@ -75,12 +76,17 @@ func (p *Position) GetBlackPieces() map[board.Square]Piece {
 
 func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, error) {
 	var numPieces int
+
+	var pieces map[board.Square]Piece
+
 	if turn == board.White {
+		pieces = p.White
 		numPieces = len(p.White)
 		log.Debugf("Getting moves for %d white pieces\n", len(p.White))
 	} else if turn == board.Black {
+		pieces = p.Black
 		numPieces = len(p.Black)
-		log.Debugf("Getting moves for %d white pieces\n", len(p.White))
+		log.Debugf("Getting moves for %d black pieces\n", len(p.Black))
 	}
 
 	ret := moves.MoveList{}
@@ -89,7 +95,7 @@ func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, err
 	var wg sync.WaitGroup
 
 	// start goroutines to get moves for each piece
-	for _, piece := range p.White {
+	for _, piece := range pieces {
 		wg.Add(1)
 
 		go func(piece Piece) {
@@ -289,4 +295,44 @@ func (p *Position) squareIsOccupied(square board.Square) (bool, board.Colour) {
 	}
 
 	return false, board.Unknown
+}
+
+func (p *Position) GetNumPiecesForColour(pieceType piece.Type, col board.Colour) int {
+	var pieces *map[board.Square]Piece
+
+	if col == board.White {
+		pieces = &p.White
+	} else if col == board.Black {
+		pieces = &p.Black
+	}
+
+	var ret int
+
+	for _, piece := range *pieces {
+		if piece.Type() == pieceType {
+			ret++
+		}
+	}
+
+	return ret
+}
+
+func (p *Position) GetPiecesForColour(pieceType piece.Type, col board.Colour) map[board.Square]Piece {
+	var pieces *map[board.Square]Piece
+
+	if col == board.White {
+		pieces = &p.White
+	} else if col == board.Black {
+		pieces = &p.Black
+	}
+
+	ret := make(map[board.Square]Piece)
+
+	for square, piece := range *pieces {
+		if piece.Type() == pieceType {
+			ret[square] = piece
+		}
+	}
+
+	return ret
 }

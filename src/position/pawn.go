@@ -19,22 +19,22 @@ func NewPawn(currentSquare board.Square, colour board.Colour) *Pawn {
 }
 
 // GetColour returns the piece's color.
-func (p *Pawn) GetColour() board.Colour {
+func (p Pawn) GetColour() board.Colour {
 	return p.Colour
 }
 
 // Type returns the piece's type.
-func (p *Pawn) Type() piece.Type {
+func (p Pawn) Type() piece.Type {
 	return piece.PawnType
 }
 
 // GetCurrentSquare returns the piece's current square.
-func (p *Pawn) GetCurrentSquare() board.Square {
+func (p Pawn) GetCurrentSquare() board.Square {
 	return p.CurrentSquare
 }
 
 // GetMoves returns a list of moves that the piece can make.
-func (p *Pawn) GetMoves(pos *Position) (moves.MoveList, error) {
+func (p Pawn) GetMoves(pos *Position) (moves.MoveList, error) {
 	ret := moves.MoveList{}
 
 	if p.Colour == board.White {
@@ -84,4 +84,42 @@ func (p *Pawn) getForwardMovesBlack(pos *Position) []moves.Move {
 	}
 
 	return ret
+}
+
+func (p *Pawn) IsDoubled(pos *Position) bool {
+	piecesOfSameColour := map[board.Square]Piece{}
+
+	if p.Colour == board.White {
+		piecesOfSameColour = pos.GetWhitePieces()
+	} else if p.Colour == board.Black {
+		piecesOfSameColour = pos.GetBlackPieces()
+	}
+
+	for square, pi := range piecesOfSameColour {
+		if pi.Type() == piece.PawnType && square.File == p.CurrentSquare.File {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (p *Pawn) IsIsolated(pos *Position) bool {
+	piecesOfSameColour := map[board.Square]Piece{}
+
+	if p.Colour == board.White {
+		piecesOfSameColour = pos.GetWhitePieces()
+	} else if p.Colour == board.Black {
+		piecesOfSameColour = pos.GetBlackPieces()
+	}
+
+	for square, pi := range piecesOfSameColour {
+		if pi.Type() == piece.PawnType && square.File == p.CurrentSquare.File-1 {
+			return false
+		} else if pi.Type() == piece.PawnType && square.File == p.CurrentSquare.File+1 {
+			return false
+		}
+	}
+
+	return true
 }

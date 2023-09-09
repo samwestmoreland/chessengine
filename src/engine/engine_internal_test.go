@@ -17,3 +17,12 @@ func TestGetAMoveInPosition(t *testing.T) {
 		t.Error("GetAMoveInPosition() returned invalid move")
 	}
 }
+
+func TestEvaluateStartingPosition(t *testing.T) {
+	e := NewEngine()
+
+	score := e.Evaluate()
+	if score != 0 {
+		t.Error("EvaluateStartingPosition() failed to return 0")
+	}
+}

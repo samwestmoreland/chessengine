@@ -3,6 +3,7 @@ go_library(
     srcs = ["engine.go"],
     visibility = ["//src:all"],
     deps = [
+        "//src/eval",
         "//src/moves",
         "//src/position",
     ],

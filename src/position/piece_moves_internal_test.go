@@ -9,12 +9,7 @@ import (
 )
 
 func TestGetMovesForKingOnEmptyBoard(t *testing.T) {
-	sqStr := "e4"
-
-	square, err := board.NewSquare(sqStr)
-	if err != nil {
-		t.Fatalf("Failed to create square %s: %v", sqStr, err)
-	}
+	square := board.NewSquareOrPanic("e4")
 
 	whiteKing := NewKing(square, board.White)
 	pos := NewPosition(board.White, []Piece{whiteKing})
