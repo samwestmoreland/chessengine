@@ -24,3 +24,8 @@ desc = "Runs golangci-lint on all Go code"
 
 [alias "benchmark"]
 cmd = "run //src/position:position_benchmark"
+
+[alias "puku"]
+cmd = run //third_party/binary:puku --
+positionallabels = true
+desc = a tool to update BUILD files in go packages
