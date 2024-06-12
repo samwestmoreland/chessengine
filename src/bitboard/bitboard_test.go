@@ -4,8 +4,15 @@ import (
 	"testing"
 )
 
-func TestPrintBitboard(t *testing.T) {
+func TestGetBit(t *testing.T) {
 	var board uint64 = 8
-	print(board)
-	t.Errorf("hello")
+
+	if getBit(board, 0) {
+		t.Error("Expected false, got true")
+	}
+
+	if !getBit(board, 3) {
+		print(board)
+		t.Error("Expected true, got false")
+	}
 }
