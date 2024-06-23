@@ -5,7 +5,8 @@ import (
 )
 
 func TestGetBit(t *testing.T) {
-	board := uint64(1) << e2
+	board := setBit(0, e2)
+	board = setBit(board, e8)
 
 	if getBit(board, 0) {
 		printBoard(board)
@@ -17,7 +18,12 @@ func TestGetBit(t *testing.T) {
 		t.Error("Expected true, got false")
 	}
 
-	if getBit(board, e8) {
+	if !getBit(board, e8) {
+		printBoard(board)
+		t.Error("Expected true, got false")
+	}
+
+	if getBit(board, f5) {
 		printBoard(board)
 		t.Error("Expected false, got true")
 	}

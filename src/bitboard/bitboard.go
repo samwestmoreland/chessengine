@@ -9,6 +9,10 @@ func getBit(board uint64, square int) bool {
 	return occ == 1
 }
 
+func setBit(board uint64, square int) uint64 {
+	return board | (1 << square)
+}
+
 // print prints a bitboard to the console.
 func printBoard(bitboard uint64) {
 	fmt.Printf("\n")
