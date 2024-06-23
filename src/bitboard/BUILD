@@ -1,6 +1,9 @@
 go_library(
     name = "bitboard",
-    srcs = ["bitboard.go"],
+    srcs = [
+        "bitboard.go",
+        "human_readable_squares.go",
+    ],
 )
 
 go_test(

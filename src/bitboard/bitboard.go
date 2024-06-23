@@ -20,7 +20,7 @@ func printBoard(bitboard uint64) {
 
 			// Print the rank
 			if file == 0 {
-				fmt.Printf("%d ", 8-rank)
+				fmt.Printf("%d  ", 8-rank)
 			}
 
 			// Check if the square is occupied
@@ -34,6 +34,5 @@ func printBoard(bitboard uint64) {
 		fmt.Printf("\n")
 	}
 
-	fmt.Println("  A B C D E F G H")
-
+	fmt.Println("   a b c d e f g h")
 }
