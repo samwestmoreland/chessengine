@@ -7,55 +7,55 @@ import (
 func TestGetBit(t *testing.T) {
 	var board uint64 = 8 // 1000
 
-	if getBit(board, a8) {
-		printBoard(board)
+	if GetBit(board, A8) {
+		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}
 
-	if !getBit(board, d8) {
-		printBoard(board)
+	if !GetBit(board, D8) {
+		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 }
 
 func TestSetBit(t *testing.T) {
-	board := setBit(0, e2)
-	board = setBit(board, e8)
+	board := SetBit(0, E2)
+	board = SetBit(board, E8)
 
-	if getBit(board, 0) {
-		printBoard(board)
+	if GetBit(board, 0) {
+		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}
 
-	if !getBit(board, e2) {
-		printBoard(board)
+	if !GetBit(board, E2) {
+		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 
-	if !getBit(board, e8) {
-		printBoard(board)
+	if !GetBit(board, E8) {
+		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 
-	if getBit(board, f5) {
-		printBoard(board)
+	if GetBit(board, F5) {
+		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}
 }
 
 func TestClearBit(t *testing.T) {
-	board := setBit(0, e2)
-	board = setBit(board, e8)
+	board := SetBit(0, E2)
+	board = SetBit(board, E8)
 
-	if !getBit(board, e2) {
-		printBoard(board)
+	if !GetBit(board, E2) {
+		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 
-	board = clearBit(board, e2)
+	board = ClearBit(board, E2)
 
-	if getBit(board, e2) {
-		printBoard(board)
+	if GetBit(board, E2) {
+		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}
 }

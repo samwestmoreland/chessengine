@@ -2,23 +2,23 @@ package bitboard
 
 import "fmt"
 
-func getBit(board uint64, square int) bool {
+func GetBit(board uint64, square int) bool {
 	occ := (board >> square) & 1
 
 	// occ is a uint64, so we need to convert it to a bool
 	return occ == 1
 }
 
-func setBit(board uint64, square int) uint64 {
+func SetBit(board uint64, square int) uint64 {
 	return board | (1 << square)
 }
 
-func clearBit(board uint64, square int) uint64 {
+func ClearBit(board uint64, square int) uint64 {
 	return board &^ (1 << square)
 }
 
 // print prints a bitboard to the console.
-func printBoard(bitboard uint64) {
+func PrintBoard(bitboard uint64) {
 	fmt.Printf("\n")
 
 	for rank := 0; rank < 8; rank++ {
@@ -32,7 +32,7 @@ func printBoard(bitboard uint64) {
 			}
 
 			// Check if the square is occupied
-			occupied := getBit(bitboard, square)
+			occupied := GetBit(bitboard, square)
 			if occupied {
 				fmt.Printf("%d ", 1)
 			} else {
@@ -43,4 +43,7 @@ func printBoard(bitboard uint64) {
 	}
 
 	fmt.Println("   a b c d e f g h")
+
+	// Print the decimal representation
+	fmt.Printf("\n   bitboard: %d\n", bitboard)
 }

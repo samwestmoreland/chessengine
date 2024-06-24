@@ -1,7 +1,10 @@
 go_library(
     name = "engine",
     srcs = ["engine.go"],
-    visibility = ["//src:all"],
+    visibility = [
+        "//src:all",
+        "//cmd:all",
+    ],
     deps = [
         "//src/eval",
         "//src/moves",

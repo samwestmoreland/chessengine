@@ -4,6 +4,10 @@ go_library(
         "bitboard.go",
         "human_readable_squares.go",
     ],
+    visibility = [
+        "//src/tables:all",
+        "//cmd:all",
+    ],
 )
 
 go_test(

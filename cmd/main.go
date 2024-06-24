@@ -6,8 +6,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/samwestmoreland/chessengine/src/bitboard"
 	"github.com/samwestmoreland/chessengine/src/engine"
 	"github.com/samwestmoreland/chessengine/src/position"
+	"github.com/samwestmoreland/chessengine/src/tables"
 )
 
 type command struct {
@@ -16,6 +18,11 @@ type command struct {
 }
 
 func main() {
+	// run_engine()
+	tables.MaskPawnAttacks(bitboard.D4, 0)
+}
+
+func run_engine() {
 	eng := engine.NewEngine()
 
 	writer := bufio.NewWriter(os.Stdout)
