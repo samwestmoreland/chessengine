@@ -44,7 +44,8 @@ func TestSetBit(t *testing.T) {
 }
 
 func TestSetWholeBoard(t *testing.T) {
-	var board uint64 = 0
+	var board uint64
+
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
 			square := rank*8 + file

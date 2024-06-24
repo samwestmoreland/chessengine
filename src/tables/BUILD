@@ -4,3 +4,12 @@ go_library(
     deps = ["//src/bitboard"],
     visibility = ["//cmd:all"],
 )
+
+go_test(
+    name = "tables_test",
+    srcs = ["tables_internal_test.go"],
+    deps = [
+        ":tables",
+        "//src/bitboard",
+    ],
+)

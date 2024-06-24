@@ -12,6 +12,6 @@ go_library(
 
 go_test(
     name = "bitboard_test",
-    srcs = ["bitboard_test.go"],
+    srcs = ["bitboard_internal_test.go"],
     deps = [":bitboard"],
 )

@@ -4,7 +4,5 @@ go_binary(
     deps = [
         "//src/engine",
         "//src/position",
-        "//src/tables",
-        "//src/bitboard",
     ],
 )
