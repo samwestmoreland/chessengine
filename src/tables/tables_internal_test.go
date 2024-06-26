@@ -4,41 +4,43 @@ import (
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/src/bitboard"
+	wb "github.com/samwestmoreland/chessengine/src/colours"
+	sq "github.com/samwestmoreland/chessengine/src/squares"
 )
 
 func TestIsAFile(t *testing.T) {
-	if isAFile(bitboard.E2) {
+	if isAFile(sq.E2) {
 		t.Error("Expected false, got true")
 	}
 
-	if !isAFile(bitboard.A3) {
+	if !isAFile(sq.A3) {
 		t.Error("Expected true, got false")
 	}
 }
 
 func TestIsHFile(t *testing.T) {
-	if isHFile(bitboard.E2) {
+	if isHFile(sq.E2) {
 		t.Error("Expected false, got true")
 	}
 
-	if isHFile(bitboard.A3) {
+	if isHFile(sq.A3) {
 		t.Error("Expected false, got true")
 	}
 
-	if !isHFile(bitboard.H8) {
+	if !isHFile(sq.H8) {
 		t.Error("Expected true, got false")
 	}
 }
 
 func TestComputePawnAttacksWhiteCentral(t *testing.T) {
-	attackedSquares := computePawnAttacks(bitboard.E2, 0)
+	attackedSquares := computePawnAttacks(sq.E2, wb.White)
 
-	if !bitboard.GetBit(attackedSquares, bitboard.D3) {
+	if !bitboard.GetBit(attackedSquares, sq.D3) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}
 
-	if !bitboard.GetBit(attackedSquares, bitboard.F3) {
+	if !bitboard.GetBit(attackedSquares, sq.F3) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}
@@ -50,14 +52,14 @@ func TestComputePawnAttacksWhiteCentral(t *testing.T) {
 }
 
 func TestComputePawnAttacksBlackCentral(t *testing.T) {
-	attackedSquares := computePawnAttacks(bitboard.C7, 1)
+	attackedSquares := computePawnAttacks(sq.C7, wb.Black)
 
-	if !bitboard.GetBit(attackedSquares, bitboard.B6) {
+	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}
 
-	if !bitboard.GetBit(attackedSquares, bitboard.D6) {
+	if !bitboard.GetBit(attackedSquares, sq.D6) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}
@@ -69,9 +71,9 @@ func TestComputePawnAttacksBlackCentral(t *testing.T) {
 }
 
 func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
-	attackedSquares := computePawnAttacks(bitboard.A2, 0)
+	attackedSquares := computePawnAttacks(sq.A2, wb.White)
 
-	if !bitboard.GetBit(attackedSquares, bitboard.B3) {
+	if !bitboard.GetBit(attackedSquares, sq.B3) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}
@@ -84,9 +86,9 @@ func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
 	// reset
 	attackedSquares = 0
 
-	attackedSquares = computePawnAttacks(bitboard.H7, 0)
+	attackedSquares = computePawnAttacks(sq.H7, wb.White)
 
-	if !bitboard.GetBit(attackedSquares, bitboard.G8) {
+	if !bitboard.GetBit(attackedSquares, sq.G8) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}
@@ -98,9 +100,9 @@ func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
 }
 
 func TestComputePawnAttacksBlackFlanks(t *testing.T) {
-	attackedSquares := computePawnAttacks(bitboard.A7, 1)
+	attackedSquares := computePawnAttacks(sq.A7, wb.Black)
 
-	if !bitboard.GetBit(attackedSquares, bitboard.B6) {
+	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}
@@ -113,9 +115,9 @@ func TestComputePawnAttacksBlackFlanks(t *testing.T) {
 	// reset
 	attackedSquares = 0
 
-	attackedSquares = computePawnAttacks(bitboard.H2, 1)
+	attackedSquares = computePawnAttacks(sq.H2, wb.Black)
 
-	if !bitboard.GetBit(attackedSquares, bitboard.G1) {
+	if !bitboard.GetBit(attackedSquares, sq.G1) {
 		bitboard.PrintBoard(attackedSquares)
 		t.Error("Expected false, got true")
 	}

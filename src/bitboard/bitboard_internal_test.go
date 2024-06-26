@@ -2,42 +2,44 @@ package bitboard
 
 import (
 	"testing"
+
+	sq "github.com/samwestmoreland/chessengine/src/squares"
 )
 
 func TestGetBit(t *testing.T) {
 	var board uint64 = 8 // 1000
 
-	if GetBit(board, A8) {
+	if GetBit(board, sq.A8) {
 		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}
 
-	if !GetBit(board, D8) {
+	if !GetBit(board, sq.D8) {
 		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 }
 
 func TestSetBit(t *testing.T) {
-	board := SetBit(0, E2)
-	board = SetBit(board, E8)
+	board := SetBit(0, sq.E2)
+	board = SetBit(board, sq.E8)
 
 	if GetBit(board, 0) {
 		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}
 
-	if !GetBit(board, E2) {
+	if !GetBit(board, sq.E2) {
 		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 
-	if !GetBit(board, E8) {
+	if !GetBit(board, sq.E8) {
 		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 
-	if GetBit(board, F5) {
+	if GetBit(board, sq.F5) {
 		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}
@@ -60,17 +62,17 @@ func TestSetWholeBoard(t *testing.T) {
 }
 
 func TestClearBit(t *testing.T) {
-	board := SetBit(0, E2)
-	board = SetBit(board, E8)
+	board := SetBit(0, sq.E2)
+	board = SetBit(board, sq.E8)
 
-	if !GetBit(board, E2) {
+	if !GetBit(board, sq.E2) {
 		PrintBoard(board)
 		t.Error("Expected true, got false")
 	}
 
-	board = ClearBit(board, E2)
+	board = ClearBit(board, sq.E2)
 
-	if GetBit(board, E2) {
+	if GetBit(board, sq.E2) {
 		PrintBoard(board)
 		t.Error("Expected false, got true")
 	}

@@ -1,4 +1,4 @@
-package bitboard
+package squares
 
 const (
 	A8 = iota

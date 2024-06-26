@@ -1,7 +1,10 @@
 // package tables
 package tables
 
-import "github.com/samwestmoreland/chessengine/src/bitboard"
+import (
+	"github.com/samwestmoreland/chessengine/src/bitboard"
+	wb "github.com/samwestmoreland/chessengine/src/colours"
+)
 
 // notAFile is const represeting the board:
 //
@@ -51,8 +54,7 @@ func computePawnAttacks(square, side int) uint64 {
 	board := bitboard.SetBit(0, square)
 	// bitboard.PrintBoard(board)
 
-	// side == 0 is white
-	if side == 0 {
+	if side == wb.White {
 		if isAFile(square) {
 			attacks = board | (board >> 7)
 		} else if isHFile(square) {
