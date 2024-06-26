@@ -17,6 +17,7 @@ linters:
     - gomnd
     - depguard
     - gochecknoglobals
+    - forbidigo
 
 linters-settings:
   ireturn:
