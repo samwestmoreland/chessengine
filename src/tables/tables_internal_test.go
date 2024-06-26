@@ -33,7 +33,7 @@ func TestIsHFile(t *testing.T) {
 }
 
 func TestComputePawnAttacksWhiteCentral(t *testing.T) {
-	attackedSquares := computePawnAttacks(sq.E2, wb.White)
+	attackedSquares := computePawnAttacks(wb.White, sq.E2)
 
 	if !bitboard.GetBit(attackedSquares, sq.D3) {
 		bitboard.PrintBoard(attackedSquares)
@@ -52,7 +52,7 @@ func TestComputePawnAttacksWhiteCentral(t *testing.T) {
 }
 
 func TestComputePawnAttacksBlackCentral(t *testing.T) {
-	attackedSquares := computePawnAttacks(sq.C7, wb.Black)
+	attackedSquares := computePawnAttacks(wb.Black, sq.C7)
 
 	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
@@ -71,7 +71,7 @@ func TestComputePawnAttacksBlackCentral(t *testing.T) {
 }
 
 func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
-	attackedSquares := computePawnAttacks(sq.A2, wb.White)
+	attackedSquares := computePawnAttacks(wb.White, sq.A2)
 
 	if !bitboard.GetBit(attackedSquares, sq.B3) {
 		bitboard.PrintBoard(attackedSquares)
@@ -83,10 +83,7 @@ func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
 		t.Error("Expected 2199023255552, got ", attackedSquares)
 	}
 
-	// reset
-	attackedSquares = 0
-
-	attackedSquares = computePawnAttacks(sq.H7, wb.White)
+	attackedSquares = computePawnAttacks(wb.White, sq.H7)
 
 	if !bitboard.GetBit(attackedSquares, sq.G8) {
 		bitboard.PrintBoard(attackedSquares)
@@ -100,7 +97,7 @@ func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
 }
 
 func TestComputePawnAttacksBlackFlanks(t *testing.T) {
-	attackedSquares := computePawnAttacks(sq.A7, wb.Black)
+	attackedSquares := computePawnAttacks(wb.Black, sq.A7)
 
 	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
@@ -112,10 +109,7 @@ func TestComputePawnAttacksBlackFlanks(t *testing.T) {
 		t.Error("Expected 131072, got ", attackedSquares)
 	}
 
-	// reset
-	attackedSquares = 0
-
-	attackedSquares = computePawnAttacks(sq.H2, wb.Black)
+	attackedSquares = computePawnAttacks(wb.Black, sq.H2)
 
 	if !bitboard.GetBit(attackedSquares, sq.G1) {
 		bitboard.PrintBoard(attackedSquares)

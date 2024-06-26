@@ -16,10 +16,10 @@ type command struct {
 }
 
 func main() {
-	run_engine()
+	runEngine()
 }
 
-func run_engine() {
+func runEngine() {
 	eng := engine.NewEngine()
 
 	writer := bufio.NewWriter(os.Stdout)
