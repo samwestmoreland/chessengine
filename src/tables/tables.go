@@ -54,9 +54,9 @@ func computePawnAttacks(square, side int) uint64 {
 	// side == 0 is white
 	if side == 0 {
 		if isAFile(square) {
-			attacks = board | (board >> 9)
-		} else if isHFile(square) {
 			attacks = board | (board >> 7)
+		} else if isHFile(square) {
+			attacks = board | (board >> 9)
 		} else {
 			attacks = board | (board >> 7) | (board >> 9)
 		}
