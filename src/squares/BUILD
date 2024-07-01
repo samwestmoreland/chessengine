@@ -6,3 +6,10 @@ go_library(
         "//src/tables:all",
     ],
 )
+
+go_test(
+    name = "squares_test",
+    external = True,
+    srcs = ["squares_test.go"],
+    deps = [":squares"],
+)

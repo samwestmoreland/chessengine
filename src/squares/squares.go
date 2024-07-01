@@ -1,5 +1,10 @@
 package squares
 
+import (
+	"strconv"
+	"strings"
+)
+
 const (
 	A8 = iota
 	B8
@@ -73,3 +78,15 @@ const (
 	G1
 	H1
 )
+
+func Stringify(square int) string {
+	var ret strings.Builder
+	rank := 8 - square/8
+
+	file := square%8 + 1
+
+	ret.WriteString(string('a' + file - 1))
+	ret.WriteString(strconv.Itoa(rank))
+
+	return ret.String()
+}

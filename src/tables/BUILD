@@ -1,6 +1,10 @@
 go_library(
     name = "tables",
-    srcs = ["tables.go"],
+    srcs = [
+        "constants.go",
+        "knight_tables.go",
+        "pawn_tables.go",
+    ],
     deps = [
         "//src/bitboard",
         "//src/colours",
@@ -10,7 +14,10 @@ go_library(
 
 go_test(
     name = "tables_test",
-    srcs = ["tables_internal_test.go"],
+    srcs = [
+        "pawn_tables_internal_test.go",
+        "knight_tables_internal_test.go",
+    ],
     deps = [
         ":tables",
         "//src/squares",
