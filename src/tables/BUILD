@@ -4,6 +4,7 @@ go_library(
         "constants.go",
         "knight_tables.go",
         "pawn_tables.go",
+        "king_tables.go",
     ],
     deps = [
         "//src/bitboard",
@@ -17,6 +18,7 @@ go_test(
     srcs = [
         "pawn_tables_internal_test.go",
         "knight_tables_internal_test.go",
+        "king_tables_internal_test.go",
     ],
     deps = [
         ":tables",
