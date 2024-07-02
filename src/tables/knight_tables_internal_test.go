@@ -25,7 +25,7 @@ func TestComputeKnightAttacks(t *testing.T) {
 		actual := computeKnightAttacks(square)
 		if actual != uint64(expected) {
 			bitboard.PrintBoard(actual)
-			t.Errorf("While computing knight attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
+			t.Errorf("Computing knight attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
 }

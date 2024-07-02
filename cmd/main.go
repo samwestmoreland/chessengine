@@ -8,7 +8,6 @@ import (
 
 	"github.com/samwestmoreland/chessengine/src/engine"
 	"github.com/samwestmoreland/chessengine/src/position"
-	"github.com/samwestmoreland/chessengine/src/tables"
 )
 
 type command struct {
