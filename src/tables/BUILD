@@ -6,6 +6,7 @@ go_library(
         "pawn_tables.go",
         "king_tables.go",
         "bishop_tables.go",
+        "rook_tables.go",
     ],
     deps = [
         "//src/bitboard",
@@ -21,6 +22,7 @@ go_test(
         "knight_tables_internal_test.go",
         "king_tables_internal_test.go",
         "bishop_tables_internal_test.go",
+        "rook_tables_internal_test.go",
     ],
     deps = [
         ":tables",
