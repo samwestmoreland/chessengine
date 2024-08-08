@@ -23,7 +23,7 @@ var bishopTestCases = map[int]uint64{
 func TestComputeBishopAttacks(t *testing.T) {
 	for square, expected := range bishopTestCases {
 		actual := computeBishopAttacks(square)
-		if actual != uint64(expected) {
+		if actual != expected {
 			bitboard.PrintBoard(actual)
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}

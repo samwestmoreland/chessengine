@@ -23,7 +23,7 @@ var rookTestCases = map[int]uint64{
 func TestComputeRookAttacks(t *testing.T) {
 	for square, expected := range rookTestCases {
 		actual := computeRookAttacks(square)
-		if actual != uint64(expected) {
+		if actual != expected {
 			bitboard.PrintBoard(actual)
 			t.Errorf("Computing rook attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}

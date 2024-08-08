@@ -81,6 +81,7 @@ const (
 
 func Stringify(square int) string {
 	var ret strings.Builder
+
 	rank := 8 - square/8
 
 	file := square%8 + 1

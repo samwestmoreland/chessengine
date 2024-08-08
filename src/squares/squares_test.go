@@ -7,7 +7,6 @@ import (
 )
 
 func TestStringify(t *testing.T) {
-
 	testCases := map[int]string{
 		0:  "a8",
 		1:  "b8",

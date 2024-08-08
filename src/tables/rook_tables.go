@@ -15,28 +15,28 @@ func PopulateRookAttackTables() {
 func computeRookAttacks(square int) uint64 {
 	var attackBoard uint64
 
-	start_rank := square / 8
-	start_file := square % 8
+	startRank := square / 8
+	startFile := square % 8
 
 	// Vertical
-	if start_file != 0 && start_file != 7 {
+	if startFile != 0 && startFile != 7 {
 		for rank := 1; rank < 7; rank++ {
-			if rank == start_rank {
+			if rank == startRank {
 				continue
 			}
 
-			attackBoard = bitboard.SetBit(attackBoard, rank*8+start_file)
+			attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
 		}
 	}
 
 	// Horizontal
-	if start_rank != 0 && start_rank != 7 {
+	if startRank != 0 && startRank != 7 {
 		for file := 1; file < 7; file++ {
-			if file == start_file {
+			if file == startFile {
 				continue
 			}
 
-			attackBoard = bitboard.SetBit(attackBoard, start_rank*8+file)
+			attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
 		}
 	}
 

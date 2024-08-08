@@ -23,7 +23,7 @@ var testCases = map[int]uint64{
 func TestComputeKingAttacks(t *testing.T) {
 	for square, expected := range testCases {
 		actual := computeKingAttacks(square)
-		if actual != uint64(expected) {
+		if actual != expected {
 			bitboard.PrintBoard(actual)
 			t.Errorf("Computing king attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
@@ -35,7 +35,7 @@ func TestPopulateKingAttackTables(t *testing.T) {
 
 	for square, expected := range testCases {
 		actual := kingAttacks[square]
-		if actual != uint64(expected) {
+		if actual != expected {
 			bitboard.PrintBoard(actual)
 			t.Errorf("Checking king attack table for square %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
