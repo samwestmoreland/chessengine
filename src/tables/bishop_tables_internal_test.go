@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/src/bitboard"
@@ -28,4 +29,20 @@ func TestMaskBishopAttacks(t *testing.T) {
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
+}
+
+func TestBishopAttacksOnTheFly(t *testing.T) {
+	var blockers uint64
+	blockers = bitboard.SetBit(blockers, sq.B6)
+	blockers = bitboard.SetBit(blockers, sq.G7)
+	blockers = bitboard.SetBit(blockers, sq.E3)
+	blockers = bitboard.SetBit(blockers, sq.B2)
+
+	fmt.Println("Blockers:")
+	bitboard.PrintBoard(blockers)
+
+	fmt.Println("Bishop attacks on the fly:")
+	bitboard.PrintBoard(bishopAttacksOnTheFly(sq.D4, blockers))
+
+	t.Errorf("Artificial failure")
 }
