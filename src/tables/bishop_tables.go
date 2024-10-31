@@ -8,11 +8,11 @@ var bishopAttacks [64]uint64
 
 func PopulateBishopAttackTables() {
 	for square := 0; square < 64; square++ {
-		bishopAttacks[square] = computeBishopAttacks(square)
+		bishopAttacks[square] = maskBishopAttacks(square)
 	}
 }
 
-func computeBishopAttacks(square int) uint64 {
+func maskBishopAttacks(square int) uint64 {
 	var attackBoard uint64
 
 	startRank := square / 8

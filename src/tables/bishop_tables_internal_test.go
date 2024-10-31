@@ -20,9 +20,9 @@ var bishopTestCases = map[int]uint64{
 	sq.H2: 70506452091904,    // another corner
 }
 
-func TestComputeBishopAttacks(t *testing.T) {
+func TestMaskBishopAttacks(t *testing.T) {
 	for square, expected := range bishopTestCases {
-		actual := computeBishopAttacks(square)
+		actual := maskBishopAttacks(square)
 		if actual != expected {
 			bitboard.PrintBoard(actual)
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
