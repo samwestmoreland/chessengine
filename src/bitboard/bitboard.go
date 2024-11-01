@@ -17,6 +17,42 @@ func ClearBit(board uint64, square int) uint64 {
 	return board &^ (1 << square)
 }
 
+func CountBits(board uint64) int {
+	count := 0
+	for board != 0 {
+		count++
+		board &= board - 1
+	}
+
+	return count
+}
+
+func LSBIndex(board uint64) int {
+	if board == 0 {
+		return -1
+	}
+
+	return CountBits(board&-board - 1)
+}
+
+func SetOccupancy(index int, attackMask uint64) uint64 {
+	var ret uint64
+
+	bitsInMask := CountBits(attackMask)
+
+	for i := 0; i < bitsInMask; i++ {
+		sq := LSBIndex(attackMask)
+
+		attackMask = ClearBit(attackMask, sq)
+
+		if index&(1<<i) != 0 {
+			ret |= (1 << sq)
+		}
+	}
+
+	return ret
+}
+
 // print prints a bitboard to the console.
 func PrintBoard(bitboard uint64) {
 	fmt.Printf("\n")

@@ -77,3 +77,39 @@ func TestClearBit(t *testing.T) {
 		t.Error("Expected false, got true")
 	}
 }
+
+func TestCountBits(t *testing.T) {
+	board := SetBit(0, sq.E2)
+	board = SetBit(board, sq.E8)
+	board = SetBit(board, sq.F5)
+
+	if CountBits(board) != 3 {
+		PrintBoard(board)
+		t.Error("Expected 3, got ", CountBits(board))
+	}
+}
+
+func TestLSBIndex(t *testing.T) {
+	board := SetBit(0, sq.E2)
+	board = SetBit(board, sq.E8)
+	board = SetBit(board, sq.F5)
+
+	index := LSBIndex(board)
+	if index != 4 {
+		PrintBoard(board)
+		t.Error("Expected 4, got ", index)
+	}
+
+	asSquare := sq.Stringify(index)
+
+	if asSquare != "e8" {
+		PrintBoard(board)
+		t.Error("Expected e8, got ", asSquare)
+	}
+}
+
+func TestLSBIndexOfZero(t *testing.T) {
+	if LSBIndex(0) != -1 {
+		t.Error("Expected -1, got ", LSBIndex(0))
+	}
+}
