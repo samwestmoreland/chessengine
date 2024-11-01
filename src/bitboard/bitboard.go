@@ -53,7 +53,7 @@ func SetOccupancy(index int, attackMask uint64) uint64 {
 	return ret
 }
 
-// print prints a bitboard to the console.
+// PrintBoard prints a bitboard to the console.
 func PrintBoard(bitboard uint64) {
 	fmt.Printf("\n")
 
