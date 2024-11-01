@@ -8,35 +8,78 @@ var rookAttacks [64]uint64
 
 func PopulateRookAttackTables() {
 	for square := 0; square < 64; square++ {
-		rookAttacks[square] = computeRookAttacks(square)
+		rookAttacks[square] = maskRookAttacks(square)
 	}
 }
 
-func computeRookAttacks(square int) uint64 {
+func maskRookAttacks(square int) uint64 {
 	var attackBoard uint64
 
 	startRank := square / 8
 	startFile := square % 8
 
-	// Vertical
-	if startFile != 0 && startFile != 7 {
-		for rank := 1; rank < 7; rank++ {
-			if rank == startRank {
-				continue
-			}
+	if startFile > 0 && startFile < 7 {
+		// North
+		for rank := startRank - 1; rank > 0; rank-- {
+			attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
+		}
 
+		// South
+		for rank := startRank + 1; rank < 7; rank++ {
 			attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
 		}
 	}
 
-	// Horizontal
-	if startRank != 0 && startRank != 7 {
-		for file := 1; file < 7; file++ {
-			if file == startFile {
-				continue
-			}
-
+	if startRank > 0 && startRank < 7 {
+		// East
+		for file := startFile + 1; file < 7; file++ {
 			attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
+		}
+
+		// West
+		for file := startFile - 1; file > 0; file-- {
+			attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
+		}
+	}
+
+	return attackBoard
+}
+
+func rookAttacksOnTheFly(square int, blockeres uint64) uint64 {
+	var attackBoard uint64
+
+	startRank := square / 8
+	startFile := square % 8
+
+	// North
+	for rank := startRank - 1; rank >= 0; rank-- {
+		attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
+		if uint64(1)<<(rank*8+startFile)&blockeres != 0 {
+			break
+		}
+	}
+
+	// South
+	for rank := startRank + 1; rank <= 7; rank++ {
+		attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
+		if uint64(1)<<(rank*8+startFile)&blockeres != 0 {
+			break
+		}
+	}
+
+	// East
+	for file := startFile + 1; file <= 7; file++ {
+		attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
+		if uint64(1)<<(startRank*8+file)&blockeres != 0 {
+			break
+		}
+	}
+
+	// West
+	for file := startFile - 1; file >= 0; file-- {
+		attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
+		if uint64(1)<<(startRank*8+file)&blockeres != 0 {
+			break
 		}
 	}
 

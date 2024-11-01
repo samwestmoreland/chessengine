@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/src/bitboard"
@@ -20,12 +21,34 @@ var rookTestCases = map[int]uint64{
 	sq.H2: 35465847065542656, // another corner
 }
 
-func TestComputeRookAttacks(t *testing.T) {
+func TestMaskRookAttacks(t *testing.T) {
 	for square, expected := range rookTestCases {
-		actual := computeRookAttacks(square)
+		actual := maskRookAttacks(square)
 		if actual != expected {
+			fmt.Println("Square", sq.Stringify(square))
+			fmt.Println("Got")
 			bitboard.PrintBoard(actual)
+			fmt.Println("Expected")
+			bitboard.PrintBoard(expected)
+			fmt.Println("")
 			t.Errorf("Computing rook attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
+}
+
+func TestRookAttacksOnTheFly(t *testing.T) {
+	var blockers uint64
+	blockers = bitboard.SetBit(blockers, sq.D7)
+	blockers = bitboard.SetBit(blockers, sq.D3)
+	blockers = bitboard.SetBit(blockers, sq.F4)
+	blockers = bitboard.SetBit(blockers, sq.B4)
+	blockers = bitboard.SetBit(blockers, sq.A4)
+
+	fmt.Println("Blockers:")
+	bitboard.PrintBoard(blockers)
+
+	fmt.Println("Rook attacks on the fly:")
+	bitboard.PrintBoard(rookAttacksOnTheFly(sq.D4, blockers))
+
+	t.Errorf("Artificial failure")
 }
