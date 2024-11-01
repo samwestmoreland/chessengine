@@ -18,28 +18,24 @@ func maskRookAttacks(square int) uint64 {
 	startRank := square / 8
 	startFile := square % 8
 
-	if startFile > 0 && startFile < 7 {
-		// North
-		for rank := startRank - 1; rank > 0; rank-- {
-			attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
-		}
-
-		// South
-		for rank := startRank + 1; rank < 7; rank++ {
-			attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
-		}
+	// North
+	for rank := startRank - 1; rank > 0; rank-- {
+		attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
 	}
 
-	if startRank > 0 && startRank < 7 {
-		// East
-		for file := startFile + 1; file < 7; file++ {
-			attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
-		}
+	// South
+	for rank := startRank + 1; rank < 7; rank++ {
+		attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
+	}
 
-		// West
-		for file := startFile - 1; file > 0; file-- {
-			attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
-		}
+	// East
+	for file := startFile + 1; file < 7; file++ {
+		attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
+	}
+
+	// West
+	for file := startFile - 1; file > 0; file-- {
+		attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
 	}
 
 	return attackBoard
