@@ -1,6 +1,8 @@
 package bitboard
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func GetBit(board uint64, square int) bool {
 	occ := (board >> square) & 1
@@ -35,6 +37,24 @@ func LSBIndex(board uint64) int {
 	return CountBits(board&-board - 1)
 }
 
+// SetOccupancy either sets each bit on the attack mask to 1 or 0.
+//
+// E.g. consider index 9, and an attack mask for a rook on d4:
+// 9    = 0 0000 1001
+//
+// There are 10 set bits in the mask, so we represent the index with 10 bits.
+// We go to the least significant bit, which in this case is d7:
+//
+// index&(1<<0) = 0 0000 0001
+// 9            = 0 0000 1001
+// -> set bit on d7
+//
+// then in the next iteration, we go to d6:
+// index&(1<<1) = 0 0000 0010
+// 9            = 0 0000 1001
+// -> don't set bit on d6
+//
+// and so on...
 func SetOccupancy(index int, attackMask uint64) uint64 {
 	var ret uint64
 
@@ -45,6 +65,7 @@ func SetOccupancy(index int, attackMask uint64) uint64 {
 
 		attackMask = ClearBit(attackMask, sq)
 
+		// Set the bit on the occupancy board
 		if index&(1<<i) != 0 {
 			ret |= (1 << sq)
 		}
