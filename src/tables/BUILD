@@ -12,7 +12,10 @@ go_library(
         "//src/bitboard",
         "//src/colours",
     ],
-    visibility = ["//cmd:all"],
+    visibility = [
+        "//cmd:all",
+        "//cmd/magics:all",
+    ],
 )
 
 go_test(

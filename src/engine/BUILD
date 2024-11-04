@@ -4,6 +4,7 @@ go_library(
     visibility = [
         "//src:all",
         "//cmd:all",
+        "//cmd/uci:all",
     ],
     deps = [
         "//src/eval",

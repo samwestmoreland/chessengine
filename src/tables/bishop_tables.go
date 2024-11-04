@@ -8,11 +8,11 @@ var bishopAttacks [64]uint64
 
 func PopulateBishopAttackTables() {
 	for square := 0; square < 64; square++ {
-		bishopAttacks[square] = maskBishopAttacks(square)
+		bishopAttacks[square] = MaskBishopAttacks(square)
 	}
 }
 
-func maskBishopAttacks(square int) uint64 {
+func MaskBishopAttacks(square int) uint64 {
 	var attackBoard uint64
 
 	startRank := square / 8
@@ -41,7 +41,7 @@ func maskBishopAttacks(square int) uint64 {
 	return attackBoard
 }
 
-func bishopAttacksOnTheFly(square int, blockers uint64) uint64 {
+func BishopAttacksOnTheFly(square int, blockers uint64) uint64 {
 	var attackBoard uint64
 
 	startRank := square / 8

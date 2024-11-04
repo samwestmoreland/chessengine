@@ -8,11 +8,11 @@ var rookAttacks [64]uint64
 
 func PopulateRookAttackTables() {
 	for square := 0; square < 64; square++ {
-		rookAttacks[square] = maskRookAttacks(square)
+		rookAttacks[square] = MaskRookAttacks(square)
 	}
 }
 
-func maskRookAttacks(square int) uint64 {
+func MaskRookAttacks(square int) uint64 {
 	var attackBoard uint64
 
 	startRank := square / 8
@@ -41,7 +41,9 @@ func maskRookAttacks(square int) uint64 {
 	return attackBoard
 }
 
-func rookAttacksOnTheFly(square int, blockeres uint64) uint64 {
+// RookAttacksOnTheFly manually computes the possible squares a rook can attack
+// depending on its position and a given blocker configuration.
+func RookAttacksOnTheFly(square int, blockeres uint64) uint64 {
 	var attackBoard uint64
 
 	startRank := square / 8

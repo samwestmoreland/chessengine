@@ -4,6 +4,7 @@ go_library(
     visibility = [
         "//src/bitboard:all",
         "//src/tables:all",
+        "//cmd/magics:all",
     ],
 )
 

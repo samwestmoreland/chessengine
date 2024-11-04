@@ -1,6 +1,8 @@
 package bitboard
 
 import (
+	"crypto/rand"
+	"encoding/binary"
 	"fmt"
 )
 
@@ -72,6 +74,20 @@ func SetOccupancy(index int, attackMask uint64) uint64 {
 	}
 
 	return ret
+}
+
+func RandomUint64() uint64 {
+	var b [8]byte
+	_, err := rand.Read(b[:])
+	if err != nil {
+		panic(err) // or handle error appropriately
+	}
+
+	return binary.BigEndian.Uint64(b[:])
+}
+
+func GenerateSparseRandomUint64() uint64 {
+	return RandomUint64() & RandomUint64() & RandomUint64()
 }
 
 // PrintBoard prints a bitboard to the console.

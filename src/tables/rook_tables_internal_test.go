@@ -54,12 +54,13 @@ func TestRookAttacksOnTheFly(t *testing.T) {
 }
 
 func TestSetOccupancy(t *testing.T) {
-	rookAttacks := maskRookAttacks(sq.A1)
+	rookAttacks := maskRookAttacks(sq.D4)
 
-	for i := 0; i < 4096; i++ {
-		occupancy := bitboard.SetOccupancy(i, rookAttacks)
-		bitboard.PrintBoard(occupancy)
-	}
+	fmt.Println("Rook attacks:")
+	bitboard.PrintBoard(rookAttacks)
+
+	fmt.Println("Set occupancy:")
+	bitboard.PrintBoard(bitboard.SetOccupancy(9, rookAttacks))
 
 	t.Errorf("Artificial failure")
 }

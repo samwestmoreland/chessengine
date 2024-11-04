@@ -113,3 +113,11 @@ func TestLSBIndexOfZero(t *testing.T) {
 		t.Error("Expected -1, got ", LSBIndex(0))
 	}
 }
+
+func TestRandomUint64(t *testing.T) {
+	for i := 0; i < 4; i++ {
+		PrintBoard(GenerateSparseRandomUint64())
+	}
+
+	t.Errorf("Artificial failure")
+}
