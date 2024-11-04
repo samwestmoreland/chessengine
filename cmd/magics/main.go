@@ -48,16 +48,25 @@ type MagicEntry struct {
 }
 
 type MagicData struct {
-	Rook struct {
-		Magics []MagicEntry `json:"magics"`
-	} `json:"rook"`
-	Bishop struct {
-		Magics []MagicEntry `json:"magics"`
-	} `json:"bishop"`
-	Metadata struct {
-		Generated string `json:"generated"`
-		Version   string `json:"version"`
-	} `json:"metadata"`
+	Rook     RookData   `json:"rook"`
+	Bishop   BishopData `json:"bishop"`
+	Metadata Metadata   `json:"metadata"`
+}
+
+type RookData struct {
+	Magics         []MagicEntry `json:"magics"`
+	TotalTableSize string       `json:"total_table_size"`
+}
+
+type BishopData struct {
+	Magics         []MagicEntry `json:"magics"`
+	TotalTableSize string       `json:"total_table_size"`
+}
+
+type Metadata struct {
+	TotalTableSize string `json:"total_table_size"`
+	Generated      string `json:"generated"`
+	Version        string `json:"version"`
 }
 
 const (
@@ -68,28 +77,24 @@ const (
 var versionString = strings.TrimSpace(magic_data.VersionString)
 
 func main() {
-	rookMagics := generateMagics(rook)
-	bishopMagics := generateMagics(bishop)
+	rookMagics, rookTableSize := generateMagics(rook)
+	bishopMagics, bishopTableSize := generateMagics(bishop)
 
 	today := time.Now().Format("2006-01-02 15:04:05")
 
-	magicData := &MagicData{
-		Rook: struct {
-			Magics []MagicEntry `json:"magics"`
-		}{
-			Magics: rookMagics,
+	magicData := MagicData{
+		Rook: RookData{
+			Magics:         rookMagics,
+			TotalTableSize: formatTableSize(rookTableSize),
 		},
-		Bishop: struct {
-			Magics []MagicEntry `json:"magics"`
-		}{
-			Magics: bishopMagics,
+		Bishop: BishopData{
+			Magics:         bishopMagics,
+			TotalTableSize: formatTableSize(bishopTableSize),
 		},
-		Metadata: struct {
-			Generated string `json:"generated"`
-			Version   string `json:"version"`
-		}{
-			Generated: today,
-			Version:   versionString,
+		Metadata: Metadata{
+			TotalTableSize: formatTableSize(rookTableSize + bishopTableSize),
+			Generated:      today,
+			Version:        versionString,
 		},
 	}
 
@@ -103,10 +108,12 @@ func main() {
 	}
 }
 
-func generateMagics(piece int) []MagicEntry {
+func generateMagics(piece int) ([]MagicEntry, int) {
 	if !(piece == rook || piece == bishop) {
 		log.Fatal("piece must be rook or bishop")
 	}
+
+	var totalTableSize int
 
 	magics := []MagicEntry{}
 
@@ -140,6 +147,12 @@ func generateMagics(piece int) []MagicEntry {
 			}
 		}
 
+		if bestMagic == 0 {
+			log.Printf("Failed to find a magic for square %d", square)
+		}
+
+		totalTableSize += bestTableSize
+
 		entry := MagicEntry{
 			Square: sq.Stringify(square),
 			Magic:  fmt.Sprintf("%016x", bestMagic),
@@ -158,7 +171,7 @@ func generateMagics(piece int) []MagicEntry {
 		magics = append(magics, entry)
 	}
 
-	return magics
+	return magics, totalTableSize
 }
 
 func testMagicCandidate(magicCandidate uint64, square, shift, piece, relevantBits int) (bool, int) {
@@ -203,4 +216,17 @@ func testMagicCandidate(magicCandidate uint64, square, shift, piece, relevantBit
 	}
 
 	return true, maxIndex + 1
+}
+
+func formatTableSize(numEntries int) string {
+	bytes := numEntries * 8 // 8 bytes per uint64
+
+	switch {
+	case bytes < 1024:
+		return fmt.Sprintf("%d B", bytes)
+	case bytes < 1024*1024:
+		return fmt.Sprintf("%.2f KB", float64(bytes)/1024)
+	default:
+		return fmt.Sprintf("%.2f MB", float64(bytes)/(1024*1024))
+	}
 }
