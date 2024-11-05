@@ -1,15 +1,25 @@
 package tables
 
 import (
+	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 )
 
-var rookAttacks [64]uint64
+// populateRookAttackTables generates a lookup table for rook attacks. Each square on the board has
+// its own hash table, which can be indexed into by hashing the blocker configuration like so:
+//
+// index = (blockerConfig * magicNumber) >> someShift
+//
+// where magicNumber is a magic number that has been pre-calculated and stored in the magic_data
+// directory, and someShift is a bit shift that has also been pre-calculated and is stored alongside
+// the magic number.
+func populateRookAttackTables(magic.RookData) [64][4096]uint64 {
+	var attacks [64][4096]uint64
 
-func PopulateRookAttackTables() {
 	for square := 0; square < 64; square++ {
-		rookAttacks[square] = MaskRookAttacks(square)
 	}
+
+	return attacks
 }
 
 func MaskRookAttacks(square int) uint64 {

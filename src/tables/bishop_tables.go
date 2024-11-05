@@ -1,15 +1,17 @@
 package tables
 
 import (
+	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 )
 
-var bishopAttacks [64]uint64
+func populateBishopAttackTables(magic.BishopData) [64][512]uint64 {
+	var attacks [64][512]uint64
 
-func PopulateBishopAttackTables() {
 	for square := 0; square < 64; square++ {
-		bishopAttacks[square] = MaskBishopAttacks(square)
 	}
+
+	return attacks
 }
 
 func MaskBishopAttacks(square int) uint64 {

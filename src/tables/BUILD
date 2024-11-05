@@ -7,10 +7,12 @@ go_library(
         "king_tables.go",
         "bishop_tables.go",
         "rook_tables.go",
+        "tables.go",
     ],
     deps = [
         "//src/bitboard",
         "//src/colours",
+        "//magic:magic_data",
     ],
     visibility = [
         "//cmd:all",

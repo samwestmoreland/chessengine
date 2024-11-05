@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/samwestmoreland/chessengine/magic_data"
+	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 	sq "github.com/samwestmoreland/chessengine/src/squares"
 	"github.com/samwestmoreland/chessengine/src/tables"
@@ -40,41 +40,12 @@ var (
 	}
 )
 
-type MagicEntry struct {
-	Square string `json:"square"`
-	Magic  string `json:"magic"` // as hex string
-	Shift  int    `json:"shift"`
-	Mask   string `json:"mask"` // as hex string
-}
-
-type MagicData struct {
-	Rook     RookData   `json:"rook"`
-	Bishop   BishopData `json:"bishop"`
-	Metadata Metadata   `json:"metadata"`
-}
-
-type RookData struct {
-	Magics         []MagicEntry `json:"magics"`
-	TotalTableSize string       `json:"total_table_size"`
-}
-
-type BishopData struct {
-	Magics         []MagicEntry `json:"magics"`
-	TotalTableSize string       `json:"total_table_size"`
-}
-
-type Metadata struct {
-	TotalTableSize string `json:"total_table_size"`
-	Generated      string `json:"generated"`
-	Version        string `json:"version"`
-}
-
 const (
 	bishop = iota
 	rook
 )
 
-var versionString = strings.TrimSpace(magic_data.VersionString)
+var versionString = strings.TrimSpace(magic.VersionString)
 
 func main() {
 	rookMagics, rookTableSize := generateMagics(rook)
@@ -82,16 +53,16 @@ func main() {
 
 	today := time.Now().Format("2006-01-02 15:04:05")
 
-	magicData := MagicData{
-		Rook: RookData{
+	magicData := magic.Data{
+		Rook: magic.RookData{
 			Magics:         rookMagics,
 			TotalTableSize: formatTableSize(rookTableSize),
 		},
-		Bishop: BishopData{
+		Bishop: magic.BishopData{
 			Magics:         bishopMagics,
 			TotalTableSize: formatTableSize(bishopTableSize),
 		},
-		Metadata: Metadata{
+		Metadata: magic.Metadata{
 			TotalTableSize: formatTableSize(rookTableSize + bishopTableSize),
 			Generated:      today,
 			Version:        versionString,
@@ -108,14 +79,14 @@ func main() {
 	}
 }
 
-func generateMagics(piece int) ([]MagicEntry, int) {
+func generateMagics(piece int) ([]magic.Entry, int) {
 	if !(piece == rook || piece == bishop) {
 		log.Fatal("piece must be rook or bishop")
 	}
 
 	var totalTableSize int
 
-	magics := []MagicEntry{}
+	magics := []magic.Entry{}
 
 	for square := 0; square < 64; square++ {
 		bestTableSize := math.MaxInt64
@@ -153,7 +124,7 @@ func generateMagics(piece int) ([]MagicEntry, int) {
 
 		totalTableSize += bestTableSize
 
-		entry := MagicEntry{
+		entry := magic.Entry{
 			Square: sq.Stringify(square),
 			Magic:  fmt.Sprintf("%016x", bestMagic),
 			Shift:  bestShift,

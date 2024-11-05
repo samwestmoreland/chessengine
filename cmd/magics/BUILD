@@ -5,6 +5,6 @@ go_binary(
         "//src/bitboard",
         "//src/tables",
         "//src/squares",
-        "//magic_data",
+        "//magic:magic_data",
     ],
 )

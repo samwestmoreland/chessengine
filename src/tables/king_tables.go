@@ -5,12 +5,14 @@ import (
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 )
 
-var kingAttacks [64]uint64
+func populateKingAttackTables() [64]uint64 {
+	var attacks [64]uint64
 
-func PopulateKingAttackTables() {
 	for square := 0; square < 64; square++ {
-		kingAttacks[square] = computeKingAttacks(square)
+		attacks[square] = computeKingAttacks(square)
 	}
+
+	return attacks
 }
 
 func computeKingAttacks(square int) uint64 {

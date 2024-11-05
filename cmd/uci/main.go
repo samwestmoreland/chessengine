@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"log"
 	"os"
 	"strings"
 
@@ -16,7 +17,10 @@ type command struct {
 }
 
 func main() {
-	// tables.ConstGenerator()
+	if err := initialiseLookupTables(); err != nil {
+		log.Fatal(err)
+	}
+
 	runEngine()
 }
 
@@ -27,7 +31,7 @@ func runEngine() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		_, err := writer.WriteString("engine ready\n") // send initial ready message
+		_, err := writer.WriteString("engine ready\n")
 		if err != nil {
 			panic(err)
 		}
@@ -137,4 +141,8 @@ func mustWrite(buf *bytes.Buffer, s string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func initialiseLookupTables() error {
+	return nil
 }

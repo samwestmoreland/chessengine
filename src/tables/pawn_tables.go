@@ -6,17 +6,17 @@ import (
 	wb "github.com/samwestmoreland/chessengine/src/colours"
 )
 
-// pawnAttacks [side][square]
-// You can't ever have a white pawn on the 1st rank, so do we need to be
-// computing those? Revisit later.
-var pawnAttacks [2][64]uint64
+// TODO: You can't ever have a white pawn on the 1st rank, so do we need to compute those?
+func populatePawnAttackTables() [2][64]uint64 {
+	var attacks [2][64]uint64
 
-func PopulatePawnAttackTables() {
 	for side := 0; side < 2; side++ {
 		for square := 0; square < 64; square++ {
-			pawnAttacks[side][square] = computePawnAttacks(side, square)
+			attacks[side][square] = computePawnAttacks(side, square)
 		}
 	}
+
+	return attacks
 }
 
 func computePawnAttacks(side, square int) uint64 {
