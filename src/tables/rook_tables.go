@@ -43,7 +43,7 @@ func MaskRookAttacks(square int) uint64 {
 
 // RookAttacksOnTheFly manually computes the possible squares a rook can attack
 // depending on its position and a given blocker configuration.
-func RookAttacksOnTheFly(square int, blockeres uint64) uint64 {
+func RookAttacksOnTheFly(square int, blockers uint64) uint64 {
 	var attackBoard uint64
 
 	startRank := square / 8
@@ -52,7 +52,7 @@ func RookAttacksOnTheFly(square int, blockeres uint64) uint64 {
 	// North
 	for rank := startRank - 1; rank >= 0; rank-- {
 		attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
-		if uint64(1)<<(rank*8+startFile)&blockeres != 0 {
+		if uint64(1)<<(rank*8+startFile)&blockers != 0 {
 			break
 		}
 	}
@@ -60,7 +60,7 @@ func RookAttacksOnTheFly(square int, blockeres uint64) uint64 {
 	// South
 	for rank := startRank + 1; rank <= 7; rank++ {
 		attackBoard = bitboard.SetBit(attackBoard, rank*8+startFile)
-		if uint64(1)<<(rank*8+startFile)&blockeres != 0 {
+		if uint64(1)<<(rank*8+startFile)&blockers != 0 {
 			break
 		}
 	}
@@ -68,7 +68,7 @@ func RookAttacksOnTheFly(square int, blockeres uint64) uint64 {
 	// East
 	for file := startFile + 1; file <= 7; file++ {
 		attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
-		if uint64(1)<<(startRank*8+file)&blockeres != 0 {
+		if uint64(1)<<(startRank*8+file)&blockers != 0 {
 			break
 		}
 	}
@@ -76,7 +76,7 @@ func RookAttacksOnTheFly(square int, blockeres uint64) uint64 {
 	// West
 	for file := startFile - 1; file >= 0; file-- {
 		attackBoard = bitboard.SetBit(attackBoard, startRank*8+file)
-		if uint64(1)<<(startRank*8+file)&blockeres != 0 {
+		if uint64(1)<<(startRank*8+file)&blockers != 0 {
 			break
 		}
 	}
