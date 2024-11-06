@@ -7,15 +7,16 @@ import (
 	"log"
 	"math"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 	sq "github.com/samwestmoreland/chessengine/src/squares"
 	"github.com/samwestmoreland/chessengine/src/tables"
-	"github.com/schollz/progressbar/v3"
 )
 
 var (
@@ -50,33 +51,16 @@ const (
 var versionString = strings.TrimSpace(magic.VersionString)
 
 func main() {
-	var wg sync.WaitGroup
-	var rookMagics, bishopMagics []magic.Entry
-	var rookTableSize, bishopTableSize int
+	// bar := progressbar.NewOptions(128, progressbar.OptionSetTheme(progressbar.Theme{
+	// 	Saucer:        "=",
+	// 	SaucerHead:    ">",
+	// 	SaucerPadding: " ",
+	// 	BarStart:      "[",
+	// 	BarEnd:        "]",
+	// }))
 
-	bar := progressbar.NewOptions(128, progressbar.OptionSetTheme(progressbar.Theme{
-		Saucer:        "=",
-		SaucerHead:    ">",
-		SaucerPadding: " ",
-		BarStart:      "[",
-		BarEnd:        "]",
-	}))
-
-	wg.Add(2)
-
-	go func() {
-		defer wg.Done()
-
-		rookMagics, rookTableSize = generateMagics(rook, bar)
-	}()
-
-	go func() {
-		defer wg.Done()
-
-		bishopMagics, bishopTableSize = generateMagics(bishop, bar)
-	}()
-
-	wg.Wait()
+	rookMagics, rookTableSize := generateMagics(rook)
+	bishopMagics, bishopTableSize := generateMagics(bishop)
 
 	today := time.Now().Format("2006-01-02 15:04:05")
 
@@ -106,7 +90,7 @@ func main() {
 	}
 }
 
-func generateMagics(piece int, bar *progressbar.ProgressBar) ([]magic.Entry, int) {
+func generateMagics(piece int) ([]magic.Entry, int) {
 	if piece == rook {
 		log.Println("Generating rook magics")
 	} else if piece == bishop {
@@ -115,68 +99,86 @@ func generateMagics(piece int, bar *progressbar.ProgressBar) ([]magic.Entry, int
 		log.Fatal("Piece must be rook or bishop")
 	}
 
-	var totalTableSize int
+	numWorkers := runtime.GOMAXPROCS(0)
+	log.Printf("Using %d workers", numWorkers)
+	squares := make(chan int, 64)
+	var wg sync.WaitGroup
 
-	magics := []magic.Entry{}
+	var totalTableSize atomic.Int64
 
-	for square := 0; square < 64; square++ {
-		bar.Add(1)
-		bestTableSize := math.MaxInt64
-		var bestMagic uint64
-		var bestShift int
+	magics := make([]magic.Entry, 64)
 
-		var relevantBits int
-		if piece == rook {
-			relevantBits = rookRelevantBits[square]
-		} else {
-			relevantBits = bishopRelevantBits[square]
-		}
+	for w := 0; w < numWorkers; w++ {
+		log.Printf("Spawning worker %d", w)
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for square := range squares {
+				bestTableSize := math.MaxInt64
+				var bestMagic uint64
+				var bestShift int
 
-		for shift := 64 - relevantBits; shift < 64-relevantBits+4; shift++ {
-			for attempt := 0; attempt < 1000000; attempt++ {
-				magicCandidate := bitboard.GenerateSparseRandomUint64()
+				var relevantBits int
+				if piece == rook {
+					relevantBits = rookRelevantBits[square]
+				} else {
+					relevantBits = bishopRelevantBits[square]
+				}
 
-				if works, tableSize := testMagicCandidate(magicCandidate, square, shift, piece, relevantBits); works {
-					if tableSize < bestTableSize {
-						bestTableSize = tableSize
-						bestMagic = magicCandidate
-						bestShift = shift
+				for shift := 64 - relevantBits; shift < 64-relevantBits+4; shift++ {
+					for attempt := 0; attempt < 1000000; attempt++ {
+						magicCandidate := bitboard.GenerateSparseRandomUint64()
+
+						if works, tableSize := testMagicCandidate(magicCandidate, square, shift, piece, relevantBits); works {
+							if tableSize < bestTableSize {
+								bestTableSize = tableSize
+								bestMagic = magicCandidate
+								bestShift = shift
+							}
+						}
+					}
+
+					if bestMagic != 0 {
+						break
 					}
 				}
+
+				if bestMagic == 0 {
+					log.Printf("Failed to find a magic for square %d", square)
+				}
+
+				totalTableSize.Add(int64(bestTableSize))
+
+				entry := magic.Entry{
+					Square: sq.Stringify(square),
+					Magic:  fmt.Sprintf("%016x", bestMagic),
+					Shift:  bestShift,
+				}
+
+				var mask uint64
+				if piece == rook {
+					mask = tables.MaskRookAttacks(square)
+				} else {
+					mask = tables.MaskBishopAttacks(square)
+				}
+
+				entry.Mask = fmt.Sprintf("%016x", mask)
+
+				magics[square] = entry
 			}
-
-			if bestMagic != 0 {
-				break
-			}
-		}
-
-		if bestMagic == 0 {
-			log.Printf("Failed to find a magic for square %d", square)
-		}
-
-		totalTableSize += bestTableSize
-
-		entry := magic.Entry{
-			Square: sq.Stringify(square),
-			Magic:  fmt.Sprintf("%016x", bestMagic),
-			Shift:  bestShift,
-		}
-
-		var mask uint64
-		if piece == rook {
-			mask = tables.MaskRookAttacks(square)
-		} else {
-			mask = tables.MaskBishopAttacks(square)
-		}
-
-		entry.Mask = fmt.Sprintf("%016x", mask)
-
-		magics = append(magics, entry)
+		}()
 	}
 
-	fmt.Println()
+	// Feed squares to workers
+	for square := 0; square < 64; square++ {
+		squares <- square
+	}
+	close(squares)
 
-	return magics, totalTableSize
+	// Wait for all workers to finish
+	wg.Wait()
+
+	return magics, int(totalTableSize.Load())
 }
 
 func testMagicCandidate(magicCandidate uint64, square, shift, piece, relevantBits int) (bool, int) {
