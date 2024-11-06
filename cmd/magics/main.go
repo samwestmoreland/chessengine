@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/schollz/progressbar/v3"
+
 	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 	sq "github.com/samwestmoreland/chessengine/src/squares"
@@ -74,21 +76,34 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := os.WriteFile("magic_data/magics.json", data, 0644); err != nil {
+	if err := os.WriteFile("magic/magics.json", data, 0644); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func generateMagics(piece int) ([]magic.Entry, int) {
-	if !(piece == rook || piece == bishop) {
-		log.Fatal("piece must be rook or bishop")
+	if piece == rook {
+		log.Println("Generating rook magics")
+	} else if piece == bishop {
+		log.Println("Generating bishop magics")
+	} else {
+		log.Fatal("Piece must be rook or bishop")
 	}
 
 	var totalTableSize int
 
 	magics := []magic.Entry{}
 
+	bar := progressbar.NewOptions(64, progressbar.OptionSetTheme(progressbar.Theme{
+		Saucer:        "=",
+		SaucerHead:    ">",
+		SaucerPadding: " ",
+		BarStart:      "[",
+		BarEnd:        "]",
+	}))
+
 	for square := 0; square < 64; square++ {
+		bar.Add(1)
 		bestTableSize := math.MaxInt64
 		var bestMagic uint64
 		var bestShift int
@@ -141,6 +156,8 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 
 		magics = append(magics, entry)
 	}
+
+	fmt.Println()
 
 	return magics, totalTableSize
 }
