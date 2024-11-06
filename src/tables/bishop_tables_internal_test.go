@@ -23,7 +23,7 @@ var bishopTestCases = map[int]uint64{
 
 func TestMaskBishopAttacks(t *testing.T) {
 	for square, expected := range bishopTestCases {
-		actual := maskBishopAttacks(square)
+		actual := MaskBishopAttacks(square)
 		if actual != expected {
 			bitboard.PrintBoard(actual)
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
@@ -38,11 +38,14 @@ func TestBishopAttacksOnTheFly(t *testing.T) {
 	blockers = bitboard.SetBit(blockers, sq.E3)
 	blockers = bitboard.SetBit(blockers, sq.B2)
 
-	fmt.Println("Blockers:")
-	bitboard.PrintBoard(blockers)
+	bishopAttacks := BishopAttacksOnTheFly(sq.D4, blockers)
 
-	fmt.Println("Bishop attacks on the fly:")
-	bitboard.PrintBoard(bishopAttacksOnTheFly(sq.D4, blockers))
+	if bishopAttacks != 584940523765760 {
+		fmt.Println("Blockers:")
+		bitboard.PrintBoard(blockers)
 
-	t.Errorf("Artificial failure")
+		fmt.Println("Bishop attacks on the fly:")
+		bitboard.PrintBoard(bishopAttacks)
+		t.Error("Expected 584940523765760, got ", bishopAttacks)
+	}
 }

@@ -31,7 +31,7 @@ func TestComputeKingAttacks(t *testing.T) {
 }
 
 func TestPopulateKingAttackTables(t *testing.T) {
-	PopulateKingAttackTables()
+	kingAttacks := populateKingAttackTables()
 
 	for square, expected := range testCases {
 		actual := kingAttacks[square]

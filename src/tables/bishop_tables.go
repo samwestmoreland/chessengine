@@ -1,14 +1,39 @@
 package tables
 
 import (
+	"math/bits"
+	"strconv"
+
 	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 )
 
-func populateBishopAttackTables(magic.BishopData) [64][512]uint64 {
-	var attacks [64][512]uint64
+func populateBishopAttackTables(data magic.BishopData) [64][]uint64 {
+	var attacks [64][]uint64
 
 	for square := 0; square < 64; square++ {
+		// Get magic data for this square
+		magicNum, _ := strconv.ParseUint(data.Magics[square].Magic, 16, 64)
+		shift := data.Magics[square].Shift
+
+		// Create slice big enough for all possible indices
+		tableSize := 1 << (64 - shift)
+		attacks[square] = make([]uint64, tableSize)
+
+		// Populate this square's table with all possible attack patterns
+		mask := MaskBishopAttacks(square)
+		numBlockers := bits.OnesCount64(mask) // how many relevant squares
+
+		// For each possible blocker configuration...
+		for i := 0; i < (1 << numBlockers); i++ {
+			blockers := bitboard.SetOccupancy(i, mask)
+			// Calculate actual moves for this blocker pattern
+			moves := BishopAttacksOnTheFly(square, blockers)
+			// Calculate index using magic
+			index := (blockers * magicNum) >> shift
+			// Store moves at this index
+			attacks[square][index] = moves
+		}
 	}
 
 	return attacks

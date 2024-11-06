@@ -17,6 +17,7 @@ go_library(
     visibility = [
         "//cmd:all",
         "//cmd/magics:all",
+        "//cmd/uci:all",
     ],
 )
 

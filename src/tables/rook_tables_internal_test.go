@@ -23,7 +23,7 @@ var rookTestCases = map[int]uint64{
 
 func TestMaskRookAttacks(t *testing.T) {
 	for square, expected := range rookTestCases {
-		actual := maskRookAttacks(square)
+		actual := MaskRookAttacks(square)
 		if actual != expected {
 			fmt.Println("Square", sq.Stringify(square))
 			fmt.Println("Got")
@@ -44,23 +44,14 @@ func TestRookAttacksOnTheFly(t *testing.T) {
 	blockers = bitboard.SetBit(blockers, sq.B4)
 	blockers = bitboard.SetBit(blockers, sq.A4)
 
-	fmt.Println("Blockers:")
-	bitboard.PrintBoard(blockers)
+	rookAttacks := RookAttacksOnTheFly(sq.D4, blockers)
 
-	fmt.Println("Rook attacks on the fly:")
-	bitboard.PrintBoard(rookAttacksOnTheFly(sq.D4, blockers))
+	if rookAttacks != 9028156000256 {
+		fmt.Println("Blockers:")
+		bitboard.PrintBoard(blockers)
 
-	t.Errorf("Artificial failure")
-}
-
-func TestSetOccupancy(t *testing.T) {
-	rookAttacks := maskRookAttacks(sq.D4)
-
-	fmt.Println("Rook attacks:")
-	bitboard.PrintBoard(rookAttacks)
-
-	fmt.Println("Set occupancy:")
-	bitboard.PrintBoard(bitboard.SetOccupancy(9, rookAttacks))
-
-	t.Errorf("Artificial failure")
+		fmt.Println("Rook attacks:")
+		bitboard.PrintBoard(RookAttacksOnTheFly(sq.D4, blockers))
+		t.Error("Expected 9028156000256, got ", rookAttacks)
+	}
 }

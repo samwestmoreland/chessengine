@@ -123,7 +123,7 @@ func TestComputePawnAttacksBlackFlanks(t *testing.T) {
 }
 
 func TestPopulatePawnAttackTables(t *testing.T) {
-	PopulatePawnAttackTables()
+	pawnAttacks := populatePawnAttackTables()
 
 	if pawnAttacks[wb.White][sq.E2] != 43980465111040 {
 		bitboard.PrintBoard(pawnAttacks[wb.White][sq.E2])

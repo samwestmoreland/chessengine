@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
+	"math/bits"
 )
 
 func GetBit(board uint64, square int) bool {
@@ -21,22 +22,12 @@ func ClearBit(board uint64, square int) uint64 {
 	return board &^ (1 << square)
 }
 
-func CountBits(board uint64) int {
-	count := 0
-	for board != 0 {
-		count++
-		board &= board - 1
-	}
-
-	return count
-}
-
 func LSBIndex(board uint64) int {
 	if board == 0 {
 		return -1
 	}
 
-	return CountBits(board&-board - 1)
+	return bits.OnesCount64(board&-board - 1)
 }
 
 // SetOccupancy either sets each bit on the attack mask to 1 or 0.
@@ -60,7 +51,7 @@ func LSBIndex(board uint64) int {
 func SetOccupancy(index int, attackMask uint64) uint64 {
 	var ret uint64
 
-	bitsInMask := CountBits(attackMask)
+	bitsInMask := bits.OnesCount64(attackMask)
 
 	for i := 0; i < bitsInMask; i++ {
 		sq := LSBIndex(attackMask)

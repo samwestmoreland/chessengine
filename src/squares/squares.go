@@ -1,6 +1,7 @@
 package squares
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -86,7 +87,7 @@ func Stringify(square int) string {
 
 	file := square%8 + 1
 
-	ret.WriteString(string('a' + file - 1))
+	ret.WriteString(fmt.Sprintf("%c", 'a'+file-1))
 	ret.WriteString(strconv.Itoa(rank))
 
 	return ret.String()

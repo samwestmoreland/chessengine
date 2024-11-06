@@ -78,17 +78,6 @@ func TestClearBit(t *testing.T) {
 	}
 }
 
-func TestCountBits(t *testing.T) {
-	board := SetBit(0, sq.E2)
-	board = SetBit(board, sq.E8)
-	board = SetBit(board, sq.F5)
-
-	if CountBits(board) != 3 {
-		PrintBoard(board)
-		t.Error("Expected 3, got ", CountBits(board))
-	}
-}
-
 func TestLSBIndex(t *testing.T) {
 	board := SetBit(0, sq.E2)
 	board = SetBit(board, sq.E8)
@@ -112,12 +101,4 @@ func TestLSBIndexOfZero(t *testing.T) {
 	if LSBIndex(0) != -1 {
 		t.Error("Expected -1, got ", LSBIndex(0))
 	}
-}
-
-func TestRandomUint64(t *testing.T) {
-	for i := 0; i < 4; i++ {
-		PrintBoard(GenerateSparseRandomUint64())
-	}
-
-	t.Errorf("Artificial failure")
 }
