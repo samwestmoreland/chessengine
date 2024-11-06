@@ -88,18 +88,23 @@ func TestLookupTableGivesCorrectMoves(t *testing.T) {
 		},
 		{
 			square:        sq.D4,
-			blockers:      bitboard.SetBit(0, sq.D7) | bitboard.SetBit(0, sq.D3),
+			blockers:      8796093024256,
 			expectedMoves: 9857084688384,
 		},
 		{
 			square:        sq.A1,
-			blockers:      bitboard.SetBit(0, sq.A2) | bitboard.SetBit(0, sq.F1) | bitboard.SetBit(0, sq.H2),
+			blockers:      2342153281209368576,
 			expectedMoves: 4467852305328242688,
 		},
 		{
 			square:        sq.G8,
-			blockers:      bitboard.SetBit(0, sq.G4) | bitboard.SetBit(0, sq.B8) | bitboard.SetBit(0, sq.H8),
+			blockers:      274877907074,
 			expectedMoves: 275955859646,
+		},
+		{
+			square:        sq.H1,
+			blockers:      288239322568624128,
+			expectedMoves: 8971311747122102272,
 		},
 	}
 
@@ -109,8 +114,13 @@ func TestLookupTableGivesCorrectMoves(t *testing.T) {
 			panic(err)
 		}
 
+		mask, err := strconv.ParseUint(data.Rook.Magics[tt.square].Mask, 16, 64)
+		if err != nil {
+			panic(err)
+		}
+
 		shift := data.Rook.Magics[tt.square].Shift
-		index := (tt.blockers * magicNum) >> shift
+		index := (tt.blockers & mask * magicNum) >> shift
 		moves := table[tt.square][index]
 
 		if moves != tt.expectedMoves {
@@ -118,15 +128,15 @@ func TestLookupTableGivesCorrectMoves(t *testing.T) {
 			bitboard.PrintBoard(tt.blockers)
 			fmt.Println("")
 
-			fmt.Println("Got moves:")
-			bitboard.PrintBoard(moves)
-			fmt.Println("")
-
 			fmt.Println("Expected moves:")
 			bitboard.PrintBoard(tt.expectedMoves)
 			fmt.Println("")
 
-			t.Error("Expected", tt.expectedMoves, "got", moves)
+			fmt.Println("Got moves:")
+			bitboard.PrintBoard(moves)
+			fmt.Println("")
+
+			t.Error("For rook on square", sq.Stringify(tt.square), "expected", tt.expectedMoves, "got", moves)
 		}
 	}
 }

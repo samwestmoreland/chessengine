@@ -8,14 +8,14 @@ import (
 	"math"
 	"os"
 	"strings"
+	"sync"
 	"time"
-
-	"github.com/schollz/progressbar/v3"
 
 	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/src/bitboard"
 	sq "github.com/samwestmoreland/chessengine/src/squares"
 	"github.com/samwestmoreland/chessengine/src/tables"
+	"github.com/schollz/progressbar/v3"
 )
 
 var (
@@ -50,8 +50,33 @@ const (
 var versionString = strings.TrimSpace(magic.VersionString)
 
 func main() {
-	rookMagics, rookTableSize := generateMagics(rook)
-	bishopMagics, bishopTableSize := generateMagics(bishop)
+	var wg sync.WaitGroup
+	var rookMagics, bishopMagics []magic.Entry
+	var rookTableSize, bishopTableSize int
+
+	bar := progressbar.NewOptions(128, progressbar.OptionSetTheme(progressbar.Theme{
+		Saucer:        "=",
+		SaucerHead:    ">",
+		SaucerPadding: " ",
+		BarStart:      "[",
+		BarEnd:        "]",
+	}))
+
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+
+		rookMagics, rookTableSize = generateMagics(rook, bar)
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		bishopMagics, bishopTableSize = generateMagics(bishop, bar)
+	}()
+
+	wg.Wait()
 
 	today := time.Now().Format("2006-01-02 15:04:05")
 
@@ -81,7 +106,7 @@ func main() {
 	}
 }
 
-func generateMagics(piece int) ([]magic.Entry, int) {
+func generateMagics(piece int, bar *progressbar.ProgressBar) ([]magic.Entry, int) {
 	if piece == rook {
 		log.Println("Generating rook magics")
 	} else if piece == bishop {
@@ -93,14 +118,6 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 	var totalTableSize int
 
 	magics := []magic.Entry{}
-
-	bar := progressbar.NewOptions(64, progressbar.OptionSetTheme(progressbar.Theme{
-		Saucer:        "=",
-		SaucerHead:    ">",
-		SaucerPadding: " ",
-		BarStart:      "[",
-		BarEnd:        "]",
-	}))
 
 	for square := 0; square < 64; square++ {
 		bar.Add(1)
