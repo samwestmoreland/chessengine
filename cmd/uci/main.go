@@ -3,11 +3,14 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/samwestmoreland/chessengine/src/engine"
 	"github.com/samwestmoreland/chessengine/src/position"
+	"github.com/samwestmoreland/chessengine/src/tables"
 )
 
 type command struct {
@@ -15,14 +18,24 @@ type command struct {
 	args []string
 }
 
+var lookupTable tables.Lookup
+
 func main() {
+	if err := initialiseLookupTables(&lookupTable); err != nil {
+		log.Fatal(err)
+	}
+
+	runEngine()
+}
+
+func runEngine() {
 	eng := engine.NewEngine()
 
 	writer := bufio.NewWriter(os.Stdout)
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		_, err := writer.WriteString("engine ready\n") // send initial ready message
+		_, err := writer.WriteString("engine ready\n")
 		if err != nil {
 			panic(err)
 		}
@@ -113,7 +126,7 @@ func handlePositionCmd(cmd *command, eng *engine.Engine) *bytes.Buffer {
 		return &resp
 	}
 
-	// try to parse FEN
+	// Try to parse FEN
 	fen, err := position.ParseFEN(strings.Join(cmd.args, " "))
 	if err != nil {
 		mustWrite(&resp, "invalid FEN\n")
@@ -132,4 +145,17 @@ func mustWrite(buf *bytes.Buffer, s string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func initialiseLookupTables(lookup *tables.Lookup) error {
+	log.Print("initialising lookup tables")
+	start := time.Now()
+
+	if err := tables.InitialiseLookupTables(lookup); err != nil {
+		return err
+	}
+
+	log.Printf("initialised lookup tables in %s", time.Since(start))
+
+	return nil
 }
