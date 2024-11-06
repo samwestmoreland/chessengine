@@ -35,5 +35,6 @@ go_test(
         "//src/squares",
         "//src/bitboard",
         "//src/colours",
+        "//magic:magic_data",
     ],
 )
