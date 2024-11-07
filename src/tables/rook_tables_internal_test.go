@@ -63,7 +63,7 @@ func TestRookAttacksOnTheFly(t *testing.T) {
 	}
 }
 
-func TestLookupTableGivesCorrectMoves(t *testing.T) {
+func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
 	var data magic.Data
 	if err := json.Unmarshal(magic.JsonData, &data); err != nil {
 		panic(err)
