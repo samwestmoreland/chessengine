@@ -18,6 +18,14 @@ func SetBit(board uint64, square int) uint64 {
 	return board | (1 << square)
 }
 
+func SetBits(board uint64, squares ...int) uint64 {
+	for _, square := range squares {
+		board = SetBit(board, square)
+	}
+
+	return board
+}
+
 func ClearBit(board uint64, square int) uint64 {
 	return board &^ (1 << square)
 }
