@@ -126,7 +126,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 				}
 
 				for shift := 64 - relevantBits; shift < 64-relevantBits+4; shift++ {
-					for attempt := 0; attempt < 1000000; attempt++ {
+					for attempt := 0; attempt < 10000000; attempt++ {
 						magicCandidate := bitboard.GenerateSparseRandomUint64()
 
 						if works, tableSize := testMagicCandidate(magicCandidate, square, shift, piece, relevantBits); works {
@@ -165,6 +165,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 				entry.Mask = fmt.Sprintf("%016x", mask)
 
 				magics[square] = entry
+				log.Printf("Found magic for square %s", sq.Stringify(square))
 			}
 		}()
 	}
