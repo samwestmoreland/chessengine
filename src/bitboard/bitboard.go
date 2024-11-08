@@ -38,7 +38,7 @@ func LSBIndex(board uint64) int {
 	return bits.OnesCount64(board&-board - 1)
 }
 
-// SetOccupancy either sets each bit on the attack mask to 1 or 0.
+// SetOccupancy sets each bit on the attack mask to 1 or 0.
 //
 // E.g. consider index 9, and an attack mask for a rook on d4:
 // 9    = 0 0000 1001
@@ -111,6 +111,7 @@ func PrintBoard(bitboard uint64) {
 				fmt.Printf("%d ", 0)
 			}
 		}
+
 		fmt.Printf("\n")
 	}
 
