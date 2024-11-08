@@ -12,7 +12,7 @@ import (
 )
 
 func TestMaskRookAttacks(t *testing.T) {
-	var rookTestCases = map[int]uint64{
+	var tests = map[int]uint64{
 		sq.E4: 4521664529305600,    // central
 		sq.G4: 18085034619584512,   // g-file
 		sq.B5: 565159647117824,     // b-file
@@ -25,7 +25,7 @@ func TestMaskRookAttacks(t *testing.T) {
 		sq.H2: 35607136465616896,   // another corner
 	}
 
-	for square, expected := range rookTestCases {
+	for square, expected := range tests {
 		actual := MaskRookAttacks(square)
 		if actual != expected {
 			fmt.Println("Square", sq.Stringify(square))
