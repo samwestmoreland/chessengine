@@ -78,6 +78,8 @@ const (
 	F1
 	G1
 	H1
+
+	NoSquare
 )
 
 func Stringify(square int) string {
@@ -91,4 +93,32 @@ func Stringify(square int) string {
 	ret.WriteString(strconv.Itoa(rank))
 
 	return ret.String()
+}
+
+func ToInt(square string) (int, error) {
+	if len(square) != 2 {
+		return 0, fmt.Errorf("invalid square format: %s", square)
+	}
+
+	rank, err := strconv.Atoi(square[1:2])
+	if err != nil {
+		return 0, fmt.Errorf("invalid rank: %s", square[1:2])
+	}
+
+	if rank < 1 || rank > 8 {
+		return 0, fmt.Errorf("rank out of range: %d", rank)
+	}
+
+	rankIndex := 8 - rank
+
+	file := strings.ToLower(square[0:1])
+	if file < "a" || file > "h" {
+		return 0, fmt.Errorf("invalid file: %s", file)
+	}
+
+	fileIndex := file[0] - 'a'
+
+	index := rankIndex*8 + int(fileIndex)
+
+	return index, nil
 }
