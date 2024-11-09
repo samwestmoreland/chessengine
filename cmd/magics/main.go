@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/samwestmoreland/chessengine/magic"
-	"github.com/samwestmoreland/chessengine/src/bitboard"
-	sq "github.com/samwestmoreland/chessengine/src/squares"
-	"github.com/samwestmoreland/chessengine/src/tables"
+	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
+	"github.com/samwestmoreland/chessengine/internal/tables"
 )
 
 var (

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/samwestmoreland/chessengine/src/bitboard"
-	"github.com/samwestmoreland/chessengine/src/engine"
-	"github.com/samwestmoreland/chessengine/src/tables"
+	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	"github.com/samwestmoreland/chessengine/internal/engine"
+	"github.com/samwestmoreland/chessengine/internal/tables"
 )
 
 type command struct {
