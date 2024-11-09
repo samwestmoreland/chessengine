@@ -58,7 +58,7 @@ func GetPieceType(pieceInt int) string {
 	}
 }
 
-type State struct {
+type Position struct {
 	Occupancy       []bb.Bitboard // Pieces of both colours
 	WhiteToMove     bool
 	CastlingRights  uint8
@@ -67,16 +67,16 @@ type State struct {
 	FullMoveNumber  uint8
 }
 
-func NewState() (*State, error) {
-	state, err := NewStateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+func NewPosition() (*Position, error) {
+	pos, err := NewPositionFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 	if err != nil {
-		return nil, fmt.Errorf("failed to create new state: %w", err)
+		return nil, fmt.Errorf("failed to create new position: %w", err)
 	}
 
-	return state, nil
+	return pos, nil
 }
 
-func NewStateFromFEN(fen string) (*State, error) {
+func NewPositionFromFEN(fen string) (*Position, error) {
 	// e.g.	"r3k1nr/pp2pp1p/6p1/1b1q4/8/2b2N2/PP2QPPP/R1B2RK1 w kq - 0 13"
 	parts := strings.Split(fen, " ")
 	// parts[0]: position string
@@ -112,7 +112,7 @@ func NewStateFromFEN(fen string) (*State, error) {
 		return nil, fmt.Errorf("failed to parse full move number: %w", err)
 	}
 
-	return &State{
+	return &Position{
 		Occupancy:       occ,
 		WhiteToMove:     parts[1] == "w",
 		CastlingRights:  castlingRights,
@@ -244,7 +244,7 @@ func parseCastlingRights(castlingRights string) uint8 {
 	return ret
 }
 
-func (s *State) Print(output io.Writer) {
+func (s *Position) Print(output io.Writer) {
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
 			square := rank*8 + file

@@ -31,7 +31,7 @@ func TestParseCastlingRights(t *testing.T) {
 	}
 }
 
-func TestNewStateFromFEN(t *testing.T) {
+func TestNewPositionFromFEN(t *testing.T) {
 	tests := []struct {
 		fen   string
 		error bool
@@ -60,7 +60,7 @@ func TestNewStateFromFEN(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.fen, func(t *testing.T) {
-			_, err := NewStateFromFEN(test.fen)
+			_, err := NewPositionFromFEN(test.fen)
 			if err != nil && !test.error {
 				t.Error(err)
 			}
