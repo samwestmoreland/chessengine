@@ -2,6 +2,8 @@
 flowchart TD
     subgraph UCI["UCI Interface"]
         MAIN[cmd/uci/main.go]
+        UCI_STRUCT[UCI struct]
+        IO[Reader/Writer]
     end
 
     subgraph ENGINE["Engine Package"]
@@ -10,8 +12,16 @@ flowchart TD
     end
 
     subgraph BITBOARD["Bitboard Package"]
-        BB_INIT[Initialize]
+        BB[Bitboard Type]
+        BB_OPS[Bit Operations<br>SetBit/ClearBit etc]
+    end
+
+    subgraph POSITION["Position Package"]
         POS[Position]
+    end
+
+    subgraph MOVEGEN["Movegen Package"]
+        MG_INIT[Initialize]
         MOVES[GetLegalMoves]
         TABLES[lookupTables]
     end
@@ -21,19 +31,28 @@ flowchart TD
     end
 
     %% Initialization flow
-    MAIN -->|1 Calls| BB_INIT
-    BB_INIT -->|2 Initializes| T_INIT
-    T_INIT -->|3 Populates| TABLES
+    MAIN -->|"Creates"| UCI_STRUCT
+    UCI_STRUCT -->|"1 Initializes"| T_INIT
+    T_INIT -->|"2 Populates"| TABLES
+    UCI_STRUCT -->|"3 Creates"| ENG
 
-    %% Runtime flow
-    MAIN -->|4 Creates| POS
-    MAIN -->|5 Passes Position to| ENG
-    ENG -->|6 Requests moves from| MOVES
-    MOVES -->|Uses| TABLES
-    ENG -->|Uses| EVAL
+    %% Component relationships
+    UCI_STRUCT -->|"Owns"| IO
+    UCI_STRUCT -->|"Owns"| POS
+    UCI_STRUCT -->|"Owns"| ENG
+    
+    %% Dependencies between packages
+    POS -->|"Uses"| BB
+    MOVEGEN -->|"Uses"| POS
+    MOVEGEN -->|"Uses"| BB
+    ENG -->|"Uses"| MOVEGEN
+    ENG -->|"Uses"| EVAL
 
+    %% Style
     style UCI fill:#f9f,stroke:#333,stroke-width:2px
     style ENGINE fill:#bbf,stroke:#333,stroke-width:2px
     style BITBOARD fill:#bbf,stroke:#333,stroke-width:2px
+    style POSITION fill:#bbf,stroke:#333,stroke-width:2px
+    style MOVEGEN fill:#bbf,stroke:#333,stroke-width:2px
     style TABLES_PKG fill:#bbf,stroke:#333,stroke-width:2px
 ```
