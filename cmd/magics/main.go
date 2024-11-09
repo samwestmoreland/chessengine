@@ -13,10 +13,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/samwestmoreland/chessengine/magic"
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 	"github.com/samwestmoreland/chessengine/internal/tables"
+	"github.com/samwestmoreland/chessengine/magic"
 )
 
 var (
@@ -127,7 +127,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 
 				for shift := 64 - relevantBits; shift < 64-relevantBits+4; shift++ {
 					for attempt := 0; attempt < 10000000; attempt++ {
-						magicCandidate := bitboard.GenerateSparseRandomUint64()
+						magicCandidate := bb.GenerateSparseRandomUint64()
 
 						if works, tableSize := testMagicCandidate(magicCandidate, square, shift, piece, relevantBits); works {
 							if tableSize < bestTableSize {
@@ -155,7 +155,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 					Shift:  bestShift,
 				}
 
-				var mask uint64
+				var mask bb.Bitboard
 				if piece == rook {
 					mask = tables.MaskRookAttacks(square)
 				} else {
@@ -187,26 +187,26 @@ func testMagicCandidate(magicCandidate uint64, square, shift, piece, relevantBit
 
 	var numBlockerConfigs = 1 << relevantBits
 
-	used := make(map[int]uint64) // index -> possible moves
+	used := make(map[int]bb.Bitboard) // index -> possible moves
 
 	for blockerConfigIndex := 0; blockerConfigIndex < numBlockerConfigs; blockerConfigIndex++ {
-		var attacks uint64
+		var attacks bb.Bitboard
 		if piece == rook {
 			attacks = tables.MaskRookAttacks(square)
 		} else {
 			attacks = tables.MaskBishopAttacks(square)
 		}
 
-		blockerConfig := bitboard.SetOccupancy(blockerConfigIndex, attacks)
+		blockerConfig := bb.SetOccupancy(blockerConfigIndex, attacks)
 
-		var actualMoves uint64
+		var actualMoves bb.Bitboard
 		if piece == rook {
 			actualMoves = tables.RookAttacksOnTheFly(square, blockerConfig)
 		} else {
 			actualMoves = tables.BishopAttacksOnTheFly(square, blockerConfig)
 		}
 
-		hashResult := (blockerConfig * magicCandidate) >> shift
+		hashResult := (uint64(blockerConfig) * magicCandidate) >> shift
 		index := int(hashResult)
 
 		if index > maxIndex {

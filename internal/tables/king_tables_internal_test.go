@@ -3,7 +3,7 @@ package tables
 import (
 	"testing"
 
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
@@ -23,8 +23,8 @@ var testCases = map[int]uint64{
 func TestMaskKingAttacks(t *testing.T) {
 	for square, expected := range testCases {
 		actual := maskKingAttacks(square)
-		if actual != expected {
-			bitboard.PrintBoard(actual)
+		if uint64(actual) != expected {
+			bb.PrintBoard(actual)
 			t.Errorf("Getting king attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
@@ -35,8 +35,8 @@ func TestPopulateKingAttackTables(t *testing.T) {
 
 	for square, expected := range testCases {
 		actual := kingAttacks[square]
-		if actual != expected {
-			bitboard.PrintBoard(actual)
+		if uint64(actual) != expected {
+			bb.PrintBoard(actual)
 			t.Errorf("Checking king attack table for square %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}

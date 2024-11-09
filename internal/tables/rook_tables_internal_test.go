@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/samwestmoreland/chessengine/magic"
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
+	"github.com/samwestmoreland/chessengine/magic"
 )
 
 func TestMaskRookAttacks(t *testing.T) {
@@ -27,14 +27,14 @@ func TestMaskRookAttacks(t *testing.T) {
 
 	for square, expected := range tests {
 		actual := MaskRookAttacks(square)
-		if actual != expected {
+		if uint64(actual) != expected {
 			fmt.Println("Square", sq.Stringify(square))
 
 			fmt.Println("Got")
-			bitboard.PrintBoard(actual)
+			bb.PrintBoard(actual)
 
 			fmt.Println("Expected")
-			bitboard.PrintBoard(expected)
+			bb.PrintBoard(bb.Bitboard(expected))
 
 			fmt.Println("")
 
@@ -44,21 +44,21 @@ func TestMaskRookAttacks(t *testing.T) {
 }
 
 func TestRookAttacksOnTheFly(t *testing.T) {
-	var blockers uint64
-	blockers = bitboard.SetBit(blockers, sq.D7)
-	blockers = bitboard.SetBit(blockers, sq.D3)
-	blockers = bitboard.SetBit(blockers, sq.F4)
-	blockers = bitboard.SetBit(blockers, sq.B4)
-	blockers = bitboard.SetBit(blockers, sq.A4)
+	var blockers bb.Bitboard
+	blockers = bb.SetBit(blockers, sq.D7)
+	blockers = bb.SetBit(blockers, sq.D3)
+	blockers = bb.SetBit(blockers, sq.F4)
+	blockers = bb.SetBit(blockers, sq.B4)
+	blockers = bb.SetBit(blockers, sq.A4)
 
 	rookAttacks := RookAttacksOnTheFly(sq.D4, blockers)
 
 	if rookAttacks != 9028156000256 {
 		fmt.Println("Blockers:")
-		bitboard.PrintBoard(blockers)
+		bb.PrintBoard(blockers)
 
 		fmt.Println("Rook attacks:")
-		bitboard.PrintBoard(RookAttacksOnTheFly(sq.D4, blockers))
+		bb.PrintBoard(RookAttacksOnTheFly(sq.D4, blockers))
 		t.Error("Expected 9028156000256, got ", rookAttacks)
 	}
 }
@@ -73,7 +73,7 @@ func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
 
 	testCases := []struct {
 		square        int
-		blockers      uint64
+		blockers      bb.Bitboard
 		expectedMoves uint64
 	}{
 		{
@@ -83,7 +83,7 @@ func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
 		},
 		{
 			square:        sq.D4,
-			blockers:      bitboard.SetBit(0, sq.D7),
+			blockers:      bb.SetBit(0, sq.D7),
 			expectedMoves: 578722409201797120,
 		},
 		{
@@ -120,20 +120,20 @@ func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
 		}
 
 		shift := data.Rook.Magics[tt.square].Shift
-		index := (tt.blockers & mask * magicNum) >> shift
+		index := (uint64(tt.blockers) & mask * magicNum) >> shift
 		moves := table[tt.square][index]
 
-		if moves != tt.expectedMoves {
+		if uint64(moves) != tt.expectedMoves {
 			fmt.Println("Blockers:")
-			bitboard.PrintBoard(tt.blockers)
+			bb.PrintBoard(tt.blockers)
 			fmt.Println("")
 
 			fmt.Println("Expected moves:")
-			bitboard.PrintBoard(tt.expectedMoves)
+			bb.PrintBoard(bb.Bitboard(tt.expectedMoves))
 			fmt.Println("")
 
 			fmt.Println("Got moves:")
-			bitboard.PrintBoard(moves)
+			bb.PrintBoard(moves)
 			fmt.Println("")
 
 			t.Error("For rook on square", sq.Stringify(tt.square), "expected", tt.expectedMoves, "got", moves)

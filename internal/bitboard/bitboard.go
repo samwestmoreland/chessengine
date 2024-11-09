@@ -7,18 +7,24 @@ import (
 	"math/bits"
 )
 
-func GetBit(board uint64, square int) bool {
-	occ := (board >> square) & 1
+type Bitboard uint64
+
+func NewBitboard(board uint64) Bitboard {
+	return Bitboard(board)
+}
+
+func GetBit(board Bitboard, square int) bool {
+	occ := (uint64(board) >> square) & 1
 
 	// occ is a uint64, so we need to convert it to a bool
 	return occ == 1
 }
 
-func SetBit(board uint64, square int) uint64 {
-	return board | (1 << square)
+func SetBit(board Bitboard, square int) Bitboard {
+	return Bitboard(uint64(board) | (1 << square))
 }
 
-func SetBits(board uint64, squares ...int) uint64 {
+func SetBits(board Bitboard, squares ...int) Bitboard {
 	for _, square := range squares {
 		board = SetBit(board, square)
 	}
@@ -26,16 +32,20 @@ func SetBits(board uint64, squares ...int) uint64 {
 	return board
 }
 
-func ClearBit(board uint64, square int) uint64 {
+func ClearBit(board Bitboard, square int) Bitboard {
 	return board &^ (1 << square)
 }
 
-func LSBIndex(board uint64) int {
+func LSBIndex(board Bitboard) int {
 	if board == 0 {
 		return -1
 	}
 
-	return bits.OnesCount64(board&-board - 1)
+	return CountBits(board&-board - 1)
+}
+
+func CountBits(board Bitboard) int {
+	return bits.OnesCount64(uint64(board))
 }
 
 // SetOccupancy sets each bit on the attack mask to 1 or 0.
@@ -56,10 +66,10 @@ func LSBIndex(board uint64) int {
 // -> don't set bit on d6
 //
 // and so on...
-func SetOccupancy(index int, attackMask uint64) uint64 {
-	var ret uint64
+func SetOccupancy(index int, attackMask Bitboard) Bitboard {
+	var ret Bitboard
 
-	bitsInMask := bits.OnesCount64(attackMask)
+	bitsInMask := CountBits(attackMask)
 
 	for i := 0; i < bitsInMask; i++ {
 		sq := LSBIndex(attackMask)
@@ -90,7 +100,7 @@ func GenerateSparseRandomUint64() uint64 {
 }
 
 // PrintBoard prints a bitboard to the console.
-func PrintBoard(bitboard uint64) {
+func PrintBoard(board Bitboard) {
 	fmt.Printf("\n")
 
 	for rank := 0; rank < 8; rank++ {
@@ -104,7 +114,7 @@ func PrintBoard(bitboard uint64) {
 			}
 
 			// Check if the square is occupied
-			occupied := GetBit(bitboard, square)
+			occupied := GetBit(board, square)
 			if occupied {
 				fmt.Printf("%d ", 1)
 			} else {
@@ -118,5 +128,5 @@ func PrintBoard(bitboard uint64) {
 	fmt.Println("   a b c d e f g h")
 
 	// Print the decimal representation
-	fmt.Printf("\n   bitboard: %d\n", bitboard)
+	fmt.Printf("\n   bitboard: %d\n", board)
 }

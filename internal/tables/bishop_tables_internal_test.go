@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/samwestmoreland/chessengine/magic"
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
+	"github.com/samwestmoreland/chessengine/magic"
 )
 
 var bishopTestCases = map[int]uint64{
@@ -27,28 +27,28 @@ var bishopTestCases = map[int]uint64{
 func TestMaskBishopAttacks(t *testing.T) {
 	for square, expected := range bishopTestCases {
 		actual := MaskBishopAttacks(square)
-		if actual != expected {
-			bitboard.PrintBoard(actual)
+		if uint64(actual) != expected {
+			bb.PrintBoard(actual)
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
 }
 
 func TestBishopAttacksOnTheFly(t *testing.T) {
-	var blockers uint64
-	blockers = bitboard.SetBit(blockers, sq.B6)
-	blockers = bitboard.SetBit(blockers, sq.G7)
-	blockers = bitboard.SetBit(blockers, sq.E3)
-	blockers = bitboard.SetBit(blockers, sq.B2)
+	var blockers bb.Bitboard
+	blockers = bb.SetBit(blockers, sq.B6)
+	blockers = bb.SetBit(blockers, sq.G7)
+	blockers = bb.SetBit(blockers, sq.E3)
+	blockers = bb.SetBit(blockers, sq.B2)
 
 	bishopAttacks := BishopAttacksOnTheFly(sq.D4, blockers)
 
 	if bishopAttacks != 584940523765760 {
 		fmt.Println("Blockers:")
-		bitboard.PrintBoard(blockers)
+		bb.PrintBoard(blockers)
 
 		fmt.Println("Bishop attacks on the fly:")
-		bitboard.PrintBoard(bishopAttacks)
+		bb.PrintBoard(bishopAttacks)
 		t.Error("Expected 584940523765760, got ", bishopAttacks)
 	}
 }
@@ -63,7 +63,7 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 
 	testCases := []struct {
 		square        int
-		blockers      uint64
+		blockers      bb.Bitboard
 		expectedMoves uint64
 	}{
 		{
@@ -73,7 +73,7 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 		},
 		{
 			square:        sq.D4,
-			blockers:      bitboard.SetBit(0, sq.B6),
+			blockers:      bb.SetBit(0, sq.B6),
 			expectedMoves: 4693335752243822720,
 		},
 		{
@@ -83,17 +83,17 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 		},
 		{
 			square:        sq.A1,
-			blockers:      bitboard.SetBit(0, sq.F6),
+			blockers:      bb.SetBit(0, sq.F6),
 			expectedMoves: 567382630203392,
 		},
 		{
 			square:        sq.E8,
-			blockers:      bitboard.SetBits(0, sq.C6, sq.H5, sq.H4, sq.H3, sq.A2, sq.F8),
+			blockers:      bb.SetBits(0, sq.C6, sq.H5, sq.H4, sq.H3, sq.A2, sq.F8),
 			expectedMoves: 2151950336,
 		},
 		{
 			square:        sq.H1,
-			blockers:      bitboard.SetBits(0, sq.D5, sq.C6, sq.B7, sq.A8, sq.B2, sq.B3, sq.C1, sq.C8),
+			blockers:      bb.SetBits(0, sq.D5, sq.C6, sq.B7, sq.A8, sq.B2, sq.B3, sq.C1, sq.C8),
 			expectedMoves: 18049651735265280,
 		},
 	}
@@ -110,20 +110,20 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 		}
 
 		shift := data.Bishop.Magics[tt.square].Shift
-		index := (tt.blockers & mask * magicNum) >> shift
+		index := (uint64(tt.blockers) & mask * magicNum) >> shift
 		moves := table[tt.square][index]
 
-		if moves != tt.expectedMoves {
+		if uint64(moves) != tt.expectedMoves {
 			fmt.Println("Blockers:")
-			bitboard.PrintBoard(tt.blockers)
+			bb.PrintBoard(tt.blockers)
 			fmt.Println("")
 
 			fmt.Println("Expected moves:")
-			bitboard.PrintBoard(tt.expectedMoves)
+			bb.PrintBoard(bb.Bitboard(tt.expectedMoves))
 			fmt.Println("")
 
 			fmt.Println("Got moves:")
-			bitboard.PrintBoard(moves)
+			bb.PrintBoard(moves)
 			fmt.Println("")
 
 			t.Error("For bishop on square", sq.Stringify(tt.square), "expected", tt.expectedMoves, "got", moves)

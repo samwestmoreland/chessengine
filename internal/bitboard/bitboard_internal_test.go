@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetBit(t *testing.T) {
-	var board uint64 = 8 // 1000
+	var board Bitboard = 8 // 1000
 
 	if GetBit(board, sq.A8) {
 		PrintBoard(board)
@@ -46,7 +46,7 @@ func TestSetBit(t *testing.T) {
 }
 
 func TestSetWholeBoard(t *testing.T) {
-	var board uint64
+	var board Bitboard
 
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {

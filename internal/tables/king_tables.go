@@ -2,11 +2,11 @@
 package tables
 
 import (
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 )
 
-func populateKingAttackTables() [64]uint64 {
-	var attacks [64]uint64
+func populateKingAttackTables() [64]bb.Bitboard {
+	var attacks [64]bb.Bitboard
 
 	for square := 0; square < 64; square++ {
 		attacks[square] = maskKingAttacks(square)
@@ -15,13 +15,13 @@ func populateKingAttackTables() [64]uint64 {
 	return attacks
 }
 
-func maskKingAttacks(square int) uint64 {
-	pieceBoard := bitboard.SetBit(0, square)
+func maskKingAttacks(square int) bb.Bitboard {
+	pieceBoard := bb.SetBit(0, square)
 
-	var attackBoard uint64
+	var attackBoard bb.Bitboard
 
 	if pieceBoard>>8 != 0 {
-		attackBoard |= (pieceBoard >> 8)
+		attackBoard = bb.Bitboard(uint64(attackBoard) | (uint64(pieceBoard) >> 8))
 	}
 
 	if pieceBoard>>9 != 0 && pieceBoard>>9&notHFile != 0 {

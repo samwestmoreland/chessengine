@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/internal/engine"
 	"github.com/samwestmoreland/chessengine/internal/tables"
 )
@@ -127,24 +126,9 @@ func handlePositionCmd(cmd *command, eng *engine.Engine) *bytes.Buffer {
 
 	if cmd.args[0] == "startpos" {
 		mustWrite(&resp, "set up starting position\n")
-		state, err := bitboard.NewState()
-		if err != nil {
-			panic(err)
-		}
-
-		eng.SetState(state)
-
-		state.Print(&resp)
 
 		return &resp
 	}
-
-	state, err := bitboard.NewStateFromFEN(cmd.args[0])
-	if err != nil {
-		panic(err)
-	}
-
-	eng.SetState(state)
 
 	return &resp
 }

@@ -3,15 +3,16 @@ package tables
 import (
 	"encoding/json"
 
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/magic"
 )
 
 type Lookup struct {
-	Pawns   [2][64]uint64
-	Knights [64]uint64
-	Kings   [64]uint64
-	Bishops [64][]uint64
-	Rooks   [64][]uint64
+	Pawns   [2][64]bb.Bitboard
+	Knights [64]bb.Bitboard
+	Kings   [64]bb.Bitboard
+	Bishops [64][]bb.Bitboard
+	Rooks   [64][]bb.Bitboard
 }
 
 func InitialiseLookupTables(table *Lookup) error {

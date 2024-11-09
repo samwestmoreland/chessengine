@@ -1,328 +1,301 @@
 package position
 
 import (
-	"errors"
 	"fmt"
+	"io"
+	"strconv"
 	"strings"
 
-	"github.com/samwestmoreland/chessengine/internal/board"
-	"github.com/samwestmoreland/chessengine/internal/moves"
-	"github.com/samwestmoreland/chessengine/internal/piece"
-	"github.com/sirupsen/logrus"
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
-var (
-	log                = logrus.New()
-	ErrInvalidPosition = errors.New("invalid position")
+const (
+	P = iota
+	N
+	B
+	R
+	Q
+	K
+	p
+	n
+	b
+	r
+	q
+	k
+	A // All white
+	a // All black
 )
 
-// A Position represents a chess position.
-type Position struct {
-	White map[board.Square]Piece
-	Black map[board.Square]Piece
-	Turn  board.Colour
+func GetPieceType(pieceInt int) string {
+	switch pieceInt {
+	case P:
+		return "P"
+	case N:
+		return "N"
+	case B:
+		return "B"
+	case R:
+		return "R"
+	case Q:
+		return "Q"
+	case K:
+		return "K"
+	case p:
+		return "p"
+	case n:
+		return "n"
+	case b:
+		return "b"
+	case r:
+		return "r"
+	case q:
+		return "q"
+	case k:
+		return "k"
+	default:
+		return ""
+	}
 }
 
-// NewPosition returns a new Position.
-func NewPositionFromFEN(fen *FEN) *Position {
-	position := getPositionFromFEN(fen)
-
-	return position
+type State struct {
+	Occupancy       []bb.Bitboard // Pieces of both colours
+	WhiteToMove     bool
+	CastlingRights  uint8
+	EnPassantSquare uint8
+	HalfMoveClock   uint8
+	FullMoveNumber  uint8
 }
 
-func NewStartingPosition() *Position {
-	fen := NewFEN()
-
-	return getPositionFromFEN(fen)
-}
-
-func NewPosition(turn board.Colour, pieces []Piece) *Position {
-	whitePieces := make(map[board.Square]Piece)
-	blackPieces := make(map[board.Square]Piece)
-	ret := &Position{Turn: turn, White: whitePieces, Black: blackPieces}
-
-	for _, piece := range pieces {
-		if !piece.GetCurrentSquare().Valid() {
-			log.Errorf("Failed to add piece %v to square %v\n", piece.Type(), piece.GetCurrentSquare())
-
-			continue
-		}
-
-		if piece.GetColour() == board.White {
-			whitePieces[piece.GetCurrentSquare()] = piece
-		} else if piece.GetColour() == board.Black {
-			blackPieces[piece.GetCurrentSquare()] = piece
-		}
+func NewState() (*State, error) {
+	state, err := NewStateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new state: %w", err)
 	}
 
-	ret.White = whitePieces
-	ret.Black = blackPieces
-
-	return ret
+	return state, nil
 }
 
-func (p *Position) GetTurn() board.Colour {
-	return p.Turn
-}
+func NewStateFromFEN(fen string) (*State, error) {
+	// e.g.	"r3k1nr/pp2pp1p/6p1/1b1q4/8/2b2N2/PP2QPPP/R1B2RK1 w kq - 0 13"
+	parts := strings.Split(fen, " ")
+	// parts[0]: position string
+	// parts[1]: turn to move
+	// parts[2]: castling rights
+	// parts[3]: en passant square
+	// parts[4]: halfmove clock
+	// parts[5]: fullmove number
 
-func (p *Position) GetWhitePieces() map[board.Square]Piece {
-	return p.White
-}
-
-func (p *Position) GetBlackPieces() map[board.Square]Piece {
-	return p.Black
-}
-
-func (p *Position) GetAllMovesConcurrent(turn board.Colour) (moves.MoveList, error) {
-	var numPieces int
-
-	var pieces map[board.Square]Piece
-
-	if turn == board.White {
-		pieces = p.White
-		numPieces = len(p.White)
-		log.Debugf("Getting moves for %d white pieces\n", len(p.White))
-	} else if turn == board.Black {
-		pieces = p.Black
-		numPieces = len(p.Black)
-		log.Debugf("Getting moves for %d black pieces\n", len(p.Black))
+	if len(parts) != 6 {
+		return nil, fmt.Errorf("FEN must have 6 parts")
 	}
 
-	ret := moves.MoveList{}
-	movesChan := make(chan moves.MoveList, numPieces)
-
-	// start goroutines to get moves for each piece
-	for _, pce := range pieces {
-		go func(myPiece Piece, myChan chan<- moves.MoveList, pos Position) {
-			pieceMoves, err := myPiece.GetMoves(&pos)
-			if err != nil {
-				log.Errorf("Failed to get moves for white piece %v: %v\n", myPiece.Type(), err)
-			}
-
-			myChan <- pieceMoves
-		}(pce, movesChan, *p)
+	occ, err := parsePositionString(parts[0])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse position string: %w", err)
 	}
 
-	for range pieces {
-		ret.AddMoveList(<-movesChan)
+	castlingRights := parseCastlingRights(parts[2])
+
+	enpassant, err := parseEnPassantSquare(parts[3])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse en passant square: %w", err)
 	}
 
-	return ret, nil
+	halfMoveClock, err := strconv.Atoi(parts[4])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse half move clock: %w", err)
+	}
+
+	fullMoveNumber, err := strconv.Atoi(parts[5])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse full move number: %w", err)
+	}
+
+	return &State{
+		Occupancy:       occ,
+		WhiteToMove:     parts[1] == "w",
+		CastlingRights:  castlingRights,
+		EnPassantSquare: uint8(enpassant),
+		HalfMoveClock:   uint8(halfMoveClock),
+		FullMoveNumber:  uint8(fullMoveNumber),
+	}, nil
 }
 
-// GetAllMovesSerial returns all possible moves for the current position
-// without any concurrency. This is just for benchmarking, really.
-func (p *Position) GetAllMovesSerial(turn board.Colour) (moves.MoveList, error) {
-	var movs moves.MoveList
-
-	var pieces *map[board.Square]Piece
-
-	if turn == board.White {
-		pieces = &p.White
-	} else if turn == board.Black {
-		pieces = &p.Black
+func parseEnPassantSquare(square string) (uint8, error) {
+	if square == "-" {
+		return uint8(sq.NoSquare), nil
 	}
 
-	for _, piece := range *pieces {
-		pieceMoves, err := piece.GetMoves(p)
-		if err != nil {
-			return movs, fmt.Errorf("failed to get moves for black piece %v: %w", piece.Type(), err)
-		}
-
-		movs.AddMoveList(pieceMoves)
+	squareInt, err := sq.ToInt(square)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse en passant square: %w", err)
 	}
 
-	return movs, nil
+	return uint8(squareInt), nil
 }
 
-func (p *Position) String() string {
-	// Print an ascii representation of the board.
-	var ret string
+func parsePositionString(posStr string) ([]bb.Bitboard, error) {
+	occ := make([]bb.Bitboard, 14)
 
-	for rank := 8; rank >= 1; rank-- {
-		for file := 1; file <= 8; file++ {
-			square := board.Square{File: file, Rank: rank}
+	sq := 0
 
-			piece, err := p.getPiece(square)
-			if err != nil {
-				log.Errorf("Failed to get piece on square %s: %v\n", square.String(), err)
-
-				return ""
-			}
-
-			if piece == nil {
-				ret += ". "
-
-				continue
-			}
-
-			if piece.GetColour() == board.White {
-				ret += piece.Type().Letter() + " "
-			} else if piece.GetColour() == board.Black {
-				ret += strings.ToLower(piece.Type().Letter()) + " "
-			}
-		}
-
-		ret += "\n"
-	}
-
-	return ret
-}
-
-func getPositionFromFEN(fen *FEN) *Position {
-	log.Debugf("Creating position from FEN: %s\n", fen.String())
-	white, black := getPiecePositionsFromFEN(fen)
-	ret := Position{White: white, Black: black, Turn: fen.Colour}
-
-	return &ret
-}
-
-func getPiecePositionsFromFEN(fen *FEN) (map[board.Square]Piece, map[board.Square]Piece) {
-	white := make(map[board.Square]Piece)
-	black := make(map[board.Square]Piece)
-
-	for _, square := range board.Squares {
-		piece, err := fen.GetPiece(square)
-		if err != nil {
-			continue
-		}
-
-		if piece == nil {
-			continue
-		}
-
-		square := square
-
-		if piece.GetColour() == board.White {
-			white[square] = piece
-		} else {
-			black[square] = piece
+	for i := 0; i < len(posStr); i++ {
+		switch posStr[i] {
+		case 'P':
+			occ[P] |= 1 << sq
+			occ[A] |= 1 << sq
+			sq++
+		case 'N':
+			occ[N] |= 1 << sq
+			occ[A] |= 1 << sq
+			sq++
+		case 'B':
+			occ[B] |= 1 << sq
+			occ[A] |= 1 << sq
+			sq++
+		case 'R':
+			occ[R] |= 1 << sq
+			occ[A] |= 1 << sq
+			sq++
+		case 'Q':
+			occ[Q] |= 1 << sq
+			occ[A] |= 1 << sq
+			sq++
+		case 'K':
+			occ[K] |= 1 << sq
+			occ[A] |= 1 << sq
+			sq++
+		case 'p':
+			occ[p] |= 1 << sq
+			occ[a] |= 1 << sq
+			sq++
+		case 'n':
+			occ[n] |= 1 << sq
+			occ[a] |= 1 << sq
+			sq++
+		case 'b':
+			occ[b] |= 1 << sq
+			occ[a] |= 1 << sq
+			sq++
+		case 'r':
+			occ[r] |= 1 << sq
+			occ[a] |= 1 << sq
+			sq++
+		case 'q':
+			occ[q] |= 1 << sq
+			occ[a] |= 1 << sq
+			sq++
+		case 'k':
+			occ[k] |= 1 << sq
+			occ[a] |= 1 << sq
+			sq++
+		case '1':
+			sq += 1
+		case '2':
+			sq += 2
+		case '3':
+			sq += 3
+		case '4':
+			sq += 4
+		case '5':
+			sq += 5
+		case '6':
+			sq += 6
+		case '7':
+			sq += 7
+		case '8':
+			sq += 8
 		}
 	}
 
-	return white, black
+	if sq != 64 {
+		return nil, fmt.Errorf("expected 64 squares, got %d", sq)
+	}
+
+	return occ, nil
 }
 
-// GetAllPossibleMoves returns all possible moves for the current position.
-func (p *Position) GetAllPossibleMoves() (moves.MoveList, error) {
-	ret := moves.MoveList{}
-	if p.White == nil || p.Black == nil {
-		return ret, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
+func parseCastlingRights(castlingRights string) uint8 {
+
+	// 1000: K
+	// 0100: Q
+	// 0010: k
+	// 0001: q
+
+	var ret uint8
+
+	if strings.Contains(castlingRights, "K") {
+		ret |= 8
 	}
 
-	if p.Turn == board.White {
-		return p.getWhiteMoves()
+	if strings.Contains(castlingRights, "Q") {
+		ret |= 4
 	}
 
-	if p.Turn == board.Black {
-		return p.getBlackMoves()
+	if strings.Contains(castlingRights, "k") {
+		ret |= 2
 	}
 
-	return ret, fmt.Errorf("position is not valid: %w", ErrInvalidPosition)
-}
-
-func (p *Position) getWhiteMoves() (moves.MoveList, error) {
-	var movs moves.MoveList
-
-	for square, piece := range p.White {
-		pieceMoves, err := piece.GetMoves(p)
-		if err != nil {
-			return movs,
-				fmt.Errorf("failed to get moves for white piece %v on square %s: %w",
-					piece.Type(), square.String(), err)
-		}
-
-		movs.AddMoveList(pieceMoves)
-	}
-
-	return movs, nil
-}
-
-func (p *Position) getBlackMoves() (moves.MoveList, error) {
-	ret := moves.MoveList{}
-
-	for square, piece := range p.Black {
-		pieceMoves, err := piece.GetMoves(p)
-		if err != nil {
-			return ret,
-				fmt.Errorf("failed to get moves for black piece %v on square %s: %w",
-					piece.Type(), square.String(), err)
-		}
-
-		ret.AddMoveList(pieceMoves)
-	}
-
-	return ret, nil
-}
-
-// getPiece returns the piece at the given square, or an error if the square is invalid.
-func (p *Position) getPiece(square board.Square) (Piece, error) {
-	if !square.Valid() {
-		return nil, fmt.Errorf("invalid square: %s: %w", square.String(), board.ErrInvalidSquare)
-	}
-
-	if piece, ok := p.White[square]; ok {
-		return piece, nil
-	}
-
-	if piece, ok := p.Black[square]; ok {
-		return piece, nil
-	}
-
-	var piece Piece
-
-	return piece, nil
-}
-
-// squareIsOccupied returns true if the given square is occupied by a piece, and the colour of the piece on that square.
-func (p *Position) squareIsOccupied(square board.Square) (bool, board.Colour) {
-	if _, ok := p.White[square]; ok {
-		return true, board.White
-	}
-
-	if _, ok := p.Black[square]; ok {
-		return true, board.Black
-	}
-
-	return false, board.Unknown
-}
-
-func (p *Position) GetNumPiecesForColour(pieceType piece.Type, col board.Colour) int {
-	var pieces *map[board.Square]Piece
-
-	if col == board.White {
-		pieces = &p.White
-	} else if col == board.Black {
-		pieces = &p.Black
-	}
-
-	var ret int
-
-	for _, piece := range *pieces {
-		if piece.Type() == pieceType {
-			ret++
-		}
+	if strings.Contains(castlingRights, "q") {
+		ret |= 1
 	}
 
 	return ret
 }
 
-func (p *Position) GetPiecesForColour(pieceType piece.Type, col board.Colour) map[board.Square]Piece {
-	var pieces *map[board.Square]Piece
+func (s *State) Print(output io.Writer) {
+	for rank := 0; rank < 8; rank++ {
+		for file := 0; file < 8; file++ {
+			square := rank*8 + file
+			occupied := false
+			for i, occ := range s.Occupancy {
+				if bb.GetBit(occ, square) {
+					occupied = true
+					output.Write([]byte(fmt.Sprintf(" %s", GetPieceType(i))))
+					break
+				}
+			}
 
-	if col == board.White {
-		pieces = &p.White
-	} else if col == board.Black {
-		pieces = &p.Black
-	}
-
-	ret := make(map[board.Square]Piece)
-
-	for square, piece := range *pieces {
-		if piece.Type() == pieceType {
-			ret[square] = piece
+			if !occupied {
+				output.Write([]byte(fmt.Sprintf(" .")))
+			}
 		}
+
+		output.Write([]byte(fmt.Sprintf("\n")))
 	}
 
-	return ret
+	output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(s.WhiteToMove))))
+	output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(s.CastlingRights))))
+	output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(int(s.EnPassantSquare)))))
+}
+
+func sideToString(whiteToMove bool) string {
+	if whiteToMove {
+		return "white"
+	} else {
+		return "black"
+	}
+}
+
+func castlingRightsToString(castlingRights uint8) string {
+	sb := strings.Builder{}
+
+	if castlingRights&8 == 8 {
+		sb.WriteString("K")
+	}
+
+	if castlingRights&4 == 4 {
+		sb.WriteString("Q")
+	}
+
+	if castlingRights&2 == 2 {
+		sb.WriteString("k")
+	}
+
+	if castlingRights&1 == 1 {
+		sb.WriteString("q")
+	}
+
+	return sb.String()
 }

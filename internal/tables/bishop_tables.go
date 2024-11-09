@@ -1,15 +1,14 @@
 package tables
 
 import (
-	"math/bits"
 	"strconv"
 
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/magic"
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
 )
 
-func populateBishopAttackTables(data magic.BishopData) [64][]uint64 {
-	var attacks [64][]uint64
+func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
+	var attacks [64][]bb.Bitboard
 
 	for square := 0; square < 64; square++ {
 		// Get magic data for this square
@@ -18,19 +17,19 @@ func populateBishopAttackTables(data magic.BishopData) [64][]uint64 {
 
 		// Create slice big enough for all possible indices
 		tableSize := 1 << (64 - shift)
-		attacks[square] = make([]uint64, tableSize)
+		attacks[square] = make([]bb.Bitboard, tableSize)
 
 		// Populate this square's table with all possible attack patterns
 		mask := MaskBishopAttacks(square)
-		numBlockers := bits.OnesCount64(mask) // how many relevant squares
+		numBlockers := bb.CountBits(mask) // how many relevant squares
 
 		// For each possible blocker configuration...
 		for i := 0; i < (1 << numBlockers); i++ {
-			blockers := bitboard.SetOccupancy(i, mask)
+			blockers := bb.SetOccupancy(i, mask)
 			// Calculate actual moves for this blocker pattern
 			moves := BishopAttacksOnTheFly(square, blockers)
 			// Calculate index using magic
-			index := (blockers * magicNum) >> shift
+			index := (uint64(blockers) * magicNum) >> shift
 			// Store moves at this index
 			attacks[square][index] = moves
 		}
@@ -39,69 +38,69 @@ func populateBishopAttackTables(data magic.BishopData) [64][]uint64 {
 	return attacks
 }
 
-func MaskBishopAttacks(square int) uint64 {
-	var attackBoard uint64
+func MaskBishopAttacks(square int) bb.Bitboard {
+	var attackBoard bb.Bitboard
 
 	startRank := square / 8
 	startFile := square % 8
 
 	// Bottom right
 	for rank, file := startRank+1, startFile+1; rank < 7 && file < 7; rank, file = rank+1, file+1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
 	// Top left
 	for rank, file := startRank-1, startFile-1; rank > 0 && file > 0; rank, file = rank-1, file-1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
 	// Top right
 	for rank, file := startRank-1, startFile+1; rank > 0 && file < 7; rank, file = rank-1, file+1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
 	// Bottom left
 	for rank, file := startRank+1, startFile-1; rank < 7 && file > 0; rank, file = rank+1, file-1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
 	return attackBoard
 }
 
-func BishopAttacksOnTheFly(square int, blockers uint64) uint64 {
-	var attackBoard uint64
+func BishopAttacksOnTheFly(square int, blockers bb.Bitboard) bb.Bitboard {
+	var attackBoard bb.Bitboard
 
 	startRank := square / 8
 	startFile := square % 8
 
 	// Bottom right
 	for rank, file := startRank+1, startFile+1; rank <= 7 && file <= 7; rank, file = rank+1, file+1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
-		if uint64(1)<<(rank*8+file)&blockers != 0 {
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}
 	}
 
 	// Top left
 	for rank, file := startRank-1, startFile-1; rank >= 0 && file >= 0; rank, file = rank-1, file-1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
-		if uint64(1)<<(rank*8+file)&blockers != 0 {
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}
 	}
 
 	// Top right
 	for rank, file := startRank-1, startFile+1; rank >= 0 && file <= 7; rank, file = rank-1, file+1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
-		if uint64(1)<<(rank*8+file)&blockers != 0 {
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}
 	}
 
 	// Bottom left
 	for rank, file := startRank+1, startFile-1; rank <= 7 && file >= 0; rank, file = rank+1, file-1 {
-		attackBoard = bitboard.SetBit(attackBoard, rank*8+file)
-		if uint64(1)<<(rank*8+file)&blockers != 0 {
+		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}
 	}
