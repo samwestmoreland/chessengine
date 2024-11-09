@@ -7,7 +7,7 @@ import (
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
-func TestComputeKnightAttacks(t *testing.T) {
+func TestMaskKnightAttacks(t *testing.T) {
 	testCases := map[int]int{
 		sq.E4: 11333767002587136,   // central
 		sq.G4: 45053588738670592,   // g-file
@@ -22,10 +22,10 @@ func TestComputeKnightAttacks(t *testing.T) {
 	}
 
 	for square, expected := range testCases {
-		actual := computeKnightAttacks(square)
+		actual := maskKnightAttacks(square)
 		if actual != uint64(expected) {
 			bitboard.PrintBoard(actual)
-			t.Errorf("Computing knight attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
+			t.Errorf("Getting knight attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
 }

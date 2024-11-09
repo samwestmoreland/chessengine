@@ -9,13 +9,13 @@ func populateKingAttackTables() [64]uint64 {
 	var attacks [64]uint64
 
 	for square := 0; square < 64; square++ {
-		attacks[square] = computeKingAttacks(square)
+		attacks[square] = maskKingAttacks(square)
 	}
 
 	return attacks
 }
 
-func computeKingAttacks(square int) uint64 {
+func maskKingAttacks(square int) uint64 {
 	pieceBoard := bitboard.SetBit(0, square)
 
 	var attackBoard uint64

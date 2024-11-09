@@ -32,8 +32,8 @@ func TestIsHFile(t *testing.T) {
 	}
 }
 
-func TestComputePawnAttacksWhiteCentral(t *testing.T) {
-	attackedSquares := computePawnAttacks(wb.White, sq.E2)
+func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
+	attackedSquares := maskPawnAttacks(wb.White, sq.E2)
 
 	if !bitboard.GetBit(attackedSquares, sq.D3) {
 		bitboard.PrintBoard(attackedSquares)
@@ -51,8 +51,8 @@ func TestComputePawnAttacksWhiteCentral(t *testing.T) {
 	}
 }
 
-func TestComputePawnAttacksBlackCentral(t *testing.T) {
-	attackedSquares := computePawnAttacks(wb.Black, sq.C7)
+func TestMaskPawnAttacksBlackCentral(t *testing.T) {
+	attackedSquares := maskPawnAttacks(wb.Black, sq.C7)
 
 	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
@@ -70,8 +70,8 @@ func TestComputePawnAttacksBlackCentral(t *testing.T) {
 	}
 }
 
-func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
-	attackedSquares := computePawnAttacks(wb.White, sq.A2)
+func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
+	attackedSquares := maskPawnAttacks(wb.White, sq.A2)
 
 	if !bitboard.GetBit(attackedSquares, sq.B3) {
 		bitboard.PrintBoard(attackedSquares)
@@ -83,7 +83,7 @@ func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
 		t.Error("Expected 2199023255552, got", attackedSquares)
 	}
 
-	attackedSquares = computePawnAttacks(wb.White, sq.H7)
+	attackedSquares = maskPawnAttacks(wb.White, sq.H7)
 
 	if !bitboard.GetBit(attackedSquares, sq.G8) {
 		bitboard.PrintBoard(attackedSquares)
@@ -96,8 +96,8 @@ func TestComputePawnAttacksWhiteFlanks(t *testing.T) {
 	}
 }
 
-func TestComputePawnAttacksBlackFlanks(t *testing.T) {
-	attackedSquares := computePawnAttacks(wb.Black, sq.A7)
+func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
+	attackedSquares := maskPawnAttacks(wb.Black, sq.A7)
 
 	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
@@ -109,7 +109,7 @@ func TestComputePawnAttacksBlackFlanks(t *testing.T) {
 		t.Error("Expected 131072, got", attackedSquares)
 	}
 
-	attackedSquares = computePawnAttacks(wb.Black, sq.H2)
+	attackedSquares = maskPawnAttacks(wb.Black, sq.H2)
 
 	if !bitboard.GetBit(attackedSquares, sq.G1) {
 		bitboard.PrintBoard(attackedSquares)

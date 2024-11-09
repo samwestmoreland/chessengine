@@ -4,8 +4,8 @@ import (
 	"math/bits"
 	"strconv"
 
-	"github.com/samwestmoreland/chessengine/magic"
 	"github.com/samwestmoreland/chessengine/internal/bitboard"
+	"github.com/samwestmoreland/chessengine/magic"
 )
 
 // populateRookAttackTables generates a lookup table for rook attacks. Each square on the board has

@@ -20,12 +20,12 @@ var testCases = map[int]uint64{
 	sq.H2: 13853283560024178688, // another corner
 }
 
-func TestComputeKingAttacks(t *testing.T) {
+func TestMaskKingAttacks(t *testing.T) {
 	for square, expected := range testCases {
-		actual := computeKingAttacks(square)
+		actual := maskKingAttacks(square)
 		if actual != expected {
 			bitboard.PrintBoard(actual)
-			t.Errorf("Computing king attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
+			t.Errorf("Getting king attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
 }

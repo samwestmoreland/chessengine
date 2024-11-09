@@ -9,13 +9,13 @@ func populateKnightAttackTables() [64]uint64 {
 	var attacks [64]uint64
 
 	for square := 0; square < 64; square++ {
-		attacks[square] = computeKnightAttacks(square)
+		attacks[square] = maskKnightAttacks(square)
 	}
 
 	return attacks
 }
 
-func computeKnightAttacks(square int) uint64 {
+func maskKnightAttacks(square int) uint64 {
 	board := bitboard.SetBit(0, square)
 
 	if isAFile(square) {

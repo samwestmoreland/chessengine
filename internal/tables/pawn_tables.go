@@ -12,28 +12,28 @@ func populatePawnAttackTables() [2][64]uint64 {
 
 	for side := 0; side < 2; side++ {
 		for square := 0; square < 64; square++ {
-			attacks[side][square] = computePawnAttacks(side, square)
+			attacks[side][square] = maskPawnAttacks(side, square)
 		}
 	}
 
 	return attacks
 }
 
-func computePawnAttacks(side, square int) uint64 {
+func maskPawnAttacks(side, square int) uint64 {
 	var attacks uint64
 
 	board := bitboard.SetBit(0, square)
 
 	if side == wb.White {
-		attacks = computeWhitePawnAttacks(board, square)
+		attacks = maskWhitePawnAttacks(board, square)
 	} else {
-		attacks = computeBlackPawnAttacks(board, square)
+		attacks = maskBlackPawnAttacks(board, square)
 	}
 
 	return bitboard.ClearBit(attacks, square)
 }
 
-func computeBlackPawnAttacks(board uint64, square int) uint64 {
+func maskBlackPawnAttacks(board uint64, square int) uint64 {
 	if isAFile(square) {
 		return board | (board << 9)
 	}
@@ -45,7 +45,7 @@ func computeBlackPawnAttacks(board uint64, square int) uint64 {
 	return board | (board << 7) | (board << 9)
 }
 
-func computeWhitePawnAttacks(board uint64, square int) uint64 {
+func maskWhitePawnAttacks(board uint64, square int) uint64 {
 	if isAFile(square) {
 		return board | (board >> 7)
 	}
