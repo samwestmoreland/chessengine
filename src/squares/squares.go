@@ -83,6 +83,10 @@ const (
 )
 
 func Stringify(square int) string {
+	if square < 0 || square > 63 {
+		return "-"
+	}
+
 	var ret strings.Builder
 
 	rank := 8 - square/8
