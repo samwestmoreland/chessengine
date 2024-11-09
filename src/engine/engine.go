@@ -2,16 +2,14 @@ package engine
 
 import (
 	"fmt"
-	"math/rand"
 
+	"github.com/samwestmoreland/chessengine/src/bitboard"
 	"github.com/samwestmoreland/chessengine/src/eval"
-	"github.com/samwestmoreland/chessengine/src/moves"
-	"github.com/samwestmoreland/chessengine/src/position"
 )
 
 type Engine struct {
-	// The position the engine is currently analysing.
-	pos *position.Position
+	// The state of the current position.
+	state *bitboard.State
 	// The current search depth.
 	Depth int
 	// The maximum search depth.
@@ -19,31 +17,40 @@ type Engine struct {
 	evaluator eval.Evaluator
 }
 
-func NewEngine() *Engine {
+func NewEngine() (*Engine, error) {
+	state, err := bitboard.NewState()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new state: %w", err)
+	}
+
 	return &Engine{
-		pos:       position.NewStartingPosition(),
+		state:     state,
 		Depth:     0,
 		MaxDepth:  1,
 		evaluator: eval.ShannonEvaluator{},
-	}
+	}, nil
 }
 
-func (e *Engine) SetPosition(pos *position.Position) {
-	e.pos = pos
+func (e *Engine) SetState(state *bitboard.State) {
+	e.state = state
 }
 
-func (e *Engine) FindBestMove() (moves.Move, error) {
-	allPossibleMoves, err := e.pos.GetAllPossibleMoves()
-	if err != nil {
-		return moves.Move{}, fmt.Errorf("failed to get all possible moves: %w", err)
-	}
+// func (e *Engine) SetPosition(pos *position.Position) {
+// 	e.pos = pos
+// }
 
-	/* #nosec G404 */
-	randomNumber := rand.Intn(allPossibleMoves.Len())
-
-	return allPossibleMoves.GetMoves()[randomNumber], nil
-}
-
-func (e *Engine) Evaluate() float64 {
-	return e.evaluator.Evaluate(e.pos)
-}
+// func (e *Engine) FindBestMove() (moves.Move, error) {
+// 	allPossibleMoves, err := e.pos.GetAllPossibleMoves()
+// 	if err != nil {
+// 		return moves.Move{}, fmt.Errorf("failed to get all possible moves: %w", err)
+// 	}
+//
+// 	/* #nosec G404 */
+// 	randomNumber := rand.Intn(allPossibleMoves.Len())
+//
+// 	return allPossibleMoves.GetMoves()[randomNumber], nil
+// }
+//
+// func (e *Engine) Evaluate() float64 {
+// 	return e.evaluator.Evaluate(e.pos)
+// }

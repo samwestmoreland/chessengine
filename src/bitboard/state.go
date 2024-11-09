@@ -2,8 +2,11 @@ package bitboard
 
 import (
 	"fmt"
-	"log"
+	"io"
+	"strconv"
 	"strings"
+
+	sq "github.com/samwestmoreland/chessengine/src/squares"
 )
 
 const (
@@ -63,15 +66,13 @@ type State struct {
 	FullMoveNumber  uint8
 }
 
-func NewState() *State {
-	return &State{
-		Occupancy:       make([]uint64, 14),
-		WhiteToMove:     false,
-		CastlingRights:  0,
-		EnPassantSquare: 0,
-		HalfMoveClock:   0,
-		FullMoveNumber:  0,
+func NewState() (*State, error) {
+	state, err := NewStateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new state: %w", err)
 	}
+
+	return state, nil
 }
 
 func NewStateFromFEN(fen string) (*State, error) {
@@ -88,18 +89,52 @@ func NewStateFromFEN(fen string) (*State, error) {
 		return nil, fmt.Errorf("FEN must have 6 parts")
 	}
 
-	occ := parsePositionString(parts[0])
+	occ, err := parsePositionString(parts[0])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse position string: %w", err)
+	}
+
 	castlingRights := parseCastlingRights(parts[2])
+
+	enpassant, err := parseEnPassantSquare(parts[3])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse en passant square: %w", err)
+	}
+
+	halfMoveClock, err := strconv.Atoi(parts[4])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse half move clock: %w", err)
+	}
+
+	fullMoveNumber, err := strconv.Atoi(parts[5])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse full move number: %w", err)
+	}
 
 	return &State{
 		Occupancy:       occ,
 		WhiteToMove:     parts[1] == "w",
 		CastlingRights:  castlingRights,
-		EnPassantSquare: 0,
+		EnPassantSquare: uint8(enpassant),
+		HalfMoveClock:   uint8(halfMoveClock),
+		FullMoveNumber:  uint8(fullMoveNumber),
 	}, nil
 }
 
-func parsePositionString(posStr string) []uint64 {
+func parseEnPassantSquare(square string) (uint8, error) {
+	if square == "-" {
+		return uint8(sq.NoSquare), nil
+	}
+
+	squareInt, err := sq.ToInt(square)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse en passant square: %w", err)
+	}
+
+	return uint8(squareInt), nil
+}
+
+func parsePositionString(posStr string) ([]uint64, error) {
 	occ := make([]uint64, 14)
 
 	sq := 0
@@ -174,10 +209,10 @@ func parsePositionString(posStr string) []uint64 {
 	}
 
 	if sq != 64 {
-		log.Fatalf("Expected 64 squares in FEN, got %d", sq)
+		return nil, fmt.Errorf("expected 64 squares, got %d", sq)
 	}
 
-	return occ
+	return occ, nil
 }
 
 func parseCastlingRights(castlingRights string) uint8 {
@@ -208,7 +243,7 @@ func parseCastlingRights(castlingRights string) uint8 {
 	return ret
 }
 
-func (s *State) Print() {
+func (s *State) Print(output io.Writer) {
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
 			square := rank*8 + file
@@ -216,16 +251,50 @@ func (s *State) Print() {
 			for i, occ := range s.Occupancy {
 				if GetBit(occ, square) {
 					occupied = true
-					fmt.Printf(" %s", GetPieceType(i))
+					output.Write([]byte(fmt.Sprintf(" %s", GetPieceType(i))))
 					break
 				}
 			}
 
 			if !occupied {
-				fmt.Printf(" .")
+				output.Write([]byte(fmt.Sprintf(" .")))
 			}
 		}
 
-		fmt.Printf("\n")
+		output.Write([]byte(fmt.Sprintf("\n")))
 	}
+
+	output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(s.WhiteToMove))))
+	output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(s.CastlingRights))))
+	output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(int(s.EnPassantSquare)))))
+}
+
+func sideToString(whiteToMove bool) string {
+	if whiteToMove {
+		return "white"
+	} else {
+		return "black"
+	}
+}
+
+func castlingRightsToString(castlingRights uint8) string {
+	sb := strings.Builder{}
+
+	if castlingRights&8 == 8 {
+		sb.WriteString("K")
+	}
+
+	if castlingRights&4 == 4 {
+		sb.WriteString("Q")
+	}
+
+	if castlingRights&2 == 2 {
+		sb.WriteString("k")
+	}
+
+	if castlingRights&1 == 1 {
+		sb.WriteString("q")
+	}
+
+	return sb.String()
 }
