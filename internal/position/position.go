@@ -143,52 +143,52 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 	for i := 0; i < len(posStr); i++ {
 		switch posStr[i] {
 		case 'P':
-			occ[P] |= 1 << sq
-			occ[A] |= 1 << sq
+			occ[P] = bb.SetBit(occ[P], sq)
+			occ[A] = bb.SetBit(occ[A], sq)
 			sq++
 		case 'N':
-			occ[N] |= 1 << sq
-			occ[A] |= 1 << sq
+			occ[N] = bb.SetBit(occ[N], sq)
+			occ[A] = bb.SetBit(occ[A], sq)
 			sq++
 		case 'B':
-			occ[B] |= 1 << sq
-			occ[A] |= 1 << sq
+			occ[B] = bb.SetBit(occ[B], sq)
+			occ[A] = bb.SetBit(occ[A], sq)
 			sq++
 		case 'R':
-			occ[R] |= 1 << sq
-			occ[A] |= 1 << sq
+			occ[R] = bb.SetBit(occ[R], sq)
+			occ[A] = bb.SetBit(occ[A], sq)
 			sq++
 		case 'Q':
-			occ[Q] |= 1 << sq
-			occ[A] |= 1 << sq
+			occ[Q] = bb.SetBit(occ[Q], sq)
+			occ[A] = bb.SetBit(occ[A], sq)
 			sq++
 		case 'K':
-			occ[K] |= 1 << sq
-			occ[A] |= 1 << sq
+			occ[K] = bb.SetBit(occ[K], sq)
+			occ[A] = bb.SetBit(occ[A], sq)
 			sq++
 		case 'p':
-			occ[p] |= 1 << sq
-			occ[a] |= 1 << sq
+			occ[p] = bb.SetBit(occ[p], sq)
+			occ[a] = bb.SetBit(occ[a], sq)
 			sq++
 		case 'n':
-			occ[n] |= 1 << sq
-			occ[a] |= 1 << sq
+			occ[n] = bb.SetBit(occ[n], sq)
+			occ[a] = bb.SetBit(occ[a], sq)
 			sq++
 		case 'b':
-			occ[b] |= 1 << sq
-			occ[a] |= 1 << sq
+			occ[b] = bb.SetBit(occ[b], sq)
+			occ[a] = bb.SetBit(occ[a], sq)
 			sq++
 		case 'r':
-			occ[r] |= 1 << sq
-			occ[a] |= 1 << sq
+			occ[r] = bb.SetBit(occ[r], sq)
+			occ[a] = bb.SetBit(occ[a], sq)
 			sq++
 		case 'q':
-			occ[q] |= 1 << sq
-			occ[a] |= 1 << sq
+			occ[q] = bb.SetBit(occ[q], sq)
+			occ[a] = bb.SetBit(occ[a], sq)
 			sq++
 		case 'k':
-			occ[k] |= 1 << sq
-			occ[a] |= 1 << sq
+			occ[k] = bb.SetBit(occ[k], sq)
+			occ[a] = bb.SetBit(occ[a], sq)
 			sq++
 		case '1':
 			sq += 1
