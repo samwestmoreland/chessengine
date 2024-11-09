@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/samwestmoreland/chessengine/src/bitboard"
 	"github.com/samwestmoreland/chessengine/src/engine"
-	"github.com/samwestmoreland/chessengine/src/position"
 	"github.com/samwestmoreland/chessengine/src/tables"
 )
 
@@ -25,11 +25,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	runEngine()
+	os.Exit(runEngine())
 }
 
-func runEngine() {
-	eng := engine.NewEngine()
+func runEngine() int {
+	eng, err := engine.NewEngine()
+	if err != nil {
+		return 1
+	}
 
 	writer := bufio.NewWriter(os.Stdout)
 	reader := bufio.NewReader(os.Stdin)
@@ -46,7 +49,7 @@ func runEngine() {
 		if err != nil {
 			_, err := writer.WriteString("Error reading input\n")
 			if err != nil {
-				panic(err)
+				return 1
 			}
 
 			writer.Flush()
@@ -59,7 +62,7 @@ func runEngine() {
 
 		_, err = resp.WriteTo(writer)
 		if err != nil {
-			panic(err)
+			return 1
 		}
 
 		writer.Flush()
@@ -68,6 +71,8 @@ func runEngine() {
 			break
 		}
 	}
+
+	return 0
 }
 
 func parseCmd(cmd string) *command {
@@ -122,20 +127,24 @@ func handlePositionCmd(cmd *command, eng *engine.Engine) *bytes.Buffer {
 
 	if cmd.args[0] == "startpos" {
 		mustWrite(&resp, "set up starting position\n")
+		state, err := bitboard.NewState()
+		if err != nil {
+			panic(err)
+		}
+
+		eng.SetState(state)
+
+		state.Print(&resp)
 
 		return &resp
 	}
 
-	// Try to parse FEN
-	fen, err := position.ParseFEN(strings.Join(cmd.args, " "))
+	state, err := bitboard.NewStateFromFEN(cmd.args[0])
 	if err != nil {
-		mustWrite(&resp, "invalid FEN\n")
-
-		return &resp
+		panic(err)
 	}
 
-	pos := position.NewPositionFromFEN(fen)
-	eng.SetPosition(pos)
+	eng.SetState(state)
 
 	return &resp
 }
