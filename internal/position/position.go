@@ -10,6 +10,22 @@ import (
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
+type Move struct {
+	From           int
+	To             int
+	PromotionPiece string
+}
+
+func (m Move) String() string {
+	ret := fmt.Sprintf("%s%s", sq.Stringify(m.From), sq.Stringify(m.To))
+
+	if m.PromotionPiece != "" {
+		ret += fmt.Sprintf("%s", m.PromotionPiece)
+	}
+
+	return ret
+}
+
 const (
 	P = iota
 	N
@@ -120,6 +136,10 @@ func NewPositionFromFEN(fen string) (*Position, error) {
 		HalfMoveClock:   uint8(halfMoveClock),
 		FullMoveNumber:  uint8(fullMoveNumber),
 	}, nil
+}
+
+func (p *Position) IsOccupied(square int) bool {
+	return bb.GetBit(p.Occupancy[A], square) || bb.GetBit(p.Occupancy[a], square)
 }
 
 func parseEnPassantSquare(square string) (uint8, error) {
