@@ -84,6 +84,9 @@ func (u *UCI) handleCommand(cmd *command) (*bytes.Buffer, bool) {
 
 	case "isready":
 		resp.WriteString("readyok\n")
+	case "ponder":
+		bestMove := u.engine.Search(u.position)
+		resp.WriteString(bestMove + "\n")
 	default:
 		resp.WriteString("unknown command\n")
 	}
