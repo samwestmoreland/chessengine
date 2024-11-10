@@ -126,3 +126,7 @@ func ToInt(square string) (int, error) {
 
 	return index, nil
 }
+
+func OnBoard(square int) bool {
+	return square >= 0 && square <= 63
+}

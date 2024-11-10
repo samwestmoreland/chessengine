@@ -101,3 +101,22 @@ func TestToInt(t *testing.T) {
 		})
 	}
 }
+
+func TestOnBoard(t *testing.T) {
+	testCases := []struct {
+		square int
+		want   bool
+	}{
+		{sq.A1, true},
+		{sq.C3, true},
+		{75, false},
+		{-1, false},
+	}
+
+	for _, tc := range testCases {
+		got := sq.OnBoard(tc.square)
+		if got != tc.want {
+			t.Errorf("OnBoard(%d) = %v, want %v", tc.square, got, tc.want)
+		}
+	}
+}
