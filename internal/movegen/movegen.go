@@ -27,7 +27,7 @@ const (
 )
 
 func Initialise() error {
-	lookupTables := &tables.Lookup{}
+	lookupTables = &tables.Lookup{}
 
 	return tables.InitialiseLookupTables(lookupTables)
 }
@@ -53,7 +53,6 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 
 	for pawnOccupancy != 0 {
 		source := bb.LSBIndex(pawnOccupancy)
-		pawnOccupancy = bb.ClearBit(pawnOccupancy, source)
 
 		target := source - 8
 		doublePush := source - 16
@@ -80,6 +79,30 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 				}
 			}
 		}
+
+		// Pawn captures
+		attacks := lookupTables.Pawns[0][source] & pos.Occupancy[a]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+
+			if target < sq.A7 {
+				ret = append(ret,
+					position.Move{From: source, To: target, PromotionPiece: "q"},
+					position.Move{From: source, To: target, PromotionPiece: "r"},
+					position.Move{From: source, To: target, PromotionPiece: "b"},
+					position.Move{From: source, To: target, PromotionPiece: "n"},
+				)
+			} else {
+				ret = append(ret,
+					position.Move{From: source, To: target},
+				)
+			}
+
+			attacks = bb.ClearBit(attacks, target)
+		}
+
+		pawnOccupancy = bb.ClearBit(pawnOccupancy, source)
 	}
 
 	return ret
@@ -114,7 +137,7 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 					position.Move{From: source, To: target},
 				)
 
-				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) {
+				if source >= sq.A7 && source <= sq.H7 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
 						position.Move{From: source, To: doublePush},
 					)
