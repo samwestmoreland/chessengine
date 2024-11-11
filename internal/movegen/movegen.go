@@ -61,17 +61,13 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 		if sq.OnBoard(target) && !pos.IsOccupied(target) {
 			// Check promotion
 			if target < sq.A7 {
-				ret = append(ret,
-					position.Move{From: source, To: target, PromotionPiece: "q"},
-					position.Move{From: source, To: target, PromotionPiece: "r"},
-					position.Move{From: source, To: target, PromotionPiece: "b"},
-					position.Move{From: source, To: target, PromotionPiece: "n"},
-				)
+				ret = append(ret, getPawnPromotions(source, target)...)
 			} else {
 				ret = append(ret,
 					position.Move{From: source, To: target},
 				)
 
+				// Double push
 				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
 						position.Move{From: source, To: doublePush},
@@ -87,12 +83,7 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 
 			if target < sq.A7 {
-				ret = append(ret,
-					position.Move{From: source, To: target, PromotionPiece: "q"},
-					position.Move{From: source, To: target, PromotionPiece: "r"},
-					position.Move{From: source, To: target, PromotionPiece: "b"},
-					position.Move{From: source, To: target, PromotionPiece: "n"},
-				)
+				ret = append(ret, getPawnPromotions(source, target)...)
 			} else {
 				ret = append(ret,
 					position.Move{From: source, To: target},
@@ -100,6 +91,16 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 			}
 
 			attacks = bb.ClearBit(attacks, target)
+		}
+
+		if pos.EnPassantSquare != sq.NoSquare {
+			enpassant := lookupTables.Pawns[0][source] & bb.SetBit(0, int(pos.EnPassantSquare))
+
+			if enpassant != 0 {
+				ret = append(ret,
+					position.Move{From: source, To: int(pos.EnPassantSquare)},
+				)
+			}
 		}
 
 		pawnOccupancy = bb.ClearBit(pawnOccupancy, source)
@@ -117,7 +118,6 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 
 	for pawnOccupancy != 0 {
 		source := bb.LSBIndex(pawnOccupancy)
-		pawnOccupancy = bb.ClearBit(pawnOccupancy, source)
 
 		target := source + 8
 		doublePush := source + 16
@@ -125,18 +125,14 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 		// Pawn advances
 		if sq.OnBoard(target) && !pos.IsOccupied(target) {
 			// Check promotion
-			if target < sq.A7 {
-				ret = append(ret,
-					position.Move{From: source, To: target, PromotionPiece: "q"},
-					position.Move{From: source, To: target, PromotionPiece: "r"},
-					position.Move{From: source, To: target, PromotionPiece: "b"},
-					position.Move{From: source, To: target, PromotionPiece: "n"},
-				)
+			if target > sq.H2 {
+				ret = append(ret, getPawnPromotions(source, target)...)
 			} else {
 				ret = append(ret,
 					position.Move{From: source, To: target},
 				)
 
+				// Doule push
 				if source >= sq.A7 && source <= sq.H7 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
 						position.Move{From: source, To: doublePush},
@@ -144,7 +140,45 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 				}
 			}
 		}
+
+		// Pawn captures
+		attacks := lookupTables.Pawns[1][source] & pos.Occupancy[A]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+
+			if target > sq.H2 {
+				ret = append(ret, getPawnPromotions(source, target)...)
+			} else {
+				ret = append(ret,
+					position.Move{From: source, To: target},
+				)
+			}
+
+			attacks = bb.ClearBit(attacks, target)
+		}
+
+		if pos.EnPassantSquare != sq.NoSquare {
+			enpassant := lookupTables.Pawns[1][source] & bb.SetBit(0, int(pos.EnPassantSquare))
+
+			if enpassant != 0 {
+				ret = append(ret,
+					position.Move{From: source, To: int(pos.EnPassantSquare)},
+				)
+			}
+		}
+
+		pawnOccupancy = bb.ClearBit(pawnOccupancy, source)
 	}
 
 	return ret
+}
+
+func getPawnPromotions(source, target int) []position.Move {
+	return []position.Move{
+		{From: source, To: target, PromotionPiece: "q"},
+		{From: source, To: target, PromotionPiece: "r"},
+		{From: source, To: target, PromotionPiece: "b"},
+		{From: source, To: target, PromotionPiece: "n"},
+	}
 }
