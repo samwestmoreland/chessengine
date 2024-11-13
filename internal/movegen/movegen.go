@@ -45,55 +45,22 @@ func GetLegalMoves(pos *position.Position) []position.Move {
 }
 
 func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) bool {
-	targetBit := bb.Bitboard(1) << square
-
-	// Check if attacked by pawn
 	if whiteAttacking {
-		whitePawns := pos.Occupancy[P]
-
-		for whitePawns != 0 {
-			pawnSquare := bb.LSBIndex(whitePawns)
-			if lookupTables.Pawns[0][pawnSquare]&targetBit != 0 {
-				return true
-			}
-
-			whitePawns = bb.ClearBit(whitePawns, pawnSquare)
-		}
-
-		// Check if attacked by knight
-		whiteKnights := pos.Occupancy[N]
-
-		for whiteKnights != 0 {
-			knightSquare := bb.LSBIndex(whiteKnights)
-			if lookupTables.Knights[knightSquare]&targetBit != 0 {
-				return true
-			}
-
-			whiteKnights = bb.ClearBit(whiteKnights, knightSquare)
-		}
-	}
-
-	blackPawns := pos.Occupancy[p]
-
-	for blackPawns != 0 {
-		pawnSquare := bb.LSBIndex(blackPawns)
-		if lookupTables.Pawns[1][pawnSquare]&targetBit != 0 {
+		if lookupTables.Pawns[1][square]&pos.Occupancy[P] != 0 {
 			return true
 		}
 
-		blackPawns = bb.ClearBit(blackPawns, pawnSquare)
-	}
-
-	// Check if attacked by knight
-	blackKnights := pos.Occupancy[n]
-
-	for blackKnights != 0 {
-		knightSquare := bb.LSBIndex(blackKnights)
-		if lookupTables.Knights[knightSquare]&targetBit != 0 {
+		if lookupTables.Knights[square]&pos.Occupancy[N] != 0 {
+			return true
+		}
+	} else {
+		if lookupTables.Pawns[0][square]&pos.Occupancy[p] != 0 {
 			return true
 		}
 
-		blackKnights = bb.ClearBit(blackKnights, knightSquare)
+		if lookupTables.Knights[square]&pos.Occupancy[n] != 0 {
+			return true
+		}
 	}
 
 	return false
