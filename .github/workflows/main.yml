@@ -1,4 +1,4 @@
-name: Main
+name: Build and test
 
 on:
   push:
@@ -10,11 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
 
-    - name: Please build
-      run: ./pleasew build //... --plain_output
+    - name: Go build
+      run: go build ./...
 
-    - name: Please test
-      run: ./pleasew test //... --plain_output
+    - name: Go test
+      run: go test ./...
 
