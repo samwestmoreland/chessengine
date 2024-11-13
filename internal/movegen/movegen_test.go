@@ -213,6 +213,27 @@ func TestSquareIsAttacked(t *testing.T) {
 			whiteAttacking: false,
 			attacked:       true,
 		},
+		{
+			name:           "white bishop attacking e5",
+			fen:            "1k6/8/8/4r3/8/2B5/8/1K6 w - - 0 1",
+			square:         sq.E5,
+			whiteAttacking: true,
+			attacked:       true,
+		},
+		{
+			name:           "white bishop not attacking blocked square",
+			fen:            "1k6/8/8/4r3/8/2B5/8/1K6 w - - 0 1",
+			square:         sq.F6,
+			whiteAttacking: true,
+			attacked:       false,
+		},
+		{
+			name:           "black bishop not attacking F4",
+			fen:            "1k6/2b5/8/4r3/8/2B5/8/1K6 b - - 0 1",
+			square:         sq.F4,
+			whiteAttacking: false,
+			attacked:       false,
+		},
 	}
 
 	for _, tt := range tests {

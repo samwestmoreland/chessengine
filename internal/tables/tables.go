@@ -2,10 +2,13 @@ package tables
 
 import (
 	"encoding/json"
+	"strconv"
 
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/magic"
 )
+
+var data magic.Data
 
 type Lookup struct {
 	Pawns   [2][64]bb.Bitboard
@@ -16,7 +19,7 @@ type Lookup struct {
 }
 
 func InitialiseLookupTables(table *Lookup) error {
-	var data magic.Data
+	data = data
 	if err := json.Unmarshal(magic.JsonData, &data); err != nil {
 		return err
 	}
@@ -28,4 +31,36 @@ func InitialiseLookupTables(table *Lookup) error {
 	table.Rooks = populateRookAttackTables(data.Rook)
 
 	return nil
+}
+
+func GetBishopLookupIndex(square int, blockers bb.Bitboard) bb.Bitboard {
+	magicNum, err := strconv.ParseUint(data.Bishop.Magics[square].Magic, 16, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	mask, err := strconv.ParseUint(data.Bishop.Magics[square].Mask, 16, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	shift := data.Bishop.Magics[square].Shift
+
+	return bb.Bitboard((uint64(blockers) & mask * magicNum) >> shift)
+}
+
+func GetRookLookupIndex(square int, blockers bb.Bitboard) bb.Bitboard {
+	magicNum, err := strconv.ParseUint(data.Rook.Magics[square].Magic, 16, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	mask, err := strconv.ParseUint(data.Rook.Magics[square].Mask, 16, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	shift := data.Rook.Magics[square].Shift
+
+	return bb.Bitboard((uint64(blockers) & mask * magicNum) >> shift)
 }

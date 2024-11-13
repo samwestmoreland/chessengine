@@ -58,6 +58,11 @@ func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) boo
 		if lookupTables.Knights[square]&pos.Occupancy[N] != 0 {
 			return true
 		}
+
+		bishopIndex := tables.GetBishopLookupIndex(square, pos.Occupancy[A]|pos.Occupancy[a])
+		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[B] != 0 {
+			return true
+		}
 	} else {
 		if lookupTables.Pawns[0][square]&pos.Occupancy[p] != 0 {
 			return true
@@ -68,6 +73,11 @@ func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) boo
 		}
 
 		if lookupTables.Knights[square]&pos.Occupancy[n] != 0 {
+			return true
+		}
+
+		bishopIndex := tables.GetBishopLookupIndex(square, pos.Occupancy[A]|pos.Occupancy[a])
+		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[b] != 0 {
 			return true
 		}
 	}

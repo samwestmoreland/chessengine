@@ -236,6 +236,7 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 	return occ, nil
 }
 
+// parseCastlingRights parses a string of castling rights into a uint8
 // 1000: K
 // 0100: Q
 // 0010: k
