@@ -236,12 +236,11 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 	return occ, nil
 }
 
+// 1000: K
+// 0100: Q
+// 0010: k
+// 0001: q
 func parseCastlingRights(castlingRights string) uint8 {
-
-	// 1000: K
-	// 0100: Q
-	// 0010: k
-	// 0001: q
 
 	var ret uint8
 

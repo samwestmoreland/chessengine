@@ -44,6 +44,61 @@ func GetLegalMoves(pos *position.Position) []position.Move {
 	return ret
 }
 
+func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) bool {
+	targetBit := bb.Bitboard(1) << square
+
+	// Check if attacked by pawn
+	if whiteAttacking {
+		whitePawns := pos.Occupancy[P]
+
+		for whitePawns != 0 {
+			pawnSquare := bb.LSBIndex(whitePawns)
+			if lookupTables.Pawns[0][pawnSquare]&targetBit != 0 {
+				return true
+			}
+
+			whitePawns = bb.ClearBit(whitePawns, pawnSquare)
+		}
+
+		// Check if attacked by knight
+		whiteKnights := pos.Occupancy[N]
+
+		for whiteKnights != 0 {
+			knightSquare := bb.LSBIndex(whiteKnights)
+			if lookupTables.Knights[knightSquare]&targetBit != 0 {
+				return true
+			}
+
+			whiteKnights = bb.ClearBit(whiteKnights, knightSquare)
+		}
+	}
+
+	blackPawns := pos.Occupancy[p]
+
+	for blackPawns != 0 {
+		pawnSquare := bb.LSBIndex(blackPawns)
+		if lookupTables.Pawns[1][pawnSquare]&targetBit != 0 {
+			return true
+		}
+
+		blackPawns = bb.ClearBit(blackPawns, pawnSquare)
+	}
+
+	// Check if attacked by knight
+	blackKnights := pos.Occupancy[n]
+
+	for blackKnights != 0 {
+		knightSquare := bb.LSBIndex(blackKnights)
+		if lookupTables.Knights[knightSquare]&targetBit != 0 {
+			return true
+		}
+
+		blackKnights = bb.ClearBit(blackKnights, knightSquare)
+	}
+
+	return false
+}
+
 func getWhitePawnMoves(pos *position.Position) []position.Move {
 	var ret []position.Move
 
@@ -181,4 +236,26 @@ func getPawnPromotions(source, target int) []position.Move {
 		{From: source, To: target, PromotionPiece: "b"},
 		{From: source, To: target, PromotionPiece: "n"},
 	}
+}
+
+func getWhiteKingCastlingMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	// King side castle
+	if pos.CastlingRights&8 != 0 {
+		// Check if pieces are in the way
+		if !pos.IsOccupied(sq.F1) && !pos.IsOccupied(sq.G1) {
+			ret = append(ret, position.Move{From: sq.E1, To: sq.G1})
+		}
+	}
+
+	// Queen side castle
+	if pos.CastlingRights&4 != 0 {
+		// Check if pieces are in the way
+		if !pos.IsOccupied(sq.D1) && !pos.IsOccupied(sq.C1) && !pos.IsOccupied(sq.B1) {
+			ret = append(ret, position.Move{From: sq.E1, To: sq.C1})
+		}
+	}
+
+	return ret
 }
