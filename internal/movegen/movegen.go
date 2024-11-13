@@ -26,6 +26,7 @@ const (
 	a // All black
 )
 
+// Initialise populates the lookup tables which are stored as a global variable in this package
 func Initialise() error {
 	lookupTables = &tables.Lookup{}
 
@@ -50,11 +51,19 @@ func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) boo
 			return true
 		}
 
+		if lookupTables.Kings[square]&pos.Occupancy[K] != 0 {
+			return true
+		}
+
 		if lookupTables.Knights[square]&pos.Occupancy[N] != 0 {
 			return true
 		}
 	} else {
 		if lookupTables.Pawns[0][square]&pos.Occupancy[p] != 0 {
+			return true
+		}
+
+		if lookupTables.Kings[square]&pos.Occupancy[k] != 0 {
 			return true
 		}
 
@@ -226,3 +235,7 @@ func getWhiteKingCastlingMoves(pos *position.Position) []position.Move {
 
 	return ret
 }
+
+// func getBishopAttacks(square int) bb.Bitboard {
+// 	return lookupTables.Bishops[square] & (pos.Occupancy[A] | pos.Occupancy[a])
+// }
