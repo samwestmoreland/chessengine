@@ -39,4 +39,4 @@ var PrecalculatedData Data
 var VersionString string
 
 //go:embed magics.json
-var JsonData []byte
+var JsonData []byte // The raw JSON data
