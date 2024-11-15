@@ -38,6 +38,7 @@ func GetLegalMoves(pos *position.Position) []position.Move {
 
 	if pos.WhiteToMove {
 		ret = append(ret, getWhitePawnMoves(pos)...)
+		ret = append(ret, getWhiteKingCastlingMoves(pos)...)
 	} else {
 		ret = append(ret, getBlackPawnMoves(pos)...)
 	}
@@ -45,8 +46,8 @@ func GetLegalMoves(pos *position.Position) []position.Move {
 	return ret
 }
 
-func SquareAttacked(pos *position.Position, square int) bool {
-	if pos.WhiteToMove {
+func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) bool {
+	if whiteAttacking {
 		if lookupTables.Pawns[1][square]&pos.Occupancy[P] != 0 {
 			return true
 		}
@@ -251,8 +252,12 @@ func getWhiteKingCastlingMoves(pos *position.Position) []position.Move {
 
 	// King side castle
 	if pos.CastlingRights&8 != 0 {
-		// Check if pieces are in the way
-		if !pos.IsOccupied(sq.F1) && !pos.IsOccupied(sq.G1) {
+		// Check if pieces are in the way or if squares are attacked
+		if !pos.IsOccupied(sq.F1) &&
+			!pos.IsOccupied(sq.G1) &&
+			!SquareAttacked(pos, sq.E1, false) &&
+			!SquareAttacked(pos, sq.F1, false) &&
+			!SquareAttacked(pos, sq.G1, false) {
 			ret = append(ret, position.Move{From: sq.E1, To: sq.G1})
 		}
 	}
@@ -260,8 +265,44 @@ func getWhiteKingCastlingMoves(pos *position.Position) []position.Move {
 	// Queen side castle
 	if pos.CastlingRights&4 != 0 {
 		// Check if pieces are in the way
-		if !pos.IsOccupied(sq.D1) && !pos.IsOccupied(sq.C1) && !pos.IsOccupied(sq.B1) {
+		if !pos.IsOccupied(sq.D1) &&
+			!pos.IsOccupied(sq.C1) &&
+			!pos.IsOccupied(sq.B1) &&
+			!SquareAttacked(pos, sq.E1, false) &&
+			!SquareAttacked(pos, sq.D1, false) &&
+			!SquareAttacked(pos, sq.C1, false) {
 			ret = append(ret, position.Move{From: sq.E1, To: sq.C1})
+		}
+	}
+
+	return ret
+}
+
+func getBlackKingCastlingMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	// King side castle
+	if pos.CastlingRights&2 != 0 {
+		// Check if pieces are in the way
+		if !pos.IsOccupied(sq.F8) &&
+			!pos.IsOccupied(sq.G8) &&
+			!SquareAttacked(pos, sq.E8, true) &&
+			!SquareAttacked(pos, sq.F8, true) &&
+			!SquareAttacked(pos, sq.G8, true) {
+			ret = append(ret, position.Move{From: sq.E8, To: sq.G8})
+		}
+	}
+
+	// Queen side castle
+	if pos.CastlingRights&1 != 0 {
+		// Check if pieces are in the way
+		if !pos.IsOccupied(sq.D8) &&
+			!pos.IsOccupied(sq.C8) &&
+			!pos.IsOccupied(sq.B8) &&
+			!SquareAttacked(pos, sq.E8, true) &&
+			!SquareAttacked(pos, sq.D8, true) &&
+			!SquareAttacked(pos, sq.C8, true) {
+			ret = append(ret, position.Move{From: sq.E8, To: sq.C8})
 		}
 	}
 
