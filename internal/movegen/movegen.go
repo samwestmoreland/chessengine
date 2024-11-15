@@ -63,6 +63,17 @@ func SquareAttacked(pos *position.Position, square int) bool {
 		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[B] != 0 {
 			return true
 		}
+
+		rookIndex := tables.GetRookLookupIndex(square, pos.Occupancy[A]|pos.Occupancy[a])
+		if lookupTables.Rooks[square][rookIndex]&pos.Occupancy[R] != 0 {
+			return true
+		}
+
+		// Lookup queen attacks using bishop and rook attacks
+		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[Q] != 0 ||
+			lookupTables.Rooks[square][rookIndex]&pos.Occupancy[Q] != 0 {
+			return true
+		}
 	} else {
 		if lookupTables.Pawns[0][square]&pos.Occupancy[p] != 0 {
 			return true
@@ -78,6 +89,17 @@ func SquareAttacked(pos *position.Position, square int) bool {
 
 		bishopIndex := tables.GetBishopLookupIndex(square, pos.Occupancy[A]|pos.Occupancy[a])
 		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[b] != 0 {
+			return true
+		}
+
+		rookIndex := tables.GetRookLookupIndex(square, pos.Occupancy[A]|pos.Occupancy[a])
+		if lookupTables.Rooks[square][rookIndex]&pos.Occupancy[r] != 0 {
+			return true
+		}
+
+		// Lookup queen attacks using bishop and rook attacks
+		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[q] != 0 ||
+			lookupTables.Rooks[square][rookIndex]&pos.Occupancy[q] != 0 {
 			return true
 		}
 	}

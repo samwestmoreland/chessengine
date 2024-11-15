@@ -213,6 +213,48 @@ func TestSquareIsAttacked(t *testing.T) {
 			square:   sq.F4,
 			attacked: false,
 		},
+		{
+			name:     "white rook attack 3rd rank",
+			fen:      "1k6/8/8/4r3/8/1R6/8/1K6 w - - 0 1",
+			square:   sq.H3,
+			attacked: true,
+		},
+		{
+			name:     "white rook 3rd rank with blocker",
+			fen:      "1k6/8/8/8/8/1R2r3/8/1K6 w - - 0 1",
+			square:   sq.F3,
+			attacked: false,
+		},
+		{
+			name:     "white rook attacking another rook",
+			fen:      "1k6/8/8/8/8/1R2r3/8/1K6 w - - 0 1",
+			square:   sq.E3,
+			attacked: true,
+		},
+		{
+			name:     "black rook not under attack because it is black to move",
+			fen:      "1k6/8/8/8/8/1R2r3/8/1K6 b - - 0 1",
+			square:   sq.E3,
+			attacked: false,
+		},
+		{
+			name:     "black rook attacking e file",
+			fen:      "1k6/8/8/8/8/1R2r3/8/1K6 b - - 0 1",
+			square:   sq.E8,
+			attacked: true,
+		},
+		{
+			name:     "black rook attack blocked by pawn of own colour",
+			fen:      "1k6/8/8/8/8/1Rp1r3/8/1K6 b - - 0 1",
+			square:   sq.B3,
+			attacked: false,
+		},
+		{
+			name:     "black rook attacked by white queen",
+			fen:      "1k6/8/1r6/8/8/8/5Q2/1K6 w - - 0 1",
+			square:   sq.B6,
+			attacked: true,
+		},
 	}
 
 	for _, tt := range tests {
