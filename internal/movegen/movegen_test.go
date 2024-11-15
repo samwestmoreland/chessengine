@@ -94,6 +94,16 @@ func TestGetLegalMoves(t *testing.T) {
 			fen:      "1k6/8/6r1/8/4Q3/8/2K5/8 w - - 0 1",
 			numMoves: 32,
 		},
+		{
+			name:     "van't kruijs opening black to move",
+			fen:      "rnbq1rk1/ppp1ppbp/3p1np1/8/3P4/4P1P1/PPPNNPBP/R1BQK2R b KQ - 1 6",
+			numMoves: 32,
+		},
+		{
+			name:     "van't kruijs opening white to move",
+			fen:      "rnbq1rk1/ppp2pbp/3p1np1/4p3/3P4/4P1P1/PPPNNPBP/R1BQK2R w KQ - 0 7",
+			numMoves: 35,
+		},
 	}
 
 	for _, tt := range tests {
