@@ -1,6 +1,7 @@
 package movegen_test
 
 import (
+	"bytes"
 	"os"
 	"testing"
 
@@ -26,7 +27,7 @@ func TestGetLegalMoves(t *testing.T) {
 		{
 			name:     "starting position",
 			fen:      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-			numMoves: 16,
+			numMoves: 20,
 		},
 		{
 			name:     "white pawn promotion with captures",
@@ -66,12 +67,32 @@ func TestGetLegalMoves(t *testing.T) {
 		{
 			name:     "white to castle king side",
 			fen:      "1k6/4b3/8/8/8/8/8/4K2R w K - 0 1",
-			numMoves: 8,
+			numMoves: 15,
 		},
 		{
 			name:     "white to castle queen side",
 			fen:      "1k6/4b3/8/8/8/8/8/R3K3 w Q - 0 1",
-			numMoves: 9,
+			numMoves: 16,
+		},
+		{
+			name:     "white knight moves",
+			fen:      "6k1/8/2P5/8/3N4/8/8/8 w - - 0 1",
+			numMoves: 8,
+		},
+		{
+			name:     "white bishop moves",
+			fen:      "6k1/8/2P5/8/4B3/8/2P5/8 w - - 0 1",
+			numMoves: 11,
+		},
+		{
+			name:     "white king moves",
+			fen:      "6k1/8/2P5/8/4B3/4K3/2P5/8 w - - 0 1",
+			numMoves: 18,
+		},
+		{
+			name:     "white queen moves",
+			fen:      "1k6/8/6r1/8/4Q3/8/2K5/8 w - - 0 1",
+			numMoves: 32,
 		},
 	}
 
@@ -85,7 +106,10 @@ func TestGetLegalMoves(t *testing.T) {
 			moves := movegen.GetLegalMoves(pos)
 
 			if len(moves) != tt.numMoves {
-				pos.Print(os.Stderr)
+				var buf bytes.Buffer
+				buf.WriteString("\n")
+				pos.Print(&buf)
+				t.Errorf(buf.String())
 				t.Errorf("got %d moves, want %d", len(moves), tt.numMoves)
 				t.Errorf("moves generated:")
 				for _, move := range moves {

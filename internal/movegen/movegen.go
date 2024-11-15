@@ -39,8 +39,19 @@ func GetLegalMoves(pos *position.Position) []position.Move {
 	if pos.WhiteToMove {
 		ret = append(ret, getWhitePawnMoves(pos)...)
 		ret = append(ret, getWhiteKingCastlingMoves(pos)...)
+		ret = append(ret, getWhiteKnightMoves(pos)...)
+		ret = append(ret, getWhiteBishopMoves(pos)...)
+		ret = append(ret, getWhiteRookMoves(pos)...)
+		ret = append(ret, getWhiteKingMoves(pos)...)
+		ret = append(ret, getWhiteQueenMoves(pos)...)
 	} else {
 		ret = append(ret, getBlackPawnMoves(pos)...)
+		ret = append(ret, getBlackKingCastlingMoves(pos)...)
+		ret = append(ret, getBlackKnightMoves(pos)...)
+		ret = append(ret, getBlackBishopMoves(pos)...)
+		ret = append(ret, getBlackRookMoves(pos)...)
+		ret = append(ret, getBlackKingMoves(pos)...)
+		ret = append(ret, getBlackQueenMoves(pos)...)
 	}
 
 	return ret
@@ -309,6 +320,260 @@ func getBlackKingCastlingMoves(pos *position.Position) []position.Move {
 	return ret
 }
 
-// func getBishopAttacks(square int) bb.Bitboard {
-// 	return lookupTables.Bishops[square] & (pos.Occupancy[A] | pos.Occupancy[a])
-// }
+func getWhiteKnightMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	knights := pos.Occupancy[N]
+
+	for knights != 0 {
+		source := bb.LSBIndex(knights)
+		knights = bb.ClearBit(knights, source)
+
+		attacks := lookupTables.Knights[source] &^ pos.Occupancy[A]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getBlackKnightMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	knights := pos.Occupancy[n]
+
+	for knights != 0 {
+		source := bb.LSBIndex(knights)
+		knights = bb.ClearBit(knights, source)
+
+		attacks := lookupTables.Knights[source] &^ pos.Occupancy[a]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getWhiteBishopMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	bishops := pos.Occupancy[B]
+
+	for bishops != 0 {
+		source := bb.LSBIndex(bishops)
+		bishops = bb.ClearBit(bishops, source)
+
+		index := tables.GetBishopLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		attacks := lookupTables.Bishops[source][index] &^ pos.Occupancy[A]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getBlackBishopMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	bishops := pos.Occupancy[b]
+
+	for bishops != 0 {
+		source := bb.LSBIndex(bishops)
+		bishops = bb.ClearBit(bishops, source)
+
+		index := tables.GetBishopLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		attacks := lookupTables.Bishops[source][index] &^ pos.Occupancy[a]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getWhiteRookMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	rooks := pos.Occupancy[R]
+
+	for rooks != 0 {
+		source := bb.LSBIndex(rooks)
+		rooks = bb.ClearBit(rooks, source)
+
+		index := tables.GetRookLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		attacks := lookupTables.Rooks[source][index] &^ pos.Occupancy[A]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getBlackRookMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	rooks := pos.Occupancy[r]
+
+	for rooks != 0 {
+		source := bb.LSBIndex(rooks)
+		rooks = bb.ClearBit(rooks, source)
+
+		index := tables.GetRookLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		attacks := lookupTables.Rooks[source][index] &^ pos.Occupancy[a]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getWhiteKingMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	king := pos.Occupancy[K]
+
+	for king != 0 {
+		source := bb.LSBIndex(king)
+		king = bb.ClearBit(king, source)
+
+		attacks := lookupTables.Kings[source] &^ pos.Occupancy[A]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getBlackKingMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	king := pos.Occupancy[k]
+
+	for king != 0 {
+		source := bb.LSBIndex(king)
+		king = bb.ClearBit(king, source)
+
+		attacks := lookupTables.Kings[source] &^ pos.Occupancy[a]
+
+		for attacks != 0 {
+			target := bb.LSBIndex(attacks)
+			attacks = bb.ClearBit(attacks, target)
+
+			ret = append(ret, position.Move{From: source, To: target})
+		}
+	}
+
+	return ret
+}
+
+func getWhiteQueenMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	queens := pos.Occupancy[Q]
+
+	for queens != 0 {
+		source := bb.LSBIndex(queens)
+		queens = bb.ClearBit(queens, source)
+
+		bishopTableIndex := tables.GetBishopLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		bishopAttacks := lookupTables.Bishops[source][bishopTableIndex] &^ pos.Occupancy[A]
+
+		rookTableIndex := tables.GetRookLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		rookAttacks := lookupTables.Rooks[source][rookTableIndex] &^ pos.Occupancy[A]
+
+		for bishopAttacks != 0 || rookAttacks != 0 {
+			if bishopAttacks != 0 {
+				target := bb.LSBIndex(bishopAttacks)
+				bishopAttacks = bb.ClearBit(bishopAttacks, target)
+
+				ret = append(ret, position.Move{From: source, To: target})
+			}
+
+			if rookAttacks != 0 {
+				target := bb.LSBIndex(rookAttacks)
+				rookAttacks = bb.ClearBit(rookAttacks, target)
+
+				ret = append(ret, position.Move{From: source, To: target})
+			}
+		}
+	}
+
+	return ret
+}
+
+func getBlackQueenMoves(pos *position.Position) []position.Move {
+	var ret []position.Move
+
+	queens := pos.Occupancy[q]
+
+	for queens != 0 {
+		source := bb.LSBIndex(queens)
+		queens = bb.ClearBit(queens, source)
+
+		bishopTableIndex := tables.GetBishopLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		bishopAttacks := lookupTables.Bishops[source][bishopTableIndex] &^ pos.Occupancy[a]
+
+		rookTableIndex := tables.GetRookLookupIndex(source, pos.Occupancy[A]|pos.Occupancy[a])
+
+		rookAttacks := lookupTables.Rooks[source][rookTableIndex] &^ pos.Occupancy[a]
+
+		for bishopAttacks != 0 || rookAttacks != 0 {
+			if bishopAttacks != 0 {
+				target := bb.LSBIndex(bishopAttacks)
+				bishopAttacks = bb.ClearBit(bishopAttacks, target)
+
+				ret = append(ret, position.Move{From: source, To: target})
+			}
+
+			if rookAttacks != 0 {
+				target := bb.LSBIndex(rookAttacks)
+				rookAttacks = bb.ClearBit(rookAttacks, target)
+
+				ret = append(ret, position.Move{From: source, To: target})
+			}
+		}
+	}
+
+	return ret
+}
