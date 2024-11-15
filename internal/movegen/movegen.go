@@ -45,8 +45,8 @@ func GetLegalMoves(pos *position.Position) []position.Move {
 	return ret
 }
 
-func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) bool {
-	if whiteAttacking {
+func SquareAttacked(pos *position.Position, square int) bool {
+	if pos.WhiteToMove {
 		if lookupTables.Pawns[1][square]&pos.Occupancy[P] != 0 {
 			return true
 		}
