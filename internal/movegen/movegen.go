@@ -2,6 +2,7 @@ package movegen
 
 import (
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	"github.com/samwestmoreland/chessengine/internal/move"
 	"github.com/samwestmoreland/chessengine/internal/position"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 	"github.com/samwestmoreland/chessengine/internal/tables"
@@ -33,8 +34,8 @@ func Initialise() error {
 	return tables.InitialiseLookupTables(lookupTables)
 }
 
-func GetLegalMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func GetLegalMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	if pos.WhiteToMove {
 		ret = append(ret, getWhitePawnMoves(pos)...)
@@ -119,8 +120,8 @@ func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) boo
 	return false
 }
 
-func getWhitePawnMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getWhitePawnMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	var pawnOccupancy bb.Bitboard
 
@@ -139,13 +140,13 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 				ret = append(ret, getPawnPromotions(source, target)...)
 			} else {
 				ret = append(ret,
-					position.Move{From: source, To: target},
+					move.Move{From: source, To: target},
 				)
 
 				// Double push
 				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						position.Move{From: source, To: doublePush},
+						move.Move{From: source, To: doublePush},
 					)
 				}
 			}
@@ -161,7 +162,7 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 				ret = append(ret, getPawnPromotions(source, target)...)
 			} else {
 				ret = append(ret,
-					position.Move{From: source, To: target},
+					move.Move{From: source, To: target},
 				)
 			}
 
@@ -173,7 +174,7 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 
 			if enpassant != 0 {
 				ret = append(ret,
-					position.Move{From: source, To: int(pos.EnPassantSquare)},
+					move.Move{From: source, To: int(pos.EnPassantSquare)},
 				)
 			}
 		}
@@ -184,8 +185,8 @@ func getWhitePawnMoves(pos *position.Position) []position.Move {
 	return ret
 }
 
-func getBlackPawnMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getBlackPawnMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	var pawnOccupancy bb.Bitboard
 
@@ -204,13 +205,13 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 				ret = append(ret, getPawnPromotions(source, target)...)
 			} else {
 				ret = append(ret,
-					position.Move{From: source, To: target},
+					move.Move{From: source, To: target},
 				)
 
 				// Doule push
 				if source >= sq.A7 && source <= sq.H7 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						position.Move{From: source, To: doublePush},
+						move.Move{From: source, To: doublePush},
 					)
 				}
 			}
@@ -226,7 +227,7 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 				ret = append(ret, getPawnPromotions(source, target)...)
 			} else {
 				ret = append(ret,
-					position.Move{From: source, To: target},
+					move.Move{From: source, To: target},
 				)
 			}
 
@@ -238,7 +239,7 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 
 			if enpassant != 0 {
 				ret = append(ret,
-					position.Move{From: source, To: int(pos.EnPassantSquare)},
+					move.Move{From: source, To: int(pos.EnPassantSquare)},
 				)
 			}
 		}
@@ -249,8 +250,8 @@ func getBlackPawnMoves(pos *position.Position) []position.Move {
 	return ret
 }
 
-func getPawnPromotions(source, target int) []position.Move {
-	return []position.Move{
+func getPawnPromotions(source, target int) []move.Move {
+	return []move.Move{
 		{From: source, To: target, PromotionPiece: "q"},
 		{From: source, To: target, PromotionPiece: "r"},
 		{From: source, To: target, PromotionPiece: "b"},
@@ -258,8 +259,8 @@ func getPawnPromotions(source, target int) []position.Move {
 	}
 }
 
-func getWhiteKingCastlingMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getWhiteKingCastlingMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	// King side castle
 	if pos.CastlingRights&8 != 0 {
@@ -269,7 +270,7 @@ func getWhiteKingCastlingMoves(pos *position.Position) []position.Move {
 			!SquareAttacked(pos, sq.E1, false) &&
 			!SquareAttacked(pos, sq.F1, false) &&
 			!SquareAttacked(pos, sq.G1, false) {
-			ret = append(ret, position.Move{From: sq.E1, To: sq.G1})
+			ret = append(ret, move.Move{From: sq.E1, To: sq.G1})
 		}
 	}
 
@@ -282,15 +283,15 @@ func getWhiteKingCastlingMoves(pos *position.Position) []position.Move {
 			!SquareAttacked(pos, sq.E1, false) &&
 			!SquareAttacked(pos, sq.D1, false) &&
 			!SquareAttacked(pos, sq.C1, false) {
-			ret = append(ret, position.Move{From: sq.E1, To: sq.C1})
+			ret = append(ret, move.Move{From: sq.E1, To: sq.C1})
 		}
 	}
 
 	return ret
 }
 
-func getBlackKingCastlingMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getBlackKingCastlingMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	// King side castle
 	if pos.CastlingRights&2 != 0 {
@@ -300,7 +301,7 @@ func getBlackKingCastlingMoves(pos *position.Position) []position.Move {
 			!SquareAttacked(pos, sq.E8, true) &&
 			!SquareAttacked(pos, sq.F8, true) &&
 			!SquareAttacked(pos, sq.G8, true) {
-			ret = append(ret, position.Move{From: sq.E8, To: sq.G8})
+			ret = append(ret, move.Move{From: sq.E8, To: sq.G8})
 		}
 	}
 
@@ -313,15 +314,15 @@ func getBlackKingCastlingMoves(pos *position.Position) []position.Move {
 			!SquareAttacked(pos, sq.E8, true) &&
 			!SquareAttacked(pos, sq.D8, true) &&
 			!SquareAttacked(pos, sq.C8, true) {
-			ret = append(ret, position.Move{From: sq.E8, To: sq.C8})
+			ret = append(ret, move.Move{From: sq.E8, To: sq.C8})
 		}
 	}
 
 	return ret
 }
 
-func getWhiteKnightMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getWhiteKnightMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	knights := pos.Occupancy[N]
 
@@ -335,15 +336,15 @@ func getWhiteKnightMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getBlackKnightMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getBlackKnightMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	knights := pos.Occupancy[n]
 
@@ -357,15 +358,15 @@ func getBlackKnightMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getWhiteBishopMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getWhiteBishopMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	bishops := pos.Occupancy[B]
 
@@ -381,15 +382,15 @@ func getWhiteBishopMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getBlackBishopMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getBlackBishopMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	bishops := pos.Occupancy[b]
 
@@ -405,15 +406,15 @@ func getBlackBishopMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getWhiteRookMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getWhiteRookMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	rooks := pos.Occupancy[R]
 
@@ -429,15 +430,15 @@ func getWhiteRookMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getBlackRookMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getBlackRookMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	rooks := pos.Occupancy[r]
 
@@ -453,15 +454,15 @@ func getBlackRookMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getWhiteKingMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getWhiteKingMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	king := pos.Occupancy[K]
 
@@ -475,15 +476,15 @@ func getWhiteKingMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getBlackKingMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getBlackKingMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	king := pos.Occupancy[k]
 
@@ -497,15 +498,15 @@ func getBlackKingMoves(pos *position.Position) []position.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, position.Move{From: source, To: target})
+			ret = append(ret, move.Move{From: source, To: target})
 		}
 	}
 
 	return ret
 }
 
-func getWhiteQueenMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getWhiteQueenMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	queens := pos.Occupancy[Q]
 
@@ -526,14 +527,14 @@ func getWhiteQueenMoves(pos *position.Position) []position.Move {
 				target := bb.LSBIndex(bishopAttacks)
 				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 
-				ret = append(ret, position.Move{From: source, To: target})
+				ret = append(ret, move.Move{From: source, To: target})
 			}
 
 			if rookAttacks != 0 {
 				target := bb.LSBIndex(rookAttacks)
 				rookAttacks = bb.ClearBit(rookAttacks, target)
 
-				ret = append(ret, position.Move{From: source, To: target})
+				ret = append(ret, move.Move{From: source, To: target})
 			}
 		}
 	}
@@ -541,8 +542,8 @@ func getWhiteQueenMoves(pos *position.Position) []position.Move {
 	return ret
 }
 
-func getBlackQueenMoves(pos *position.Position) []position.Move {
-	var ret []position.Move
+func getBlackQueenMoves(pos *position.Position) []move.Move {
+	var ret []move.Move
 
 	queens := pos.Occupancy[q]
 
@@ -563,14 +564,14 @@ func getBlackQueenMoves(pos *position.Position) []position.Move {
 				target := bb.LSBIndex(bishopAttacks)
 				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 
-				ret = append(ret, position.Move{From: source, To: target})
+				ret = append(ret, move.Move{From: source, To: target})
 			}
 
 			if rookAttacks != 0 {
 				target := bb.LSBIndex(rookAttacks)
 				rookAttacks = bb.ClearBit(rookAttacks, target)
 
-				ret = append(ret, position.Move{From: source, To: target})
+				ret = append(ret, move.Move{From: source, To: target})
 			}
 		}
 	}
