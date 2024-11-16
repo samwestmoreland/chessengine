@@ -56,22 +56,22 @@ func MaskRookAttacks(square sq.Square) bb.Bitboard {
 	startFile := square % 8
 
 	// North
-	for rank := startRank - 1; rank > 0; rank-- {
+	for rank := startRank - 1; rank > 0 && rank < 7; rank-- {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 	}
 
 	// South
-	for rank := startRank + 1; rank < 7; rank++ {
+	for rank := startRank + 1; rank > 0 && rank < 7; rank++ {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 	}
 
 	// East
-	for file := startFile + 1; file < 7; file++ {
+	for file := startFile + 1; file > 0 && file < 7; file++ {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 	}
 
 	// West
-	for file := startFile - 1; file > 0; file-- {
+	for file := startFile - 1; file > 0 && file < 7; file-- {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 	}
 
@@ -87,7 +87,7 @@ func RookAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	startFile := square % 8
 
 	// North
-	for rank := startRank - 1; rank >= 0; rank-- {
+	for rank := startRank - 1; rank >= 0 && rank <= 7; rank-- {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 		if bb.Bitboard(1)<<(rank*8+startFile)&blockers != 0 {
 			break
@@ -95,7 +95,7 @@ func RookAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// South
-	for rank := startRank + 1; rank <= 7; rank++ {
+	for rank := startRank + 1; rank >= 0 && rank <= 7; rank++ {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 		if bb.Bitboard(1)<<(rank*8+startFile)&blockers != 0 {
 			break
@@ -103,7 +103,7 @@ func RookAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// East
-	for file := startFile + 1; file <= 7; file++ {
+	for file := startFile + 1; file >= 0 && file <= 7; file++ {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 		if bb.Bitboard(1)<<(startRank*8+file)&blockers != 0 {
 			break
@@ -111,7 +111,7 @@ func RookAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// West
-	for file := startFile - 1; file >= 0; file-- {
+	for file := startFile - 1; file >= 0 && file <= 7; file-- {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 		if bb.Bitboard(1)<<(startRank*8+file)&blockers != 0 {
 			break

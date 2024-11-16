@@ -49,25 +49,23 @@ func MaskBishopAttacks(square sq.Square) bb.Bitboard {
 	startRank := square / 8
 	startFile := square % 8
 
-	log.Println("startRank", startRank, "startFile", startFile)
-
 	// Bottom right
-	for rank, file := startRank+1, startFile+1; rank < 7 && file < 7; rank, file = rank+1, file+1 {
+	for rank, file := startRank+1, startFile+1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank+1, file+1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
 	// Top left
-	for rank, file := startRank-1, startFile-1; rank > 0 && file > 0; rank, file = rank-1, file-1 {
+	for rank, file := startRank-1, startFile-1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank-1, file-1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
 	// Top right
-	for rank, file := startRank-1, startFile+1; rank > 0 && file < 7; rank, file = rank-1, file+1 {
+	for rank, file := startRank-1, startFile+1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank-1, file+1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
 	// Bottom left
-	for rank, file := startRank+1, startFile-1; rank < 7 && file > 0; rank, file = rank+1, file-1 {
+	for rank, file := startRank+1, startFile-1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank+1, file-1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 	}
 
@@ -75,16 +73,13 @@ func MaskBishopAttacks(square sq.Square) bb.Bitboard {
 }
 
 func BishopAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
-	log.Println("BishopAttacksOnTheFly", sq.Stringify(square), blockers)
 	var attackBoard bb.Bitboard
 
 	startRank := square / 8
 	startFile := square % 8
 
-	log.Println("startRank", startRank, "startFile", startFile)
-
 	// Bottom right
-	for rank, file := startRank+1, startFile+1; rank <= 7 && file <= 7; rank, file = rank+1, file+1 {
+	for rank, file := startRank+1, startFile+1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank+1, file+1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
@@ -92,7 +87,7 @@ func BishopAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// Top left
-	for rank, file := startRank-1, startFile-1; rank >= 0 && file >= 0; rank, file = rank-1, file-1 {
+	for rank, file := startRank-1, startFile-1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank-1, file-1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
@@ -100,7 +95,7 @@ func BishopAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// Top right
-	for rank, file := startRank-1, startFile+1; rank >= 0 && file <= 7; rank, file = rank-1, file+1 {
+	for rank, file := startRank-1, startFile+1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank-1, file+1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
@@ -108,7 +103,7 @@ func BishopAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// Bottom left
-	for rank, file := startRank+1, startFile-1; rank <= 7 && file >= 0; rank, file = rank+1, file-1 {
+	for rank, file := startRank+1, startFile-1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank+1, file-1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break

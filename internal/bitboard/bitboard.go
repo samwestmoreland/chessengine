@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"log"
 	"math/bits"
 
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
@@ -25,7 +24,6 @@ func GetBit(board Bitboard, square sq.Square) bool {
 }
 
 func SetBit(board Bitboard, square sq.Square) Bitboard {
-	log.Println("SetBit", board, sq.Stringify(square))
 	return Bitboard(uint64(board) | (1 << square))
 }
 
