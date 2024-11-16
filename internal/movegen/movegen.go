@@ -1,11 +1,9 @@
 package movegen
 
 import (
-	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/internal/move"
 	"github.com/samwestmoreland/chessengine/internal/piece"
 	"github.com/samwestmoreland/chessengine/internal/position"
-	sq "github.com/samwestmoreland/chessengine/internal/squares"
 	"github.com/samwestmoreland/chessengine/internal/tables"
 )
 
