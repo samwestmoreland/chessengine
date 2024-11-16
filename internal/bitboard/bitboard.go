@@ -24,6 +24,10 @@ func GetBit(board Bitboard, square sq.Square) bool {
 }
 
 func SetBit(board Bitboard, square sq.Square) Bitboard {
+	if !sq.OnBoard(square) {
+		panic(fmt.Sprintf("tried to set bit off board: %s", square))
+	}
+
 	return Bitboard(uint64(board) | (1 << square))
 }
 
