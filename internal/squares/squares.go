@@ -82,7 +82,9 @@ const (
 	NoSquare
 )
 
-func Stringify(square int) string {
+type Square uint8
+
+func Stringify(square Square) string {
 	if square < 0 || square > 63 {
 		return "-"
 	}
@@ -94,12 +96,12 @@ func Stringify(square int) string {
 	file := square%8 + 1
 
 	ret.WriteString(fmt.Sprintf("%c", 'a'+file-1))
-	ret.WriteString(strconv.Itoa(rank))
+	ret.WriteString(strconv.Itoa(int(rank)))
 
 	return ret.String()
 }
 
-func ToInt(square string) (int, error) {
+func ToUInt8(square string) (Square, error) {
 	if len(square) != 2 {
 		return 0, fmt.Errorf("invalid square format: %s", square)
 	}
@@ -124,9 +126,9 @@ func ToInt(square string) (int, error) {
 
 	index := rankIndex*8 + int(fileIndex)
 
-	return index, nil
+	return Square(index), nil
 }
 
-func OnBoard(square int) bool {
+func OnBoard(square Square) bool {
 	return square >= 0 && square <= 63
 }

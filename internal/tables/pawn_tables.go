@@ -4,22 +4,23 @@ package tables
 import (
 	"github.com/samwestmoreland/chessengine/internal/bitboard"
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
 // TODO: You can't ever have a white pawn on the 1st rank, so do we need to compute those?
 func populatePawnAttackTables() [2][64]bb.Bitboard {
 	var attacks [2][64]bb.Bitboard
 
-	for side := 0; side < 2; side++ {
-		for square := 0; square < 64; square++ {
-			attacks[side][square] = maskPawnAttacks(side, square)
+	for side := uint8(0); side < 2; side++ {
+		for square := uint8(0); square < 64; square++ {
+			attacks[side][square] = maskPawnAttacks(side, sq.Square(square))
 		}
 	}
 
 	return attacks
 }
 
-func maskPawnAttacks(side, square int) bb.Bitboard {
+func maskPawnAttacks(side uint8, square sq.Square) bb.Bitboard {
 	var attacks bb.Bitboard
 
 	board := bitboard.SetBit(0, square)
@@ -33,7 +34,7 @@ func maskPawnAttacks(side, square int) bb.Bitboard {
 	return bitboard.ClearBit(attacks, square)
 }
 
-func maskBlackPawnAttacks(board bb.Bitboard, square int) bb.Bitboard {
+func maskBlackPawnAttacks(board bb.Bitboard, square sq.Square) bb.Bitboard {
 	if isAFile(square) {
 		return board | (board << 9)
 	}
@@ -45,7 +46,7 @@ func maskBlackPawnAttacks(board bb.Bitboard, square int) bb.Bitboard {
 	return board | (board << 7) | (board << 9)
 }
 
-func maskWhitePawnAttacks(board bb.Bitboard, square int) bb.Bitboard {
+func maskWhitePawnAttacks(board bb.Bitboard, square sq.Square) bb.Bitboard {
 	if isAFile(square) {
 		return board | (board >> 7)
 	}

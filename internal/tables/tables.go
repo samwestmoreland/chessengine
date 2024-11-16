@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 	"github.com/samwestmoreland/chessengine/magic"
 )
 
@@ -33,7 +34,7 @@ func InitialiseLookupTables(table *Lookup) error {
 	return nil
 }
 
-func GetBishopLookupIndex(square int, blockers bb.Bitboard) bb.Bitboard {
+func GetBishopLookupIndex(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	magicNum, err := strconv.ParseUint(data.Bishop.Magics[square].Magic, 16, 64)
 	if err != nil {
 		panic(err)
@@ -49,7 +50,7 @@ func GetBishopLookupIndex(square int, blockers bb.Bitboard) bb.Bitboard {
 	return bb.Bitboard((uint64(blockers) & mask * magicNum) >> shift)
 }
 
-func GetRookLookupIndex(square int, blockers bb.Bitboard) bb.Bitboard {
+func GetRookLookupIndex(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	magicNum, err := strconv.ParseUint(data.Rook.Magics[square].Magic, 16, 64)
 	if err != nil {
 		panic(err)

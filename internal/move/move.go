@@ -1,5 +1,9 @@
 package move
 
+import (
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
+)
+
 // Moves are represented as bitmasks:
 //
 //	0000 0000 0000 0000 0011 1111    source square
@@ -12,10 +16,10 @@ package move
 //	1000 0000 0000 0000 0000 0000    castling flag
 type Move uint32
 
-func Encode(source, target, piece, promotionPiece, capture, doublePush, enPassant, castling uint32) Move {
+func Encode(source, target sq.Square, piece, promotionPiece, capture, doublePush, enPassant, castling uint32) Move {
 	return Move(
-		(source) |
-			(target << 6) |
+		uint32(source) |
+			(uint32(target) << 6) |
 			(piece << 12) |
 			(promotionPiece << 16) |
 			(capture << 20) |
@@ -24,12 +28,16 @@ func Encode(source, target, piece, promotionPiece, capture, doublePush, enPassan
 			(castling << 23))
 }
 
-func (m Move) Source() int {
-	return int(m & 0b111111)
+func (m Move) String() string {
+	return sq.Stringify(m.Source()) + sq.Stringify(m.Target())
 }
 
-func (m Move) Target() int {
-	return int((m >> 6) & 0b111111)
+func (m Move) Source() sq.Square {
+	return sq.Square(m & 0b111111)
+}
+
+func (m Move) Target() sq.Square {
+	return sq.Square((m >> 6) & 0b111111)
 }
 
 // MoveBuilder type for debugging and testing
@@ -88,27 +96,27 @@ func (b *MoveBuilder) Castling() *MoveBuilder {
 	return b
 }
 
-func (b *MoveBuilder) Build() Move {
-	var move uint32
-
-	// Pack all the fields into the move
-	move |= uint32(b.source)
-	move |= uint32(b.target) << 6
-	move |= uint32(b.piece) << 12
-	move |= uint32(b.promotion) << 16
-
-	if b.isCapture {
-		move |= captureMask
-	}
-	if b.isDoublePush {
-		move |= doublePushMask
-	}
-	if b.isEnPassant {
-		move |= enPassantMask
-	}
-	if b.isCastling {
-		move |= castlingMask
-	}
-
-	return Move(move)
-}
+// func (b *MoveBuilder) Build() Move {
+// 	var move uint32
+//
+// 	// Pack all the fields into the move
+// 	move |= uint32(b.source)
+// 	move |= uint32(b.target) << 6
+// 	move |= uint32(b.piece) << 12
+// 	move |= uint32(b.promotion) << 16
+//
+// 	if b.isCapture {
+// 		move |= captureMask
+// 	}
+// 	if b.isDoublePush {
+// 		move |= doublePushMask
+// 	}
+// 	if b.isEnPassant {
+// 		move |= enPassantMask
+// 	}
+// 	if b.isCastling {
+// 		move |= castlingMask
+// 	}
+//
+// 	return Move(move)
+// }

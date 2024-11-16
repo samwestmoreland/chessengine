@@ -134,7 +134,7 @@ func TestSquareIsAttacked(t *testing.T) {
 	tests := []struct {
 		name           string
 		fen            string
-		square         int
+		square         sq.Square
 		whiteAttacking bool
 		attacked       bool
 	}{

@@ -1,9 +1,11 @@
 package movegen
 
 import (
+	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/internal/move"
 	"github.com/samwestmoreland/chessengine/internal/piece"
 	"github.com/samwestmoreland/chessengine/internal/position"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 	"github.com/samwestmoreland/chessengine/internal/tables"
 )
 
@@ -40,7 +42,7 @@ func GetLegalMoves(pos *position.Position) []move.Move {
 	return ret
 }
 
-func SquareAttacked(pos *position.Position, square int, whiteAttacking bool) bool {
+func SquareAttacked(pos *position.Position, square sq.Square, whiteAttacking bool) bool {
 	if whiteAttacking {
 		if lookupTables.Pawns[1][square]&pos.Occupancy[piece.Wp] != 0 {
 			return true
@@ -119,16 +121,23 @@ func getWhitePawnMoves(pos *position.Position) []move.Move {
 		if sq.OnBoard(target) && !pos.IsOccupied(target) {
 			// Check promotion
 			if target < sq.A7 {
-				ret = append(ret, getPawnPromotions(source, target)...)
+				promotionMoves := []move.Move{
+					move.Encode(source, target, piece.Wp, piece.Wq, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Wp, piece.Wr, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Wp, piece.Wn, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Wp, piece.Wb, 0, 0, 0, 0),
+				}
+
+				ret = append(ret, promotionMoves...)
 			} else {
 				ret = append(ret,
-					move.Move{From: source, To: target},
+					move.Encode(source, target, piece.Wp, piece.NoPiece, 0, 0, 0, 0),
 				)
 
 				// Double push
 				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						move.Move{From: source, To: doublePush},
+						move.Encode(source, target, piece.Wp, piece.NoPiece, 0, 1, 0, 0),
 					)
 				}
 			}
@@ -141,10 +150,17 @@ func getWhitePawnMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 
 			if target < sq.A7 {
-				ret = append(ret, getPawnPromotions(source, target)...)
+				promotionMoves := []move.Move{
+					move.Encode(source, target, piece.Bp, piece.Bq, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Br, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bn, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bb, 0, 0, 0, 0),
+				}
+
+				ret = append(ret, promotionMoves...)
 			} else {
 				ret = append(ret,
-					move.Move{From: source, To: target},
+					move.Encode(source, target, piece.Bp, piece.NoPiece, 1, 0, 0, 0),
 				)
 			}
 
@@ -152,11 +168,11 @@ func getWhitePawnMoves(pos *position.Position) []move.Move {
 		}
 
 		if pos.EnPassantSquare != sq.NoSquare {
-			enpassant := lookupTables.Pawns[0][source] & bb.SetBit(0, int(pos.EnPassantSquare))
+			enpassant := lookupTables.Pawns[0][source] & bb.SetBit(0, pos.EnPassantSquare)
 
 			if enpassant != 0 {
 				ret = append(ret,
-					move.Move{From: source, To: int(pos.EnPassantSquare)},
+					move.Encode(source, pos.EnPassantSquare, piece.Wp, piece.NoPiece, 0, 0, 1, 0),
 				)
 			}
 		}
@@ -184,16 +200,23 @@ func getBlackPawnMoves(pos *position.Position) []move.Move {
 		if sq.OnBoard(target) && !pos.IsOccupied(target) {
 			// Check promotion
 			if target > sq.H2 {
-				ret = append(ret, getPawnPromotions(source, target)...)
+				promotionMoves := []move.Move{
+					move.Encode(source, target, piece.Bp, piece.Bq, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Br, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bn, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bb, 0, 0, 0, 0),
+				}
+
+				ret = append(ret, promotionMoves...)
 			} else {
 				ret = append(ret,
-					move.Move{From: source, To: target},
+					move.Encode(source, target, piece.Bp, piece.NoPiece, 0, 0, 0, 0),
 				)
 
 				// Doule push
 				if source >= sq.A7 && source <= sq.H7 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						move.Move{From: source, To: doublePush},
+						move.Encode(source, target, piece.Bp, piece.NoPiece, 0, 0, 1, 0),
 					)
 				}
 			}
@@ -205,11 +228,19 @@ func getBlackPawnMoves(pos *position.Position) []move.Move {
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
 
+			// Promotion
 			if target > sq.H2 {
-				ret = append(ret, getPawnPromotions(source, target)...)
+				promotionMoves := []move.Move{
+					move.Encode(source, target, piece.Bp, piece.Bq, 1, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Br, 1, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bn, 1, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bb, 1, 0, 0, 0),
+				}
+
+				ret = append(ret, promotionMoves...)
 			} else {
 				ret = append(ret,
-					move.Move{From: source, To: target},
+					move.Encode(source, target, piece.Bp, piece.NoPiece, 1, 0, 0, 0),
 				)
 			}
 
@@ -217,11 +248,11 @@ func getBlackPawnMoves(pos *position.Position) []move.Move {
 		}
 
 		if pos.EnPassantSquare != sq.NoSquare {
-			enpassant := lookupTables.Pawns[1][source] & bb.SetBit(0, int(pos.EnPassantSquare))
+			enpassant := lookupTables.Pawns[1][source] & bb.SetBit(0, pos.EnPassantSquare)
 
 			if enpassant != 0 {
 				ret = append(ret,
-					move.Move{From: source, To: int(pos.EnPassantSquare)},
+					move.Encode(source, pos.EnPassantSquare, piece.Bp, piece.NoPiece, 0, 0, 1, 0),
 				)
 			}
 		}
@@ -230,15 +261,6 @@ func getBlackPawnMoves(pos *position.Position) []move.Move {
 	}
 
 	return ret
-}
-
-func getPawnPromotions(source, target int) []move.Move {
-	return []move.Move{
-		{From: source, To: target, PromotionPiece: "q"},
-		{From: source, To: target, PromotionPiece: "r"},
-		{From: source, To: target, PromotionPiece: "b"},
-		{From: source, To: target, PromotionPiece: "n"},
-	}
 }
 
 func getWhiteKingCastlingMoves(pos *position.Position) []move.Move {
@@ -252,7 +274,7 @@ func getWhiteKingCastlingMoves(pos *position.Position) []move.Move {
 			!SquareAttacked(pos, sq.E1, false) &&
 			!SquareAttacked(pos, sq.F1, false) &&
 			!SquareAttacked(pos, sq.G1, false) {
-			ret = append(ret, move.Move{From: sq.E1, To: sq.G1})
+			ret = append(ret, move.Encode(sq.E1, sq.G1, piece.Wk, piece.NoPiece, 0, 0, 0, 1))
 		}
 	}
 
@@ -265,7 +287,7 @@ func getWhiteKingCastlingMoves(pos *position.Position) []move.Move {
 			!SquareAttacked(pos, sq.E1, false) &&
 			!SquareAttacked(pos, sq.D1, false) &&
 			!SquareAttacked(pos, sq.C1, false) {
-			ret = append(ret, move.Move{From: sq.E1, To: sq.C1})
+			ret = append(ret, move.Encode(sq.E1, sq.C1, piece.Wk, piece.NoPiece, 0, 0, 0, 1))
 		}
 	}
 
@@ -283,7 +305,7 @@ func getBlackKingCastlingMoves(pos *position.Position) []move.Move {
 			!SquareAttacked(pos, sq.E8, true) &&
 			!SquareAttacked(pos, sq.F8, true) &&
 			!SquareAttacked(pos, sq.G8, true) {
-			ret = append(ret, move.Move{From: sq.E8, To: sq.G8})
+			ret = append(ret, move.Encode(sq.E8, sq.G8, piece.Bk, piece.NoPiece, 0, 0, 0, 1))
 		}
 	}
 
@@ -296,7 +318,7 @@ func getBlackKingCastlingMoves(pos *position.Position) []move.Move {
 			!SquareAttacked(pos, sq.E8, true) &&
 			!SquareAttacked(pos, sq.D8, true) &&
 			!SquareAttacked(pos, sq.C8, true) {
-			ret = append(ret, move.Move{From: sq.E8, To: sq.C8})
+			ret = append(ret, move.Encode(sq.E8, sq.C8, piece.Bk, piece.NoPiece, 0, 0, 0, 1))
 		}
 	}
 
@@ -318,7 +340,7 @@ func getWhiteKnightMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Wn, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -340,7 +362,7 @@ func getBlackKnightMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Bn, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -364,7 +386,7 @@ func getWhiteBishopMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Wb, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -388,7 +410,7 @@ func getBlackBishopMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Bb, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -412,7 +434,7 @@ func getWhiteRookMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Wr, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -436,7 +458,7 @@ func getBlackRookMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Br, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -458,7 +480,7 @@ func getWhiteKingMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Wk, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -480,7 +502,7 @@ func getBlackKingMoves(pos *position.Position) []move.Move {
 			target := bb.LSBIndex(attacks)
 			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Move{From: source, To: target})
+			ret = append(ret, move.Encode(source, target, piece.Bk, piece.NoPiece, 0, 0, 0, 0))
 		}
 	}
 
@@ -509,14 +531,14 @@ func getWhiteQueenMoves(pos *position.Position) []move.Move {
 				target := bb.LSBIndex(bishopAttacks)
 				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 
-				ret = append(ret, move.Move{From: source, To: target})
+				ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
 			}
 
 			if rookAttacks != 0 {
 				target := bb.LSBIndex(rookAttacks)
 				rookAttacks = bb.ClearBit(rookAttacks, target)
 
-				ret = append(ret, move.Move{From: source, To: target})
+				ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
 			}
 		}
 	}
@@ -546,14 +568,14 @@ func getBlackQueenMoves(pos *position.Position) []move.Move {
 				target := bb.LSBIndex(bishopAttacks)
 				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 
-				ret = append(ret, move.Move{From: source, To: target})
+				ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
 			}
 
 			if rookAttacks != 0 {
 				target := bb.LSBIndex(rookAttacks)
 				rookAttacks = bb.ClearBit(rookAttacks, target)
 
-				ret = append(ret, move.Move{From: source, To: target})
+				ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
 			}
 		}
 	}

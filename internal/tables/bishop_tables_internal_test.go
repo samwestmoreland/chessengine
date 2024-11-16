@@ -1,8 +1,8 @@
 package tables
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"testing"
 
@@ -11,7 +11,7 @@ import (
 	"github.com/samwestmoreland/chessengine/magic"
 )
 
-var bishopTestCases = map[int]uint64{
+var bishopTestCases = map[sq.Square]uint64{
 	sq.E4: 19184279556981248, // central
 	sq.G4: 4538784537380864,  // g-file
 	sq.B5: 4512412900526080,  // b-file
@@ -28,7 +28,9 @@ func TestMaskBishopAttacks(t *testing.T) {
 	for square, expected := range bishopTestCases {
 		actual := MaskBishopAttacks(square)
 		if uint64(actual) != expected {
-			bb.PrintBoard(actual)
+			var buf bytes.Buffer
+			bb.PrintBoard(actual, &buf)
+			t.Errorf(buf.String())
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
@@ -44,11 +46,16 @@ func TestBishopAttacksOnTheFly(t *testing.T) {
 	bishopAttacks := BishopAttacksOnTheFly(sq.D4, blockers)
 
 	if bishopAttacks != 584940523765760 {
-		fmt.Println("Blockers:")
-		bb.PrintBoard(blockers)
+		var buf bytes.Buffer
 
-		fmt.Println("Bishop attacks on the fly:")
-		bb.PrintBoard(bishopAttacks)
+		buf.WriteString("Blockers:\n")
+		bb.PrintBoard(blockers, &buf)
+
+		buf.WriteString("Bishop attacks on the fly:")
+		bb.PrintBoard(bishopAttacks, &buf)
+
+		t.Error(buf.String())
+
 		t.Error("Expected 584940523765760, got ", bishopAttacks)
 	}
 }
@@ -62,7 +69,7 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 	table := populateBishopAttackTables(data.Bishop)
 
 	testCases := []struct {
-		square        int
+		square        sq.Square
 		blockers      bb.Bitboard
 		expectedMoves uint64
 	}{
@@ -114,17 +121,20 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 		moves := table[tt.square][index]
 
 		if uint64(moves) != tt.expectedMoves {
-			fmt.Println("Blockers:")
-			bb.PrintBoard(tt.blockers)
-			fmt.Println("")
+			var buf bytes.Buffer
+			buf.WriteString("Blockers:")
+			bb.PrintBoard(tt.blockers, &buf)
+			buf.WriteString("\n")
 
-			fmt.Println("Expected moves:")
-			bb.PrintBoard(bb.Bitboard(tt.expectedMoves))
-			fmt.Println("")
+			buf.WriteString("Expected moves:")
+			bb.PrintBoard(bb.Bitboard(tt.expectedMoves), &buf)
+			buf.WriteString("\n")
 
-			fmt.Println("Got moves:")
-			bb.PrintBoard(moves)
-			fmt.Println("")
+			buf.WriteString("Got moves:")
+			bb.PrintBoard(moves, &buf)
+			buf.WriteString("\n")
+
+			t.Error(buf.String())
 
 			t.Error("For bishop on square", sq.Stringify(tt.square), "expected", tt.expectedMoves, "got", moves)
 		}

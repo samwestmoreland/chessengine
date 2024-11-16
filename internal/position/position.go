@@ -15,7 +15,7 @@ type Position struct {
 	Occupancy       []bb.Bitboard // Pieces of both colours
 	WhiteToMove     bool
 	CastlingRights  uint8
-	EnPassantSquare uint8
+	EnPassantSquare sq.Square
 	HalfMoveClock   uint8
 	FullMoveNumber  uint8
 }
@@ -69,33 +69,33 @@ func NewPositionFromFEN(fen string) (*Position, error) {
 		Occupancy:       occ,
 		WhiteToMove:     parts[1] == "w",
 		CastlingRights:  castlingRights,
-		EnPassantSquare: uint8(enpassant),
+		EnPassantSquare: enpassant,
 		HalfMoveClock:   uint8(halfMoveClock),
 		FullMoveNumber:  uint8(fullMoveNumber),
 	}, nil
 }
 
-func (p *Position) IsOccupied(square int) bool {
+func (p *Position) IsOccupied(square sq.Square) bool {
 	return bb.GetBit(p.Occupancy[piece.Wa], square) || bb.GetBit(p.Occupancy[piece.Ba], square)
 }
 
-func parseEnPassantSquare(square string) (uint8, error) {
+func parseEnPassantSquare(square string) (sq.Square, error) {
 	if square == "-" {
-		return uint8(sq.NoSquare), nil
+		return sq.Square(sq.NoSquare), nil
 	}
 
-	squareInt, err := sq.ToInt(square)
+	squareInt, err := sq.ToUInt8(square)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse en passant square: %w", err)
 	}
 
-	return uint8(squareInt), nil
+	return sq.Square(squareInt), nil
 }
 
 func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 	occ := make([]bb.Bitboard, 14)
 
-	sq := 0
+	var sq sq.Square
 
 	for i := 0; i < len(posStr); i++ {
 		switch posStr[i] {
@@ -204,7 +204,7 @@ func parseCastlingRights(castlingRights string) uint8 {
 func (s *Position) Print(output io.Writer) {
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
-			square := rank*8 + file
+			square := sq.Square(rank*8 + file)
 			occupied := false
 			for i, occ := range s.Occupancy {
 				if bb.GetBit(occ, square) {
@@ -224,7 +224,7 @@ func (s *Position) Print(output io.Writer) {
 
 	output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(s.WhiteToMove))))
 	output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(s.CastlingRights))))
-	output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(int(s.EnPassantSquare)))))
+	output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(s.EnPassantSquare))))
 }
 
 func sideToString(whiteToMove bool) string {

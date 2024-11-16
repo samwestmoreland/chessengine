@@ -4,7 +4,11 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
+	"io"
+	"log"
 	"math/bits"
+
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
 type Bitboard uint64
@@ -13,18 +17,19 @@ func NewBitboard(board uint64) Bitboard {
 	return Bitboard(board)
 }
 
-func GetBit(board Bitboard, square int) bool {
+func GetBit(board Bitboard, square sq.Square) bool {
 	occ := (uint64(board) >> square) & 1
 
 	// occ is a uint64, so we need to convert it to a bool
 	return occ == 1
 }
 
-func SetBit(board Bitboard, square int) Bitboard {
+func SetBit(board Bitboard, square sq.Square) Bitboard {
+	log.Println("SetBit", board, sq.Stringify(square))
 	return Bitboard(uint64(board) | (1 << square))
 }
 
-func SetBits(board Bitboard, squares ...int) Bitboard {
+func SetBits(board Bitboard, squares ...sq.Square) Bitboard {
 	for _, square := range squares {
 		board = SetBit(board, square)
 	}
@@ -32,20 +37,20 @@ func SetBits(board Bitboard, squares ...int) Bitboard {
 	return board
 }
 
-func ClearBit(board Bitboard, square int) Bitboard {
+func ClearBit(board Bitboard, square sq.Square) Bitboard {
 	return board &^ (1 << square)
 }
 
-func LSBIndex(board Bitboard) int {
+func LSBIndex(board Bitboard) sq.Square {
 	if board == 0 {
-		return -1
+		return sq.NoSquare
 	}
 
-	return CountBits(board&-board - 1)
+	return sq.Square(CountBits(board&-board - 1))
 }
 
-func CountBits(board Bitboard) int {
-	return bits.OnesCount64(uint64(board))
+func CountBits(board Bitboard) uint8 {
+	return uint8(bits.OnesCount64(uint64(board)))
 }
 
 // SetOccupancy sets each bit on the attack mask to 1 or 0.
@@ -71,7 +76,7 @@ func SetOccupancy(index int, attackMask Bitboard) Bitboard {
 
 	bitsInMask := CountBits(attackMask)
 
-	for i := 0; i < bitsInMask; i++ {
+	for i := uint8(0); i < bitsInMask; i++ {
 		sq := LSBIndex(attackMask)
 
 		attackMask = ClearBit(attackMask, sq)
@@ -100,33 +105,33 @@ func GenerateSparseRandomUint64() uint64 {
 }
 
 // PrintBoard prints a bitboard to the console.
-func PrintBoard(board Bitboard) {
-	fmt.Printf("\n")
+func PrintBoard(board Bitboard, output io.Writer) {
+	output.Write([]byte("\n"))
 
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
 			// Convert rank and file into a square
-			square := rank*8 + file
+			square := sq.Square(rank*8 + file)
 
 			// Print the rank
 			if file == 0 {
-				fmt.Printf("%d  ", 8-rank)
+				output.Write([]byte(fmt.Sprintf("%d  ", 8-rank)))
 			}
 
 			// Check if the square is occupied
 			occupied := GetBit(board, square)
 			if occupied {
-				fmt.Printf("%d ", 1)
+				output.Write([]byte(fmt.Sprintf("%d ", 1)))
 			} else {
-				fmt.Printf("%d ", 0)
+				output.Write([]byte(fmt.Sprintf("%d ", 0)))
 			}
 		}
 
-		fmt.Printf("\n")
+		output.Write([]byte("\n"))
 	}
 
-	fmt.Println("   a b c d e f g h")
+	output.Write([]byte("   a b c d e f g h"))
 
 	// Print the decimal representation
-	fmt.Printf("\n   bitboard: %d\n", board)
+	output.Write([]byte(fmt.Sprintf("\n   bitboard: %d\n", board)))
 }

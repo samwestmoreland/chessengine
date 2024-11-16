@@ -1,18 +1,23 @@
 package tables
 
 import (
+	"log"
 	"strconv"
 
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 	"github.com/samwestmoreland/chessengine/magic"
 )
 
 func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
 	var attacks [64][]bb.Bitboard
 
-	for square := 0; square < 64; square++ {
+	for square := uint8(0); square < uint8(64); square++ {
 		// Get magic data for this square
-		magicNum, _ := strconv.ParseUint(data.Magics[square].Magic, 16, 64)
+		magicNum, err := strconv.ParseUint(data.Magics[square].Magic, 16, 64)
+		if err != nil {
+			log.Fatal(err)
+		}
 		shift := data.Magics[square].Shift
 
 		// Create slice big enough for all possible indices
@@ -20,14 +25,14 @@ func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
 		attacks[square] = make([]bb.Bitboard, tableSize)
 
 		// Populate this square's table with all possible attack patterns
-		mask := MaskBishopAttacks(square)
+		mask := MaskBishopAttacks(sq.Square(square))
 		numBlockers := bb.CountBits(mask) // how many relevant squares
 
 		// For each possible blocker configuration...
 		for i := 0; i < (1 << numBlockers); i++ {
 			blockers := bb.SetOccupancy(i, mask)
 			// Calculate actual moves for this blocker pattern
-			moves := BishopAttacksOnTheFly(square, blockers)
+			moves := BishopAttacksOnTheFly(sq.Square(square), blockers)
 			// Calculate index using magic
 			index := (uint64(blockers) * magicNum) >> shift
 			// Store moves at this index
@@ -38,11 +43,13 @@ func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
 	return attacks
 }
 
-func MaskBishopAttacks(square int) bb.Bitboard {
+func MaskBishopAttacks(square sq.Square) bb.Bitboard {
 	var attackBoard bb.Bitboard
 
 	startRank := square / 8
 	startFile := square % 8
+
+	log.Println("startRank", startRank, "startFile", startFile)
 
 	// Bottom right
 	for rank, file := startRank+1, startFile+1; rank < 7 && file < 7; rank, file = rank+1, file+1 {
@@ -67,11 +74,14 @@ func MaskBishopAttacks(square int) bb.Bitboard {
 	return attackBoard
 }
 
-func BishopAttacksOnTheFly(square int, blockers bb.Bitboard) bb.Bitboard {
+func BishopAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
+	log.Println("BishopAttacksOnTheFly", sq.Stringify(square), blockers)
 	var attackBoard bb.Bitboard
 
 	startRank := square / 8
 	startFile := square % 8
+
+	log.Println("startRank", startRank, "startFile", startFile)
 
 	// Bottom right
 	for rank, file := startRank+1, startFile+1; rank <= 7 && file <= 7; rank, file = rank+1, file+1 {

@@ -15,6 +15,7 @@ const (
 	Bk
 	Wa // All white
 	Ba // All black
+	NoPiece
 )
 
 func String(pieceInt int) string {

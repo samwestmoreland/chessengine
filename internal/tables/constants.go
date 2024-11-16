@@ -1,7 +1,10 @@
 package tables
 
 import (
+	"os"
+
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
 // notAFile is const represeting the board:
@@ -64,29 +67,29 @@ const notABFile bb.Bitboard = 18229723555195321596
 
 const notGHFile bb.Bitboard = 4557430888798830399
 
-func isAFile(square int) bool {
+func isAFile(square sq.Square) bool {
 	return (1 << square & notAFile) == 0
 }
 
-func isHFile(square int) bool {
+func isHFile(square sq.Square) bool {
 	return (1 << square & notHFile) == 0
 }
 
-func isABFile(square int) bool {
+func isABFile(square sq.Square) bool {
 	return (1 << square & notABFile) == 0
 }
 
-func isGHFile(square int) bool {
+func isGHFile(square sq.Square) bool {
 	return (1 << square & notGHFile) == 0
 }
 
 func ConstGenerator() {
 	var board bb.Bitboard
 
-	for rank := 0; rank < 8; rank++ {
-		for file := 0; file < 8; file++ {
+	for rank := uint8(0); rank < 8; rank++ {
+		for file := uint8(0); file < 8; file++ {
 			// Convert rank and file into a square
-			square := rank*8 + file
+			square := sq.Square(rank*8 + file)
 
 			if file > 1 {
 				board = bb.SetBit(board, square)
@@ -94,5 +97,5 @@ func ConstGenerator() {
 		}
 	}
 
-	bb.PrintBoard(board)
+	bb.PrintBoard(board, os.Stdout)
 }
