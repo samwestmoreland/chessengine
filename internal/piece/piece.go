@@ -1,56 +1,49 @@
 package piece
 
-// Type represents the type of a piece.
-type Type int
-
 const (
-	KingType   Type = iota // KingType = 0
-	QueenType              // QueenType = 1
-	RookType               // RookType = 2
-	BishopType             // BishopType = 3
-	KnightType             // KnightType = 4
-	PawnType               // PawnType = 5
-	NoneType               // NoneType = 6
+	Wp = iota
+	Wn
+	Wb
+	Wr
+	Wq
+	Wk
+	Bp
+	Bn
+	Bb
+	Br
+	Bq
+	Bk
+	Wa // All white
+	Ba // All black
 )
 
-func (t Type) String() string {
-	switch t {
-	case KingType:
-		return "King"
-	case QueenType:
-		return "Queen"
-	case RookType:
-		return "Rook"
-	case BishopType:
-		return "Bishop"
-	case KnightType:
-		return "Knight"
-	case PawnType:
-		return "Pawn"
-	case NoneType:
-		return "None"
-	default:
-		return "Unknown"
-	}
-}
-
-func (t Type) Letter() string {
-	switch t {
-	case KingType:
-		return "K"
-	case QueenType:
-		return "Q"
-	case RookType:
-		return "R"
-	case BishopType:
-		return "B"
-	case KnightType:
-		return "N"
-	case PawnType:
+func String(pieceInt int) string {
+	switch pieceInt {
+	case Wp:
 		return "P"
-	case NoneType:
-		return " "
+	case Wn:
+		return "N"
+	case Wb:
+		return "B"
+	case Wr:
+		return "R"
+	case Wq:
+		return "Q"
+	case Wk:
+		return "K"
+	case Bp:
+		return "p"
+	case Bn:
+		return "n"
+	case Bb:
+		return "b"
+	case Br:
+		return "r"
+	case Bq:
+		return "q"
+	case Bk:
+		return "k"
 	default:
-		return "?"
+		return ""
 	}
 }

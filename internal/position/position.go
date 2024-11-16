@@ -7,56 +7,9 @@ import (
 	"strings"
 
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	"github.com/samwestmoreland/chessengine/internal/piece"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
-
-const (
-	P = iota
-	N
-	B
-	R
-	Q
-	K
-	p
-	n
-	b
-	r
-	q
-	k
-	A // All white
-	a // All black
-)
-
-func GetPieceType(pieceInt int) string {
-	switch pieceInt {
-	case P:
-		return "P"
-	case N:
-		return "N"
-	case B:
-		return "B"
-	case R:
-		return "R"
-	case Q:
-		return "Q"
-	case K:
-		return "K"
-	case p:
-		return "p"
-	case n:
-		return "n"
-	case b:
-		return "b"
-	case r:
-		return "r"
-	case q:
-		return "q"
-	case k:
-		return "k"
-	default:
-		return ""
-	}
-}
 
 type Position struct {
 	Occupancy       []bb.Bitboard // Pieces of both colours
@@ -123,7 +76,7 @@ func NewPositionFromFEN(fen string) (*Position, error) {
 }
 
 func (p *Position) IsOccupied(square int) bool {
-	return bb.GetBit(p.Occupancy[A], square) || bb.GetBit(p.Occupancy[a], square)
+	return bb.GetBit(p.Occupancy[piece.Wa], square) || bb.GetBit(p.Occupancy[piece.Ba], square)
 }
 
 func parseEnPassantSquare(square string) (uint8, error) {
@@ -147,52 +100,52 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 	for i := 0; i < len(posStr); i++ {
 		switch posStr[i] {
 		case 'P':
-			occ[P] = bb.SetBit(occ[P], sq)
-			occ[A] = bb.SetBit(occ[A], sq)
+			occ[piece.Wp] = bb.SetBit(occ[piece.Wp], sq)
+			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], sq)
 			sq++
 		case 'N':
-			occ[N] = bb.SetBit(occ[N], sq)
-			occ[A] = bb.SetBit(occ[A], sq)
+			occ[piece.Wn] = bb.SetBit(occ[piece.Wn], sq)
+			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], sq)
 			sq++
 		case 'B':
-			occ[B] = bb.SetBit(occ[B], sq)
-			occ[A] = bb.SetBit(occ[A], sq)
+			occ[piece.Wb] = bb.SetBit(occ[piece.Wb], sq)
+			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], sq)
 			sq++
 		case 'R':
-			occ[R] = bb.SetBit(occ[R], sq)
-			occ[A] = bb.SetBit(occ[A], sq)
+			occ[piece.Wr] = bb.SetBit(occ[piece.Wr], sq)
+			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], sq)
 			sq++
 		case 'Q':
-			occ[Q] = bb.SetBit(occ[Q], sq)
-			occ[A] = bb.SetBit(occ[A], sq)
+			occ[piece.Wq] = bb.SetBit(occ[piece.Wq], sq)
+			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], sq)
 			sq++
 		case 'K':
-			occ[K] = bb.SetBit(occ[K], sq)
-			occ[A] = bb.SetBit(occ[A], sq)
+			occ[piece.Wk] = bb.SetBit(occ[piece.Wk], sq)
+			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], sq)
 			sq++
 		case 'p':
-			occ[p] = bb.SetBit(occ[p], sq)
-			occ[a] = bb.SetBit(occ[a], sq)
+			occ[piece.Bp] = bb.SetBit(occ[piece.Bp], sq)
+			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], sq)
 			sq++
 		case 'n':
-			occ[n] = bb.SetBit(occ[n], sq)
-			occ[a] = bb.SetBit(occ[a], sq)
+			occ[piece.Bn] = bb.SetBit(occ[piece.Bn], sq)
+			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], sq)
 			sq++
 		case 'b':
-			occ[b] = bb.SetBit(occ[b], sq)
-			occ[a] = bb.SetBit(occ[a], sq)
+			occ[piece.Bb] = bb.SetBit(occ[piece.Bb], sq)
+			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], sq)
 			sq++
 		case 'r':
-			occ[r] = bb.SetBit(occ[r], sq)
-			occ[a] = bb.SetBit(occ[a], sq)
+			occ[piece.Br] = bb.SetBit(occ[piece.Br], sq)
+			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], sq)
 			sq++
 		case 'q':
-			occ[q] = bb.SetBit(occ[q], sq)
-			occ[a] = bb.SetBit(occ[a], sq)
+			occ[piece.Bq] = bb.SetBit(occ[piece.Bq], sq)
+			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], sq)
 			sq++
 		case 'k':
-			occ[k] = bb.SetBit(occ[k], sq)
-			occ[a] = bb.SetBit(occ[a], sq)
+			occ[piece.Bk] = bb.SetBit(occ[piece.Bk], sq)
+			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], sq)
 			sq++
 		case '1':
 			sq += 1
@@ -256,7 +209,7 @@ func (s *Position) Print(output io.Writer) {
 			for i, occ := range s.Occupancy {
 				if bb.GetBit(occ, square) {
 					occupied = true
-					output.Write([]byte(fmt.Sprintf(" %s", GetPieceType(i))))
+					output.Write([]byte(fmt.Sprintf(" %s", piece.String(i))))
 					break
 				}
 			}
