@@ -4,7 +4,6 @@ package tables
 import (
 	"github.com/samwestmoreland/chessengine/internal/bitboard"
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
-	wb "github.com/samwestmoreland/chessengine/internal/colours"
 )
 
 // TODO: You can't ever have a white pawn on the 1st rank, so do we need to compute those?
@@ -25,7 +24,7 @@ func maskPawnAttacks(side, square int) bb.Bitboard {
 
 	board := bitboard.SetBit(0, square)
 
-	if side == wb.White {
+	if side == 0 {
 		attacks = maskWhitePawnAttacks(board, square)
 	} else {
 		attacks = maskBlackPawnAttacks(board, square)

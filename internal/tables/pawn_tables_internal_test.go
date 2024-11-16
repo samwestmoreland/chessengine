@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/internal/bitboard"
-	wb "github.com/samwestmoreland/chessengine/internal/colours"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
@@ -33,7 +32,7 @@ func TestIsHFile(t *testing.T) {
 }
 
 func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
-	attackedSquares := maskPawnAttacks(wb.White, sq.E2)
+	attackedSquares := maskPawnAttacks(0, sq.E2)
 
 	if !bitboard.GetBit(attackedSquares, sq.D3) {
 		bitboard.PrintBoard(attackedSquares)
@@ -52,7 +51,7 @@ func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
 }
 
 func TestMaskPawnAttacksBlackCentral(t *testing.T) {
-	attackedSquares := maskPawnAttacks(wb.Black, sq.C7)
+	attackedSquares := maskPawnAttacks(1, sq.C7)
 
 	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
@@ -71,7 +70,7 @@ func TestMaskPawnAttacksBlackCentral(t *testing.T) {
 }
 
 func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
-	attackedSquares := maskPawnAttacks(wb.White, sq.A2)
+	attackedSquares := maskPawnAttacks(0, sq.A2)
 
 	if !bitboard.GetBit(attackedSquares, sq.B3) {
 		bitboard.PrintBoard(attackedSquares)
@@ -83,7 +82,7 @@ func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
 		t.Error("Expected 2199023255552, got", attackedSquares)
 	}
 
-	attackedSquares = maskPawnAttacks(wb.White, sq.H7)
+	attackedSquares = maskPawnAttacks(0, sq.H7)
 
 	if !bitboard.GetBit(attackedSquares, sq.G8) {
 		bitboard.PrintBoard(attackedSquares)
@@ -97,7 +96,7 @@ func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
 }
 
 func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
-	attackedSquares := maskPawnAttacks(wb.Black, sq.A7)
+	attackedSquares := maskPawnAttacks(1, sq.A7)
 
 	if !bitboard.GetBit(attackedSquares, sq.B6) {
 		bitboard.PrintBoard(attackedSquares)
@@ -109,7 +108,7 @@ func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
 		t.Error("Expected 131072, got", attackedSquares)
 	}
 
-	attackedSquares = maskPawnAttacks(wb.Black, sq.H2)
+	attackedSquares = maskPawnAttacks(1, sq.H2)
 
 	if !bitboard.GetBit(attackedSquares, sq.G1) {
 		bitboard.PrintBoard(attackedSquares)
@@ -125,33 +124,33 @@ func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
 func TestPopulatePawnAttackTables(t *testing.T) {
 	pawnAttacks := populatePawnAttackTables()
 
-	if pawnAttacks[wb.White][sq.E2] != 43980465111040 {
-		bitboard.PrintBoard(pawnAttacks[wb.White][sq.E2])
-		t.Error("Expected 43980465111040, got", pawnAttacks[wb.White][sq.E2])
+	if pawnAttacks[0][sq.E2] != 43980465111040 {
+		bitboard.PrintBoard(pawnAttacks[0][sq.E2])
+		t.Error("Expected 43980465111040, got", pawnAttacks[0][sq.E2])
 	}
 
-	if pawnAttacks[wb.Black][sq.F3] != 22517998136852480 {
-		bitboard.PrintBoard(pawnAttacks[wb.Black][sq.F3])
-		t.Error("Expected 22517998136852480, got", pawnAttacks[wb.Black][sq.F3])
+	if pawnAttacks[1][sq.F3] != 22517998136852480 {
+		bitboard.PrintBoard(pawnAttacks[1][sq.F3])
+		t.Error("Expected 22517998136852480, got", pawnAttacks[1][sq.F3])
 	}
 
-	if pawnAttacks[wb.White][sq.A2] != 2199023255552 {
-		bitboard.PrintBoard(pawnAttacks[wb.White][sq.A2])
-		t.Error("Expected 2199023255552, got", pawnAttacks[wb.White][sq.A2])
+	if pawnAttacks[0][sq.A2] != 2199023255552 {
+		bitboard.PrintBoard(pawnAttacks[0][sq.A2])
+		t.Error("Expected 2199023255552, got", pawnAttacks[0][sq.A2])
 	}
 
-	if pawnAttacks[wb.Black][sq.A2] != 144115188075855872 {
-		bitboard.PrintBoard(pawnAttacks[wb.Black][sq.A2])
-		t.Error("Expected 144115188075855872, got", pawnAttacks[wb.Black][sq.A2])
+	if pawnAttacks[1][sq.A2] != 144115188075855872 {
+		bitboard.PrintBoard(pawnAttacks[1][sq.A2])
+		t.Error("Expected 144115188075855872, got", pawnAttacks[1][sq.A2])
 	}
 
-	if pawnAttacks[wb.White][sq.H8] != 0 {
-		bitboard.PrintBoard(pawnAttacks[wb.White][sq.H8])
-		t.Error("Expected 0, got", pawnAttacks[wb.White][sq.H8])
+	if pawnAttacks[0][sq.H8] != 0 {
+		bitboard.PrintBoard(pawnAttacks[0][sq.H8])
+		t.Error("Expected 0, got", pawnAttacks[0][sq.H8])
 	}
 
-	if pawnAttacks[wb.Black][sq.H7] != 4194304 {
-		bitboard.PrintBoard(pawnAttacks[wb.Black][sq.H7])
-		t.Error("Expected 4194304, got", pawnAttacks[wb.Black][sq.H7])
+	if pawnAttacks[1][sq.H7] != 4194304 {
+		bitboard.PrintBoard(pawnAttacks[1][sq.H7])
+		t.Error("Expected 4194304, got", pawnAttacks[1][sq.H7])
 	}
 }
