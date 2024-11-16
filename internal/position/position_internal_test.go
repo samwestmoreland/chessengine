@@ -1,6 +1,7 @@
 package position
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -23,7 +24,11 @@ func TestParseCastlingRights(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.input, func(t *testing.T) {
-			result := parseCastlingRights(test.input)
+			result, err := parseCastlingRights(test.input)
+			if err != nil {
+				t.Error(err)
+			}
+
 			if result != test.output {
 				t.Errorf("Expected %d, got %d", test.output, result)
 			}
@@ -33,37 +38,77 @@ func TestParseCastlingRights(t *testing.T) {
 
 func TestNewPositionFromFEN(t *testing.T) {
 	tests := []struct {
-		fen   string
-		error bool
+		name          string
+		fen           string
+		expectPanic   bool
+		expectError   bool
+		errorContains string
 	}{
 		{
+			"starting position",
 			"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
 			false,
+			false,
+			"",
 		},
 		{
+			"invalid castling rights",
 			"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkqq - 0 1",
+			false,
 			true,
+			"expected castling rights",
 		},
 		{
+			"invalid side",
 			"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR g KQkq - 0 1",
+			false,
 			true,
+			"invalid side",
 		},
 		{
+			"extra fields",
 			"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 2",
+			false,
 			true,
+			"FEN must have",
 		},
 		{
+			"too many squares",
 			"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB3KBNR w KQkq - 0 1",
 			true,
+			false,
+			"",
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.fen, func(t *testing.T) {
-			_, err := NewPositionFromFEN(test.fen)
-			if err != nil && !test.error {
-				t.Error(err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					if !tt.expectPanic {
+						t.Errorf("unexpected panic: %v", r)
+					}
+				}
+			}()
+
+			pos, err := NewPositionFromFEN(tt.fen)
+			if tt.expectPanic {
+				t.Error("expected panic but got none")
+			}
+			if err != nil {
+				if !tt.expectError {
+					t.Errorf("unexpected error: %v", err)
+				} else if tt.errorContains != "" && !strings.Contains(err.Error(), tt.errorContains) {
+					t.Errorf("error %q does not contain %q", err.Error(), tt.errorContains)
+				}
+			} else if tt.expectError {
+				t.Error("expected error but got none")
+			}
+
+			if pos != nil && tt.expectError {
+				t.Error("got position when expecting error")
 			}
 		})
 	}
+
 }

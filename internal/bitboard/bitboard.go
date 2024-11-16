@@ -17,6 +17,10 @@ func NewBitboard(board uint64) Bitboard {
 }
 
 func GetBit(board Bitboard, square sq.Square) bool {
+	if !sq.OnBoard(square) {
+		panic(fmt.Sprintf("tried to get bit off board: %d", square))
+	}
+
 	occ := (uint64(board) >> square) & 1
 
 	// occ is a uint64, so we need to convert it to a bool
@@ -25,7 +29,7 @@ func GetBit(board Bitboard, square sq.Square) bool {
 
 func SetBit(board Bitboard, square sq.Square) Bitboard {
 	if !sq.OnBoard(square) {
-		panic(fmt.Sprintf("tried to set bit off board: %s", square))
+		panic(fmt.Sprintf("tried to set bit off board: %d", square))
 	}
 
 	return Bitboard(uint64(board) | (1 << square))
@@ -40,6 +44,10 @@ func SetBits(board Bitboard, squares ...sq.Square) Bitboard {
 }
 
 func ClearBit(board Bitboard, square sq.Square) Bitboard {
+	if !sq.OnBoard(square) {
+		panic(fmt.Sprintf("tried to clear bit off board: %d", square))
+	}
+
 	return board &^ (1 << square)
 }
 
