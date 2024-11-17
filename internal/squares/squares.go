@@ -85,7 +85,7 @@ const (
 type Square uint8
 
 func Stringify(square Square) string {
-	if square < 0 || square > 63 {
+	if square > 63 {
 		return "-"
 	}
 
@@ -130,5 +130,5 @@ func ToUInt8(square string) (Square, error) {
 }
 
 func OnBoard(square Square) bool {
-	return square >= 0 && square <= 63
+	return square <= 63
 }

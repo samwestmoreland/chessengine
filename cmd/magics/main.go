@@ -51,14 +51,6 @@ const (
 var versionString = strings.TrimSpace(magic.VersionString)
 
 func main() {
-	// bar := progressbar.NewOptions(128, progressbar.OptionSetTheme(progressbar.Theme{
-	// 	Saucer:        "=",
-	// 	SaucerHead:    ">",
-	// 	SaucerPadding: " ",
-	// 	BarStart:      "[",
-	// 	BarEnd:        "]",
-	// }))
-
 	rookMagics, rookTableSize := generateMagics(rook)
 	bishopMagics, bishopTableSize := generateMagics(bishop)
 
@@ -101,7 +93,9 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 
 	numWorkers := runtime.GOMAXPROCS(0)
 	log.Printf("Using %d workers", numWorkers)
+
 	squares := make(chan sq.Square, 64)
+
 	var wg sync.WaitGroup
 
 	var totalTableSize atomic.Int64
@@ -110,12 +104,17 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 
 	for w := 0; w < numWorkers; w++ {
 		log.Printf("Spawning worker %d", w)
+
 		wg.Add(1)
+
 		go func() {
 			defer wg.Done()
+
 			for square := range squares {
 				bestTableSize := math.MaxInt64
+
 				var bestMagic uint64
+
 				var bestShift int
 
 				var relevantBits int
@@ -165,6 +164,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 				entry.Mask = fmt.Sprintf("%016x", mask)
 
 				magics[square] = entry
+
 				log.Printf("Found magic for square %s", sq.Stringify(square))
 			}
 		}()
@@ -174,6 +174,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 	for square := uint8(0); square < 64; square++ {
 		squares <- sq.Square(square)
 	}
+
 	close(squares)
 
 	// Wait for all workers to finish

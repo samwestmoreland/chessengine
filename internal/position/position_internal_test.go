@@ -92,9 +92,11 @@ func TestNewPositionFromFEN(t *testing.T) {
 			}()
 
 			pos, err := NewPositionFromFEN(tt.fen)
+
 			if tt.expectPanic {
 				t.Error("expected panic but got none")
 			}
+
 			if err != nil {
 				if !tt.expectError {
 					t.Errorf("unexpected error: %v", err)
@@ -110,5 +112,4 @@ func TestNewPositionFromFEN(t *testing.T) {
 			}
 		})
 	}
-
 }

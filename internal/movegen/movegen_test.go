@@ -117,11 +117,13 @@ func TestGetLegalMoves(t *testing.T) {
 
 			if len(moves) != tt.numMoves {
 				var buf bytes.Buffer
+
 				buf.WriteString("\n")
 				pos.Print(&buf)
-				t.Errorf(buf.String())
+				t.Error(buf.String())
 				t.Errorf("got %d moves, want %d", len(moves), tt.numMoves)
 				t.Errorf("moves generated:")
+
 				for _, move := range moves {
 					t.Errorf("  %s", move.String())
 				}

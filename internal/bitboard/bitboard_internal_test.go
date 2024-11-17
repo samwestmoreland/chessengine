@@ -12,6 +12,7 @@ func TestGetBit(t *testing.T) {
 
 	if GetBit(board, sq.A8) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -19,6 +20,7 @@ func TestGetBit(t *testing.T) {
 
 	if !GetBit(board, sq.D8) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -31,6 +33,7 @@ func TestSetBit(t *testing.T) {
 
 	if GetBit(board, 0) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -38,6 +41,7 @@ func TestSetBit(t *testing.T) {
 
 	if !GetBit(board, sq.E2) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -45,6 +49,7 @@ func TestSetBit(t *testing.T) {
 
 	if !GetBit(board, sq.E8) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -52,6 +57,7 @@ func TestSetBit(t *testing.T) {
 
 	if GetBit(board, sq.F5) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -70,6 +76,7 @@ func TestSetWholeBoard(t *testing.T) {
 
 	if board != 18446744073709551615 {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected 18446744073709551615, got ", board)
@@ -82,6 +89,7 @@ func TestClearBit(t *testing.T) {
 
 	if !GetBit(board, sq.E2) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -91,6 +99,7 @@ func TestClearBit(t *testing.T) {
 
 	if GetBit(board, sq.E2) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -105,6 +114,7 @@ func TestLSBIndex(t *testing.T) {
 	index := LSBIndex(board)
 	if index != 4 {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected 4, got ", index)
@@ -114,6 +124,7 @@ func TestLSBIndex(t *testing.T) {
 
 	if asSquare != "e8" {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected e8, got ", asSquare)

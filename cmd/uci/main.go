@@ -41,6 +41,7 @@ func (u *UCI) Run() error {
 		if _, err := u.writer.WriteString("engine ready\n"); err != nil {
 			return err
 		}
+
 		u.writer.Flush()
 
 		cmdStr, err := u.reader.ReadString('\n')
@@ -48,7 +49,9 @@ func (u *UCI) Run() error {
 			if _, err := u.writer.WriteString("Error reading input\n"); err != nil {
 				return err
 			}
+
 			u.writer.Flush()
+
 			continue
 		}
 
@@ -58,17 +61,20 @@ func (u *UCI) Run() error {
 		if _, err := resp.WriteTo(u.writer); err != nil {
 			return err
 		}
+
 		u.writer.Flush()
 
 		if quit {
 			break
 		}
 	}
+
 	return nil
 }
 
 func (u *UCI) handleCommand(cmd *command) (*bytes.Buffer, bool) {
 	var resp bytes.Buffer
+
 	var quit bool
 
 	switch cmd.name {
@@ -107,14 +113,13 @@ func (u *UCI) handlePositionCmd(cmd *command, resp *bytes.Buffer) {
 		}
 
 		u.position = pos
+
 		resp.WriteString("set up starting position\n")
 
 		pos.Print(os.Stdout)
 
 		return
 	}
-
-	// Handle FEN string case...
 }
 
 func main() {

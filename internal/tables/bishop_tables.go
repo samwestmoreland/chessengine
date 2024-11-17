@@ -18,6 +18,7 @@ func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		shift := data.Magics[square].Shift
 
 		// Create slice big enough for all possible indices
@@ -79,32 +80,36 @@ func BishopAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	startFile := square % 8
 
 	// Bottom right
-	for rank, file := startRank+1, startFile+1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank+1, file+1 {
+	for rank, file := startRank+1, startFile+1; rank <= 7 && file <= 7; rank, file = rank+1, file+1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}
 	}
 
 	// Top left
-	for rank, file := startRank-1, startFile-1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank-1, file-1 {
+	for rank, file := startRank-1, startFile-1; rank <= 7 && file <= 7; rank, file = rank-1, file-1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}
 	}
 
 	// Top right
-	for rank, file := startRank-1, startFile+1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank-1, file+1 {
+	for rank, file := startRank-1, startFile+1; rank <= 7 && file <= 7; rank, file = rank-1, file+1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}
 	}
 
 	// Bottom left
-	for rank, file := startRank+1, startFile-1; rank >= 0 && rank <= 7 && file >= 0 && file <= 7; rank, file = rank+1, file-1 {
+	for rank, file := startRank+1, startFile-1; rank <= 7 && file <= 7; rank, file = rank+1, file-1 {
 		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+
 		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
 			break
 		}

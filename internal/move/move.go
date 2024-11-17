@@ -139,12 +139,15 @@ func (b *MoveBuilder) Build() Move {
 	if b.isCapture {
 		move |= (1 << 20)
 	}
+
 	if b.isDoublePush {
 		move |= (1 << 21)
 	}
+
 	if b.isEnPassant {
 		move |= (1 << 22)
 	}
+
 	if b.isCastling {
 		move |= (1 << 23)
 	}

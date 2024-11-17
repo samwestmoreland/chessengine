@@ -26,8 +26,9 @@ func TestMaskKingAttacks(t *testing.T) {
 		actual := maskKingAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bb.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Getting king attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
@@ -40,8 +41,9 @@ func TestPopulateKingAttackTables(t *testing.T) {
 		actual := kingAttacks[square]
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bb.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Checking king attack table for square %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}

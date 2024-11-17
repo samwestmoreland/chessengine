@@ -30,6 +30,7 @@ func TestMaskRookAttacks(t *testing.T) {
 		actual := MaskRookAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			buf.WriteString(fmt.Sprintf("Square %s\n", sq.Stringify(square)))
 
 			buf.WriteString("Got")
@@ -59,6 +60,7 @@ func TestRookAttacksOnTheFly(t *testing.T) {
 
 	if rookAttacks != 9028156000256 {
 		var buf bytes.Buffer
+
 		buf.WriteString("Blockers:\n")
 		bb.PrintBoard(blockers, &buf)
 
@@ -132,6 +134,7 @@ func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
 
 		if uint64(moves) != tt.expectedMoves {
 			var buf bytes.Buffer
+
 			buf.WriteString("Blockers:")
 			bb.PrintBoard(tt.blockers, &buf)
 			buf.WriteString("\n")

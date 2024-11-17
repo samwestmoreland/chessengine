@@ -26,8 +26,9 @@ func TestMaskKnightAttacks(t *testing.T) {
 		actual := maskKnightAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bitboard.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Getting knight attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}

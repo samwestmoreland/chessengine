@@ -29,8 +29,9 @@ func TestMaskBishopAttacks(t *testing.T) {
 		actual := MaskBishopAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bb.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
@@ -122,6 +123,7 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 
 		if uint64(moves) != tt.expectedMoves {
 			var buf bytes.Buffer
+
 			buf.WriteString("Blockers:")
 			bb.PrintBoard(tt.blockers, &buf)
 			buf.WriteString("\n")

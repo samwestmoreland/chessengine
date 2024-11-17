@@ -226,25 +226,42 @@ func (s *Position) Print(output io.Writer) {
 		for file := 0; file < 8; file++ {
 			square := sq.Square(rank*8 + file)
 			occupied := false
+
 			for i, occ := range s.Occupancy {
 				if bb.GetBit(occ, square) {
 					occupied = true
-					output.Write([]byte(fmt.Sprintf(" %s", piece.Piece(i).String())))
+
+					if _, err := output.Write([]byte(fmt.Sprintf(" %s", piece.Piece(i).String()))); err != nil {
+						panic(err)
+					}
+
 					break
 				}
 			}
 
 			if !occupied {
-				output.Write([]byte(fmt.Sprintf(" .")))
+				if _, err := output.Write([]byte(" .")); err != nil {
+					panic(err)
+				}
 			}
 		}
 
-		output.Write([]byte(fmt.Sprintf("\n")))
+		if _, err := output.Write([]byte("\n")); err != nil {
+			panic(err)
+		}
 	}
 
-	output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(s.WhiteToMove))))
-	output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(s.CastlingRights))))
-	output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(s.EnPassantSquare))))
+	if _, err := output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(s.WhiteToMove)))); err != nil {
+		panic(err)
+	}
+
+	if _, err := output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(s.CastlingRights)))); err != nil {
+		panic(err)
+	}
+
+	if _, err := output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(s.EnPassantSquare)))); err != nil {
+		panic(err)
+	}
 }
 
 func sideToString(whiteToMove bool) string {
