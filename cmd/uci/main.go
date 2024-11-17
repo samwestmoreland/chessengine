@@ -104,6 +104,7 @@ func (u *UCI) handleCommand(cmd *command) (*bytes.Buffer, bool) {
 func (u *UCI) handlePositionCmd(cmd *command, resp *bytes.Buffer) {
 	if len(cmd.args) == 0 {
 		resp.WriteString("too few arguments. expected `position <fen>` or `position startpos`\n")
+
 		return
 	}
 

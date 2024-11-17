@@ -89,41 +89,49 @@ func NewMove() *MoveBuilder {
 
 func (b *MoveBuilder) From(square sq.Square) *MoveBuilder {
 	b.source = square
+
 	return b
 }
 
 func (b *MoveBuilder) To(square sq.Square) *MoveBuilder {
 	b.target = square
+
 	return b
 }
 
 func (b *MoveBuilder) Piece(p piece.Piece) *MoveBuilder {
 	b.piece = p
+
 	return b
 }
 
 func (b *MoveBuilder) Promotion(p piece.Piece) *MoveBuilder {
 	b.promotion = p
+
 	return b
 }
 
 func (b *MoveBuilder) Capture() *MoveBuilder {
 	b.isCapture = true
+
 	return b
 }
 
 func (b *MoveBuilder) DoublePush() *MoveBuilder {
 	b.isDoublePush = true
+
 	return b
 }
 
 func (b *MoveBuilder) EnPassant() *MoveBuilder {
 	b.isEnPassant = true
+
 	return b
 }
 
 func (b *MoveBuilder) Castling() *MoveBuilder {
 	b.isCastling = true
+
 	return b
 }
 
