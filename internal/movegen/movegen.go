@@ -1,6 +1,8 @@
 package movegen
 
 import (
+	"fmt"
+
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/internal/move"
 	"github.com/samwestmoreland/chessengine/internal/piece"
@@ -15,7 +17,12 @@ var lookupTables *tables.Lookup
 func Initialise() error {
 	lookupTables = &tables.Lookup{}
 
-	return tables.InitialiseLookupTables(lookupTables)
+	err := tables.InitialiseLookupTables(lookupTables)
+	if err != nil {
+		return fmt.Errorf("failed to initialise lookup tables: %w", err)
+	}
+
+	return nil
 }
 
 func GetLegalMoves(pos *position.Position) []move.Move {

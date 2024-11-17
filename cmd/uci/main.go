@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -21,12 +22,12 @@ type UCI struct {
 
 func NewUCI(writer *bufio.Writer, reader *bufio.Reader) (*UCI, error) {
 	if err := movegen.Initialise(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to initialise move generator: %w", err)
 	}
 
 	eng, err := engine.NewEngine()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create engine: %w", err)
 	}
 
 	return &UCI{
@@ -39,7 +40,7 @@ func NewUCI(writer *bufio.Writer, reader *bufio.Reader) (*UCI, error) {
 func (u *UCI) Run() error {
 	for {
 		if _, err := u.writer.WriteString("engine ready\n"); err != nil {
-			return err
+			return fmt.Errorf("failed to write ready response: %w", err)
 		}
 
 		u.writer.Flush()
@@ -47,7 +48,7 @@ func (u *UCI) Run() error {
 		cmdStr, err := u.reader.ReadString('\n')
 		if err != nil {
 			if _, err := u.writer.WriteString("Error reading input\n"); err != nil {
-				return err
+				return fmt.Errorf("failed to write error response: %w", err)
 			}
 
 			u.writer.Flush()
@@ -59,7 +60,7 @@ func (u *UCI) Run() error {
 		resp, quit := u.handleCommand(cmd)
 
 		if _, err := resp.WriteTo(u.writer); err != nil {
-			return err
+			return fmt.Errorf("failed to write response: %w", err)
 		}
 
 		u.writer.Flush()
