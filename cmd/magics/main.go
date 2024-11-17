@@ -77,7 +77,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := os.WriteFile("magic/magics.json", data, 0600); err != nil {
+	if err := os.WriteFile("magic/magics.json", data, 0o600); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -188,7 +188,7 @@ func generateMagics(piece int) ([]magic.Entry, uint64) {
 func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, relevantBits int) (bool, uint64) {
 	var maxIndex uint64
 
-	var numBlockerConfigs = 1 << relevantBits
+	numBlockerConfigs := 1 << relevantBits
 
 	used := make(map[uint64]bb.Bitboard) // index -> possible moves
 

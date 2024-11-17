@@ -13,7 +13,7 @@ import (
 )
 
 func TestMaskRookAttacks(t *testing.T) {
-	var tests = map[sq.Square]uint64{
+	tests := map[sq.Square]uint64{
 		sq.E4: 4521664529305600,    // central
 		sq.G4: 18085034619584512,   // g-file
 		sq.B5: 565159647117824,     // b-file
