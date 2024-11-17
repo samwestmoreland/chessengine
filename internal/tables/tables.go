@@ -21,7 +21,7 @@ type Lookup struct {
 }
 
 func InitialiseLookupTables(table *Lookup) error {
-	if err := json.Unmarshal(magic.JsonData, &data); err != nil {
+	if err := json.Unmarshal(magic.JSONData, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal magic data: %w", err)
 	}
 

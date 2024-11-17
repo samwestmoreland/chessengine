@@ -152,6 +152,7 @@ func generateMagics(piece int) ([]magic.Entry, uint64) {
 					Square: sq.Stringify(square),
 					Magic:  fmt.Sprintf("%016x", bestMagic),
 					Shift:  bestShift,
+					Mask:   "",
 				}
 
 				var mask bb.Bitboard
