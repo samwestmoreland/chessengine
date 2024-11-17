@@ -73,10 +73,10 @@ func (m Move) IsCastling() bool {
 
 // MoveBuilder type for debugging and testing
 type MoveBuilder struct {
-	source       int
-	target       int
-	piece        int
-	promotion    int
+	source       sq.Square
+	target       sq.Square
+	piece        piece.Piece
+	promotion    piece.Piece
 	isCapture    bool
 	isDoublePush bool
 	isEnPassant  bool
@@ -87,22 +87,22 @@ func NewMove() *MoveBuilder {
 	return &MoveBuilder{}
 }
 
-func (b *MoveBuilder) From(square int) *MoveBuilder {
+func (b *MoveBuilder) From(square sq.Square) *MoveBuilder {
 	b.source = square
 	return b
 }
 
-func (b *MoveBuilder) To(square int) *MoveBuilder {
+func (b *MoveBuilder) To(square sq.Square) *MoveBuilder {
 	b.target = square
 	return b
 }
 
-func (b *MoveBuilder) Piece(p int) *MoveBuilder {
+func (b *MoveBuilder) Piece(p piece.Piece) *MoveBuilder {
 	b.piece = p
 	return b
 }
 
-func (b *MoveBuilder) Promotion(p int) *MoveBuilder {
+func (b *MoveBuilder) Promotion(p piece.Piece) *MoveBuilder {
 	b.promotion = p
 	return b
 }
@@ -127,27 +127,27 @@ func (b *MoveBuilder) Castling() *MoveBuilder {
 	return b
 }
 
-// func (b *MoveBuilder) Build() Move {
-// 	var move uint32
-//
-// 	// Pack all the fields into the move
-// 	move |= uint32(b.source)
-// 	move |= uint32(b.target) << 6
-// 	move |= uint32(b.piece) << 12
-// 	move |= uint32(b.promotion) << 16
-//
-// 	if b.isCapture {
-// 		move |= captureMask
-// 	}
-// 	if b.isDoublePush {
-// 		move |= doublePushMask
-// 	}
-// 	if b.isEnPassant {
-// 		move |= enPassantMask
-// 	}
-// 	if b.isCastling {
-// 		move |= castlingMask
-// 	}
-//
-// 	return Move(move)
-// }
+func (b *MoveBuilder) Build() Move {
+	var move Move
+
+	// Pack all the fields into the move
+	move |= Move(uint32(b.source))
+	move |= Move(uint32(b.target) << 6)
+	move |= Move(uint32(b.piece) << 12)
+	move |= Move(uint32(b.promotion) << 16)
+
+	if b.isCapture {
+		move |= (1 << 20)
+	}
+	if b.isDoublePush {
+		move |= (1 << 21)
+	}
+	if b.isEnPassant {
+		move |= (1 << 22)
+	}
+	if b.isCastling {
+		move |= (1 << 23)
+	}
+
+	return Move(move)
+}
