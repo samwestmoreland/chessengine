@@ -18,4 +18,12 @@ func TestExtractSourceAndTargetSquares(t *testing.T) {
 	if aMove.Target() != sq.A2 {
 		t.Errorf("Expected target square to be a2, got %s", sq.Stringify(aMove.Target()))
 	}
+
+	if aMove.Piece() != piece.Wk {
+		t.Errorf("Expected piece to be white king, got %s", aMove.Piece().String())
+	}
+
+	if aMove.PromotionPiece() != piece.NoPiece {
+		t.Errorf("Expected promotion to be no piece, got %s", aMove.PromotionPiece().String())
+	}
 }

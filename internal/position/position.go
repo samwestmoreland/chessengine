@@ -110,7 +110,7 @@ func parseEnPassantSquare(square string) (sq.Square, error) {
 }
 
 func parsePositionString(posStr string) ([]bb.Bitboard, error) {
-	occ := make([]bb.Bitboard, 14)
+	occ := make([]bb.Bitboard, 15)
 
 	var square sq.Square
 
@@ -229,7 +229,7 @@ func (s *Position) Print(output io.Writer) {
 			for i, occ := range s.Occupancy {
 				if bb.GetBit(occ, square) {
 					occupied = true
-					output.Write([]byte(fmt.Sprintf(" %s", piece.String(i))))
+					output.Write([]byte(fmt.Sprintf(" %s", piece.Piece(i).String())))
 					break
 				}
 			}
