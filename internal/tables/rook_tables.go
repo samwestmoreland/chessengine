@@ -48,7 +48,7 @@ func populateRookAttackTables(data magic.RookData) [64][]bb.Bitboard {
 }
 
 // MaskRookAttacks generates a bitmask for all possible squares that a rook can attack from a given
-// square
+// square.
 func MaskRookAttacks(square sq.Square) bb.Bitboard {
 	var attackBoard bb.Bitboard
 

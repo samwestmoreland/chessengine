@@ -79,7 +79,7 @@ func (m Move) IsCastling() bool {
 	return (m >> 23) == 1
 }
 
-// Builder type for debugging and testing
+// Builder type for debugging and testing.
 type Builder struct {
 	source       sq.Square
 	target       sq.Square
