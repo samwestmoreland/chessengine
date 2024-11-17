@@ -77,8 +77,8 @@ func NewPositionFromFEN(fen string) (*Position, error) {
 		WhiteToMove:     whiteToMove,
 		CastlingRights:  castlingRights,
 		EnPassantSquare: enpassant,
-		HalfMoveClock:   uint8(halfMoveClock),
-		FullMoveNumber:  uint8(fullMoveNumber),
+		HalfMoveClock:   byte(halfMoveClock),
+		FullMoveNumber:  byte(fullMoveNumber),
 	}, nil
 }
 
@@ -226,14 +226,14 @@ func parseCastlingRights(castlingRights string) (uint8, error) {
 func (p *Position) Print(output io.Writer) {
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
-			square := sq.Square(rank*8 + file)
+			square := sq.Square(byte(rank*8 + file))
 			occupied := false
 
 			for i, occ := range p.Occupancy {
 				if bb.GetBit(occ, square) {
 					occupied = true
 
-					if _, err := output.Write([]byte(fmt.Sprintf(" %s", piece.Piece(i).String()))); err != nil {
+					if _, err := output.Write([]byte(fmt.Sprintf(" %s", piece.Piece(byte(i)).String()))); err != nil {
 						panic(err)
 					}
 

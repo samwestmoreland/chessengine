@@ -56,7 +56,7 @@ func LSBIndex(board Bitboard) sq.Square {
 		return sq.NoSquare
 	}
 
-	return sq.Square(CountBits(board&-board - 1))
+	return sq.Square(byte(CountBits(board&-board - 1)))
 }
 
 func CountBits(board Bitboard) int {
@@ -122,7 +122,7 @@ func PrintBoard(board Bitboard, output io.Writer) {
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
 			// Convert rank and file into a square
-			square := sq.Square(rank*8 + file)
+			square := sq.Square(byte(rank*8 + file))
 
 			// Print the rank
 			if file == 0 {

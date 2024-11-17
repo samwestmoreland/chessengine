@@ -77,12 +77,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := os.WriteFile("magic/magics.json", data, 0644); err != nil {
+	if err := os.WriteFile("magic/magics.json", data, 0600); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func generateMagics(piece int) ([]magic.Entry, int) {
+func generateMagics(piece int) ([]magic.Entry, uint64) {
 	if piece == rook {
 		log.Println("Generating rook magics")
 	} else if piece == bishop {
@@ -98,7 +98,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 
 	var wg sync.WaitGroup
 
-	var totalTableSize atomic.Int64
+	var totalTableSize atomic.Uint64
 
 	magics := make([]magic.Entry, 64)
 
@@ -111,7 +111,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 			defer wg.Done()
 
 			for square := range squares {
-				bestTableSize := math.MaxInt64
+				var bestTableSize uint64 = math.MaxUint64
 
 				var bestMagic uint64
 
@@ -146,7 +146,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 					log.Printf("Failed to find a magic for square %d", square)
 				}
 
-				totalTableSize.Add(int64(bestTableSize))
+				totalTableSize.Add(bestTableSize)
 
 				entry := magic.Entry{
 					Square: sq.Stringify(square),
@@ -180,15 +180,15 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 	// Wait for all workers to finish
 	wg.Wait()
 
-	return magics, int(totalTableSize.Load())
+	return magics, totalTableSize.Load()
 }
 
-func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, relevantBits int) (bool, int) {
-	var maxIndex int
+func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, relevantBits int) (bool, uint64) {
+	var maxIndex uint64
 
 	var numBlockerConfigs = 1 << relevantBits
 
-	used := make(map[int]bb.Bitboard) // index -> possible moves
+	used := make(map[uint64]bb.Bitboard) // index -> possible moves
 
 	for blockerConfigIndex := 0; blockerConfigIndex < numBlockerConfigs; blockerConfigIndex++ {
 		var attacks bb.Bitboard
@@ -208,7 +208,7 @@ func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, r
 		}
 
 		hashResult := (uint64(blockerConfig) * magicCandidate) >> shift
-		index := int(hashResult)
+		index := hashResult
 
 		if index > maxIndex {
 			maxIndex = index
@@ -227,7 +227,7 @@ func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, r
 	return true, maxIndex + 1
 }
 
-func formatTableSize(numEntries int) string {
+func formatTableSize(numEntries uint64) string {
 	bytes := numEntries * 8 // 8 bytes per uint64
 
 	switch {

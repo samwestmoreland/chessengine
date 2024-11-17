@@ -126,7 +126,7 @@ func ParseString(square string) (Square, error) {
 
 	index := rankIndex*8 + int(fileIndex)
 
-	return Square(index), nil
+	return Square(byte(index)), nil
 }
 
 func OnBoard(square Square) bool {
