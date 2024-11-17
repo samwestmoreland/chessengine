@@ -46,6 +46,12 @@ func (p Piece) String() string {
 		return "q"
 	case Bk:
 		return "k"
+	case Wa:
+		return "W"
+	case Ba:
+		return "B"
+	case NoPiece:
+		return ""
 	default:
 		return ""
 	}

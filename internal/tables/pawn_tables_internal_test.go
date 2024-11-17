@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
@@ -36,7 +35,7 @@ func TestIsHFile(t *testing.T) {
 func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
 	attackedSquares := maskPawnAttacks(0, sq.E2)
 
-	if !bitboard.GetBit(attackedSquares, sq.D3) {
+	if !bb.GetBit(attackedSquares, sq.D3) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)
@@ -44,7 +43,7 @@ func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
 		t.Error("Expected false, got true")
 	}
 
-	if !bitboard.GetBit(attackedSquares, sq.F3) {
+	if !bb.GetBit(attackedSquares, sq.F3) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)
@@ -64,7 +63,7 @@ func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
 func TestMaskPawnAttacksBlackCentral(t *testing.T) {
 	attackedSquares := maskPawnAttacks(1, sq.C7)
 
-	if !bitboard.GetBit(attackedSquares, sq.B6) {
+	if !bb.GetBit(attackedSquares, sq.B6) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)
@@ -72,7 +71,7 @@ func TestMaskPawnAttacksBlackCentral(t *testing.T) {
 		t.Error("Expected false, got true")
 	}
 
-	if !bitboard.GetBit(attackedSquares, sq.D6) {
+	if !bb.GetBit(attackedSquares, sq.D6) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)
@@ -92,7 +91,7 @@ func TestMaskPawnAttacksBlackCentral(t *testing.T) {
 func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
 	attackedSquares := maskPawnAttacks(0, sq.A2)
 
-	if !bitboard.GetBit(attackedSquares, sq.B3) {
+	if !bb.GetBit(attackedSquares, sq.B3) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)
@@ -110,7 +109,7 @@ func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
 
 	attackedSquares = maskPawnAttacks(0, sq.H7)
 
-	if !bitboard.GetBit(attackedSquares, sq.G8) {
+	if !bb.GetBit(attackedSquares, sq.G8) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)
@@ -130,7 +129,7 @@ func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
 func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
 	attackedSquares := maskPawnAttacks(1, sq.A7)
 
-	if !bitboard.GetBit(attackedSquares, sq.B6) {
+	if !bb.GetBit(attackedSquares, sq.B6) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)
@@ -148,7 +147,7 @@ func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
 
 	attackedSquares = maskPawnAttacks(1, sq.H2)
 
-	if !bitboard.GetBit(attackedSquares, sq.G1) {
+	if !bb.GetBit(attackedSquares, sq.G1) {
 		var buf bytes.Buffer
 
 		bb.PrintBoard(attackedSquares, &buf)

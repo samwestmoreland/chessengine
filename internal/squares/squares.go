@@ -101,7 +101,7 @@ func Stringify(square Square) string {
 	return ret.String()
 }
 
-func ToUInt8(square string) (Square, error) {
+func ParseString(square string) (Square, error) {
 	if len(square) != 2 {
 		return 0, fmt.Errorf("invalid square format: %s", square)
 	}

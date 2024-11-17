@@ -101,12 +101,12 @@ func parseEnPassantSquare(square string) (sq.Square, error) {
 		return sq.Square(sq.NoSquare), nil
 	}
 
-	squareInt, err := sq.ToUInt8(square)
+	squareInt, err := sq.ParseString(square)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse en passant square: %w", err)
 	}
 
-	return sq.Square(squareInt), nil
+	return squareInt, nil
 }
 
 func parsePositionString(posStr string) ([]bb.Bitboard, error) {

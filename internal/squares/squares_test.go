@@ -90,7 +90,7 @@ func TestStringify(t *testing.T) {
 func TestToInt(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.stringRepresentation, func(t *testing.T) {
-			result, err := sq.ToUInt8(test.stringRepresentation)
+			result, err := sq.ParseString(test.stringRepresentation)
 			if err != nil {
 				t.Error(err)
 			}

@@ -59,8 +59,8 @@ func LSBIndex(board Bitboard) sq.Square {
 	return sq.Square(CountBits(board&-board - 1))
 }
 
-func CountBits(board Bitboard) uint8 {
-	return uint8(bits.OnesCount64(uint64(board)))
+func CountBits(board Bitboard) int {
+	return bits.OnesCount64(uint64(board))
 }
 
 // SetOccupancy sets each bit on the attack mask to 1 or 0.
@@ -86,7 +86,7 @@ func SetOccupancy(index int, attackMask Bitboard) Bitboard {
 
 	bitsInMask := CountBits(attackMask)
 
-	for i := uint8(0); i < bitsInMask; i++ {
+	for i := 0; i < bitsInMask; i++ {
 		sq := LSBIndex(attackMask)
 
 		attackMask = ClearBit(attackMask, sq)

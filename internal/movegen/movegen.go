@@ -13,9 +13,15 @@ import (
 
 var lookupTables *tables.Lookup
 
-// Initialise populates the lookup tables which are stored as a global variable in this package
+// Initialise populates the lookup tables which are stored as a global variable in this package.
 func Initialise() error {
-	lookupTables = &tables.Lookup{}
+	lookupTables = &tables.Lookup{
+		Pawns:   [2][64]bb.Bitboard{},
+		Knights: [64]bb.Bitboard{},
+		Kings:   [64]bb.Bitboard{},
+		Bishops: [64][]bb.Bitboard{},
+		Rooks:   [64][]bb.Bitboard{},
+	}
 
 	err := tables.InitialiseLookupTables(lookupTables)
 	if err != nil {

@@ -31,9 +31,10 @@ func NewUCI(writer *bufio.Writer, reader *bufio.Reader) (*UCI, error) {
 	}
 
 	return &UCI{
-		engine: eng,
-		writer: writer,
-		reader: reader,
+		engine:   eng,
+		position: nil,
+		writer:   writer,
+		reader:   reader,
 	}, nil
 }
 
