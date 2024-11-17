@@ -1,8 +1,7 @@
 package move
 
 import (
-	"fmt"
-
+	"github.com/samwestmoreland/chessengine/internal/piece"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
@@ -18,12 +17,137 @@ import (
 //	1000 0000 0000 0000 0000 0000    castling flag
 type Move uint32
 
-func (m Move) String() string {
-	ret := fmt.Sprintf("%s%s", sq.Stringify(m.From), sq.Stringify(m.To))
+func Encode(source, target sq.Square, movePiece, promotionPiece piece.Piece, capture, doublePush, enPassant, castling uint32) Move {
+	return Move(
+		uint32(source) |
+			(uint32(target) << 6) |
+			(uint32(movePiece) << 12) |
+			(uint32(promotionPiece) << 16) |
+			(capture << 20) |
+			(doublePush << 21) |
+			(enPassant << 22) |
+			(castling << 23))
+}
 
-	if m.PromotionPiece != "" {
-		ret += fmt.Sprintf("%s", m.PromotionPiece)
+func (m Move) String() string {
+	ret := sq.Stringify(m.Source()) + sq.Stringify(m.Target())
+
+	if m.PromotionPiece() != piece.NoPiece {
+		ret += m.PromotionPiece().String()
 	}
 
 	return ret
+}
+
+func (m Move) Source() sq.Square {
+	return sq.Square(m & 0x3f)
+}
+
+func (m Move) Target() sq.Square {
+	return sq.Square((m >> 6) & 0x3f)
+}
+
+func (m Move) Piece() piece.Piece {
+	return piece.Piece((m >> 12) & 0xf)
+}
+
+func (m Move) PromotionPiece() piece.Piece {
+	return piece.Piece((m >> 16) & 0xf)
+}
+
+func (m Move) IsCapture() bool {
+	return (m >> 20) == 1
+}
+
+func (m Move) IsDoublePush() bool {
+	return (m >> 21) == 1
+}
+
+func (m Move) IsEnPassant() bool {
+	return (m >> 22) == 1
+}
+
+func (m Move) IsCastling() bool {
+	return (m >> 23) == 1
+}
+
+// MoveBuilder type for debugging and testing
+type MoveBuilder struct {
+	source       sq.Square
+	target       sq.Square
+	piece        piece.Piece
+	promotion    piece.Piece
+	isCapture    bool
+	isDoublePush bool
+	isEnPassant  bool
+	isCastling   bool
+}
+
+func NewMove() *MoveBuilder {
+	return &MoveBuilder{}
+}
+
+func (b *MoveBuilder) From(square sq.Square) *MoveBuilder {
+	b.source = square
+	return b
+}
+
+func (b *MoveBuilder) To(square sq.Square) *MoveBuilder {
+	b.target = square
+	return b
+}
+
+func (b *MoveBuilder) Piece(p piece.Piece) *MoveBuilder {
+	b.piece = p
+	return b
+}
+
+func (b *MoveBuilder) Promotion(p piece.Piece) *MoveBuilder {
+	b.promotion = p
+	return b
+}
+
+func (b *MoveBuilder) Capture() *MoveBuilder {
+	b.isCapture = true
+	return b
+}
+
+func (b *MoveBuilder) DoublePush() *MoveBuilder {
+	b.isDoublePush = true
+	return b
+}
+
+func (b *MoveBuilder) EnPassant() *MoveBuilder {
+	b.isEnPassant = true
+	return b
+}
+
+func (b *MoveBuilder) Castling() *MoveBuilder {
+	b.isCastling = true
+	return b
+}
+
+func (b *MoveBuilder) Build() Move {
+	var move Move
+
+	// Pack all the fields into the move
+	move |= Move(uint32(b.source))
+	move |= Move(uint32(b.target) << 6)
+	move |= Move(uint32(b.piece) << 12)
+	move |= Move(uint32(b.promotion) << 16)
+
+	if b.isCapture {
+		move |= (1 << 20)
+	}
+	if b.isDoublePush {
+		move |= (1 << 21)
+	}
+	if b.isEnPassant {
+		move |= (1 << 22)
+	}
+	if b.isCastling {
+		move |= (1 << 23)
+	}
+
+	return Move(move)
 }

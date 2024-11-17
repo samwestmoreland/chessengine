@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/samwestmoreland/chessengine/internal/bitboard"
@@ -8,7 +9,7 @@ import (
 )
 
 func TestMaskKnightAttacks(t *testing.T) {
-	testCases := map[int]uint64{
+	testCases := map[sq.Square]uint64{
 		sq.E4: 11333767002587136,   // central
 		sq.G4: 45053588738670592,   // g-file
 		sq.B5: 5531918402816,       // b-file
@@ -24,7 +25,9 @@ func TestMaskKnightAttacks(t *testing.T) {
 	for square, expected := range testCases {
 		actual := maskKnightAttacks(square)
 		if uint64(actual) != expected {
-			bitboard.PrintBoard(actual)
+			var buf bytes.Buffer
+			bitboard.PrintBoard(actual, &buf)
+			t.Errorf(buf.String())
 			t.Errorf("Getting knight attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}

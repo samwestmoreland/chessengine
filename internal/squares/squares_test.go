@@ -7,7 +7,7 @@ import (
 )
 
 var tests = []struct {
-	integerRepresentation int
+	integerRepresentation sq.Square
 	stringRepresentation  string
 }{
 	{sq.A1, "a1"},
@@ -90,7 +90,7 @@ func TestStringify(t *testing.T) {
 func TestToInt(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.stringRepresentation, func(t *testing.T) {
-			result, err := sq.ToInt(test.stringRepresentation)
+			result, err := sq.ToUInt8(test.stringRepresentation)
 			if err != nil {
 				t.Error(err)
 			}
@@ -104,13 +104,12 @@ func TestToInt(t *testing.T) {
 
 func TestOnBoard(t *testing.T) {
 	testCases := []struct {
-		square int
+		square sq.Square
 		want   bool
 	}{
 		{sq.A1, true},
 		{sq.C3, true},
 		{75, false},
-		{-1, false},
 	}
 
 	for _, tc := range testCases {

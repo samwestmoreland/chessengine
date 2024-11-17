@@ -3,19 +3,20 @@ package tables
 
 import (
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
 
 func populateKnightAttackTables() [64]bb.Bitboard {
 	var attacks [64]bb.Bitboard
 
-	for square := 0; square < 64; square++ {
-		attacks[square] = maskKnightAttacks(square)
+	for square := uint8(0); square < 64; square++ {
+		attacks[square] = maskKnightAttacks(sq.Square(square))
 	}
 
 	return attacks
 }
 
-func maskKnightAttacks(square int) bb.Bitboard {
+func maskKnightAttacks(square sq.Square) bb.Bitboard {
 	board := bb.SetBit(0, square)
 
 	if isAFile(square) {

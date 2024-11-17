@@ -1,7 +1,10 @@
 package piece
 
+type Piece uint8
+
 const (
-	Wp = iota
+	NoPiece Piece = iota
+	Wp
 	Wn
 	Wb
 	Wr
@@ -17,8 +20,8 @@ const (
 	Ba // All black
 )
 
-func String(pieceInt int) string {
-	switch pieceInt {
+func (p Piece) String() string {
+	switch p {
 	case Wp:
 		return "P"
 	case Wn:

@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
+	sq "github.com/samwestmoreland/chessengine/internal/squares"
 	"github.com/samwestmoreland/chessengine/magic"
 )
 
@@ -18,7 +19,7 @@ import (
 func populateRookAttackTables(data magic.RookData) [64][]bb.Bitboard {
 	var attacks [64][]bb.Bitboard
 
-	for square := 0; square < 64; square++ {
+	for square := uint8(0); square < 64; square++ {
 		// Get magic data for this square
 		magicNum, _ := strconv.ParseUint(data.Magics[square].Magic, 16, 64)
 		shift := data.Magics[square].Shift
@@ -28,14 +29,14 @@ func populateRookAttackTables(data magic.RookData) [64][]bb.Bitboard {
 		attacks[square] = make([]bb.Bitboard, tableSize)
 
 		// Populate this square's table with all possible attack patterns
-		mask := MaskRookAttacks(square)
+		mask := MaskRookAttacks(sq.Square(square))
 		numBlockers := bb.CountBits(mask) // how many relevant squares
 
 		// For each possible blocker configuration...
 		for i := 0; i < (1 << numBlockers); i++ {
 			blockers := bb.SetOccupancy(i, mask)
 			// Calculate actual moves for this blocker pattern
-			moves := RookAttacksOnTheFly(square, blockers)
+			moves := RookAttacksOnTheFly(sq.Square(square), blockers)
 			// Calculate index using magic
 			index := (uint64(blockers) * magicNum) >> shift
 			// Store moves at this index
@@ -48,29 +49,29 @@ func populateRookAttackTables(data magic.RookData) [64][]bb.Bitboard {
 
 // MaskRookAttacks generates a bitmask for all possible squares that a rook can attack from a given
 // square
-func MaskRookAttacks(square int) bb.Bitboard {
+func MaskRookAttacks(square sq.Square) bb.Bitboard {
 	var attackBoard bb.Bitboard
 
 	startRank := square / 8
 	startFile := square % 8
 
 	// North
-	for rank := startRank - 1; rank > 0; rank-- {
+	for rank := startRank - 1; rank > 0 && rank < 7; rank-- {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 	}
 
 	// South
-	for rank := startRank + 1; rank < 7; rank++ {
+	for rank := startRank + 1; rank > 0 && rank < 7; rank++ {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 	}
 
 	// East
-	for file := startFile + 1; file < 7; file++ {
+	for file := startFile + 1; file > 0 && file < 7; file++ {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 	}
 
 	// West
-	for file := startFile - 1; file > 0; file-- {
+	for file := startFile - 1; file > 0 && file < 7; file-- {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 	}
 
@@ -79,14 +80,14 @@ func MaskRookAttacks(square int) bb.Bitboard {
 
 // RookAttacksOnTheFly manually computes the possible squares a rook can attack
 // depending on its position and a given blocker configuration.
-func RookAttacksOnTheFly(square int, blockers bb.Bitboard) bb.Bitboard {
+func RookAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	var attackBoard bb.Bitboard
 
 	startRank := square / 8
 	startFile := square % 8
 
 	// North
-	for rank := startRank - 1; rank >= 0; rank-- {
+	for rank := startRank - 1; rank >= 0 && rank <= 7; rank-- {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 		if bb.Bitboard(1)<<(rank*8+startFile)&blockers != 0 {
 			break
@@ -94,7 +95,7 @@ func RookAttacksOnTheFly(square int, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// South
-	for rank := startRank + 1; rank <= 7; rank++ {
+	for rank := startRank + 1; rank >= 0 && rank <= 7; rank++ {
 		attackBoard = bb.SetBit(attackBoard, rank*8+startFile)
 		if bb.Bitboard(1)<<(rank*8+startFile)&blockers != 0 {
 			break
@@ -102,7 +103,7 @@ func RookAttacksOnTheFly(square int, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// East
-	for file := startFile + 1; file <= 7; file++ {
+	for file := startFile + 1; file >= 0 && file <= 7; file++ {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 		if bb.Bitboard(1)<<(startRank*8+file)&blockers != 0 {
 			break
@@ -110,7 +111,7 @@ func RookAttacksOnTheFly(square int, blockers bb.Bitboard) bb.Bitboard {
 	}
 
 	// West
-	for file := startFile - 1; file >= 0; file-- {
+	for file := startFile - 1; file >= 0 && file <= 7; file-- {
 		attackBoard = bb.SetBit(attackBoard, startRank*8+file)
 		if bb.Bitboard(1)<<(startRank*8+file)&blockers != 0 {
 			break

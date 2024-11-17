@@ -101,7 +101,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 
 	numWorkers := runtime.GOMAXPROCS(0)
 	log.Printf("Using %d workers", numWorkers)
-	squares := make(chan int, 64)
+	squares := make(chan sq.Square, 64)
 	var wg sync.WaitGroup
 
 	var totalTableSize atomic.Int64
@@ -171,8 +171,8 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 	}
 
 	// Feed squares to workers
-	for square := 0; square < 64; square++ {
-		squares <- square
+	for square := uint8(0); square < 64; square++ {
+		squares <- sq.Square(square)
 	}
 	close(squares)
 
@@ -182,7 +182,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 	return magics, int(totalTableSize.Load())
 }
 
-func testMagicCandidate(magicCandidate uint64, square, shift, piece, relevantBits int) (bool, int) {
+func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, relevantBits int) (bool, int) {
 	var maxIndex int
 
 	var numBlockerConfigs = 1 << relevantBits
