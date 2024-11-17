@@ -6,6 +6,8 @@ import (
 )
 
 func TestParseCastlingRights(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		input  string
 		output uint8
@@ -24,6 +26,8 @@ func TestParseCastlingRights(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.input, func(t *testing.T) {
+			t.Parallel()
+
 			result, err := parseCastlingRights(test.input)
 			if err != nil {
 				t.Error(err)
@@ -37,6 +41,8 @@ func TestParseCastlingRights(t *testing.T) {
 }
 
 func TestNewPositionFromFEN(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name          string
 		fen           string
@@ -83,6 +89,8 @@ func TestNewPositionFromFEN(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			defer func() {
 				if r := recover(); r != nil {
 					if !tt.expectPanic {
@@ -92,9 +100,11 @@ func TestNewPositionFromFEN(t *testing.T) {
 			}()
 
 			pos, err := NewPositionFromFEN(tt.fen)
+
 			if tt.expectPanic {
 				t.Error("expected panic but got none")
 			}
+
 			if err != nil {
 				if !tt.expectError {
 					t.Errorf("unexpected error: %v", err)
@@ -110,5 +120,4 @@ func TestNewPositionFromFEN(t *testing.T) {
 			}
 		})
 	}
-
 }

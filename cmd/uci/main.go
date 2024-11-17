@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -21,34 +22,38 @@ type UCI struct {
 
 func NewUCI(writer *bufio.Writer, reader *bufio.Reader) (*UCI, error) {
 	if err := movegen.Initialise(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to initialise move generator: %w", err)
 	}
 
 	eng, err := engine.NewEngine()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create engine: %w", err)
 	}
 
 	return &UCI{
-		engine: eng,
-		writer: writer,
-		reader: reader,
+		engine:   eng,
+		position: nil,
+		writer:   writer,
+		reader:   reader,
 	}, nil
 }
 
 func (u *UCI) Run() error {
 	for {
 		if _, err := u.writer.WriteString("engine ready\n"); err != nil {
-			return err
+			return fmt.Errorf("failed to write ready response: %w", err)
 		}
+
 		u.writer.Flush()
 
 		cmdStr, err := u.reader.ReadString('\n')
 		if err != nil {
 			if _, err := u.writer.WriteString("Error reading input\n"); err != nil {
-				return err
+				return fmt.Errorf("failed to write error response: %w", err)
 			}
+
 			u.writer.Flush()
+
 			continue
 		}
 
@@ -56,19 +61,22 @@ func (u *UCI) Run() error {
 		resp, quit := u.handleCommand(cmd)
 
 		if _, err := resp.WriteTo(u.writer); err != nil {
-			return err
+			return fmt.Errorf("failed to write response: %w", err)
 		}
+
 		u.writer.Flush()
 
 		if quit {
 			break
 		}
 	}
+
 	return nil
 }
 
 func (u *UCI) handleCommand(cmd *command) (*bytes.Buffer, bool) {
 	var resp bytes.Buffer
+
 	var quit bool
 
 	switch cmd.name {
@@ -97,6 +105,7 @@ func (u *UCI) handleCommand(cmd *command) (*bytes.Buffer, bool) {
 func (u *UCI) handlePositionCmd(cmd *command, resp *bytes.Buffer) {
 	if len(cmd.args) == 0 {
 		resp.WriteString("too few arguments. expected `position <fen>` or `position startpos`\n")
+
 		return
 	}
 
@@ -107,14 +116,13 @@ func (u *UCI) handlePositionCmd(cmd *command, resp *bytes.Buffer) {
 		}
 
 		u.position = pos
+
 		resp.WriteString("set up starting position\n")
 
 		pos.Print(os.Stdout)
 
 		return
 	}
-
-	// Handle FEN string case...
 }
 
 func main() {

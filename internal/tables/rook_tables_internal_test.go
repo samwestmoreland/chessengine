@@ -13,7 +13,9 @@ import (
 )
 
 func TestMaskRookAttacks(t *testing.T) {
-	var tests = map[sq.Square]uint64{
+	t.Parallel()
+
+	tests := map[sq.Square]uint64{
 		sq.E4: 4521664529305600,    // central
 		sq.G4: 18085034619584512,   // g-file
 		sq.B5: 565159647117824,     // b-file
@@ -30,6 +32,7 @@ func TestMaskRookAttacks(t *testing.T) {
 		actual := MaskRookAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			buf.WriteString(fmt.Sprintf("Square %s\n", sq.Stringify(square)))
 
 			buf.WriteString("Got")
@@ -48,6 +51,8 @@ func TestMaskRookAttacks(t *testing.T) {
 }
 
 func TestRookAttacksOnTheFly(t *testing.T) {
+	t.Parallel()
+
 	var blockers bb.Bitboard
 	blockers = bb.SetBit(blockers, sq.D7)
 	blockers = bb.SetBit(blockers, sq.D3)
@@ -59,6 +64,7 @@ func TestRookAttacksOnTheFly(t *testing.T) {
 
 	if rookAttacks != 9028156000256 {
 		var buf bytes.Buffer
+
 		buf.WriteString("Blockers:\n")
 		bb.PrintBoard(blockers, &buf)
 
@@ -71,8 +77,10 @@ func TestRookAttacksOnTheFly(t *testing.T) {
 }
 
 func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
+	t.Parallel()
+
 	var data magic.Data
-	if err := json.Unmarshal(magic.JsonData, &data); err != nil {
+	if err := json.Unmarshal(magic.JSONData, &data); err != nil {
 		panic(err)
 	}
 
@@ -132,6 +140,7 @@ func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
 
 		if uint64(moves) != tt.expectedMoves {
 			var buf bytes.Buffer
+
 			buf.WriteString("Blockers:")
 			bb.PrintBoard(tt.blockers, &buf)
 			buf.WriteString("\n")

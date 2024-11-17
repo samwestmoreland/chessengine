@@ -56,11 +56,11 @@ func LSBIndex(board Bitboard) sq.Square {
 		return sq.NoSquare
 	}
 
-	return sq.Square(CountBits(board&-board - 1))
+	return sq.Square(byte(CountBits(board&-board - 1)))
 }
 
-func CountBits(board Bitboard) uint8 {
-	return uint8(bits.OnesCount64(uint64(board)))
+func CountBits(board Bitboard) int {
+	return bits.OnesCount64(uint64(board))
 }
 
 // SetOccupancy sets each bit on the attack mask to 1 or 0.
@@ -86,13 +86,13 @@ func SetOccupancy(index int, attackMask Bitboard) Bitboard {
 
 	bitsInMask := CountBits(attackMask)
 
-	for i := uint8(0); i < bitsInMask; i++ {
+	for bit := range bitsInMask {
 		sq := LSBIndex(attackMask)
 
 		attackMask = ClearBit(attackMask, sq)
 
 		// Set the bit on the occupancy board
-		if index&(1<<i) != 0 {
+		if index&(1<<bit) != 0 {
 			ret |= (1 << sq)
 		}
 	}
@@ -102,46 +102,59 @@ func SetOccupancy(index int, attackMask Bitboard) Bitboard {
 
 func RandomUint64() uint64 {
 	var b [8]byte
-	_, err := rand.Read(b[:])
-	if err != nil {
-		panic(err) // or handle error appropriately
+	if _, err := rand.Read(b[:]); err != nil {
+		panic(err)
 	}
 
 	return binary.BigEndian.Uint64(b[:])
 }
 
 func GenerateSparseRandomUint64() uint64 {
-	return RandomUint64() & RandomUint64() & RandomUint64()
+	return RandomUint64() & RandomUint64() & RandomUint64() //nolint
 }
 
 // PrintBoard prints a bitboard to the console.
 func PrintBoard(board Bitboard, output io.Writer) {
-	output.Write([]byte("\n"))
+	if _, err := output.Write([]byte("\n")); err != nil {
+		panic(err)
+	}
 
-	for rank := 0; rank < 8; rank++ {
-		for file := 0; file < 8; file++ {
+	for rank := range 8 {
+		for file := range 8 {
 			// Convert rank and file into a square
-			square := sq.Square(rank*8 + file)
+			square := sq.Square(byte(rank*8 + file))
 
 			// Print the rank
 			if file == 0 {
-				output.Write([]byte(fmt.Sprintf("%d  ", 8-rank)))
+				if _, err := output.Write([]byte(fmt.Sprintf("%d  ", 8-rank))); err != nil {
+					panic(err)
+				}
 			}
 
 			// Check if the square is occupied
 			occupied := GetBit(board, square)
 			if occupied {
-				output.Write([]byte(fmt.Sprintf("%d ", 1)))
+				if _, err := output.Write([]byte(fmt.Sprintf("%d ", 1))); err != nil {
+					panic(err)
+				}
 			} else {
-				output.Write([]byte(fmt.Sprintf("%d ", 0)))
+				if _, err := output.Write([]byte(fmt.Sprintf("%d ", 0))); err != nil {
+					panic(err)
+				}
 			}
 		}
 
-		output.Write([]byte("\n"))
+		if _, err := output.Write([]byte("\n")); err != nil {
+			panic(err)
+		}
 	}
 
-	output.Write([]byte("   a b c d e f g h"))
+	if _, err := output.Write([]byte("   a b c d e f g h")); err != nil {
+		panic(err)
+	}
 
 	// Print the decimal representation
-	output.Write([]byte(fmt.Sprintf("\n   bitboard: %d\n", board)))
+	if _, err := output.Write([]byte(fmt.Sprintf("\n   bitboard: %d\n", board))); err != nil {
+		panic(err)
+	}
 }

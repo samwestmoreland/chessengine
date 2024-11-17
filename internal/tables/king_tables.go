@@ -9,8 +9,8 @@ import (
 func populateKingAttackTables() [64]bb.Bitboard {
 	var attacks [64]bb.Bitboard
 
-	for square := uint8(0); square < 64; square++ {
-		attacks[square] = maskKingAttacks(sq.Square(square))
+	for square := range 64 {
+		attacks[square] = maskKingAttacks(sq.Square(byte(square)))
 	}
 
 	return attacks

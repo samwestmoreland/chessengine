@@ -2,6 +2,7 @@ package tables
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
@@ -20,9 +21,8 @@ type Lookup struct {
 }
 
 func InitialiseLookupTables(table *Lookup) error {
-	data = data
-	if err := json.Unmarshal(magic.JsonData, &data); err != nil {
-		return err
+	if err := json.Unmarshal(magic.JSONData, &data); err != nil {
+		return fmt.Errorf("failed to unmarshal magic data: %w", err)
 	}
 
 	table.Pawns = populatePawnAttackTables()

@@ -2,7 +2,6 @@ package engine
 
 import (
 	"log"
-	"math/rand/v2"
 
 	"github.com/samwestmoreland/chessengine/internal/movegen"
 	"github.com/samwestmoreland/chessengine/internal/position"
@@ -31,7 +30,5 @@ func (e *Engine) Search(pos *position.Position) string {
 
 	log.Println("Number of moves:", numMoves)
 
-	rand := rand.IntN(numMoves)
-
-	return moves[rand].String()
+	return moves[0].String()
 }

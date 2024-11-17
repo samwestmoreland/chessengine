@@ -17,7 +17,11 @@ import (
 //	1000 0000 0000 0000 0000 0000    castling flag
 type Move uint32
 
-func Encode(source, target sq.Square, movePiece, promotionPiece piece.Piece, capture, doublePush, enPassant, castling uint32) Move {
+func Encode(
+	source, target sq.Square,
+	movePiece, promotionPiece piece.Piece,
+	capture, doublePush, enPassant, castling uint32,
+) Move {
 	return Move(
 		uint32(source) |
 			(uint32(target) << 6) |
@@ -40,19 +44,27 @@ func (m Move) String() string {
 }
 
 func (m Move) Source() sq.Square {
-	return sq.Square(m & 0x3f)
+	val := m & 0x3f
+
+	return sq.Square(byte(val))
 }
 
 func (m Move) Target() sq.Square {
-	return sq.Square((m >> 6) & 0x3f)
+	val := (m >> 6) & 0x3f
+
+	return sq.Square(byte(val))
 }
 
 func (m Move) Piece() piece.Piece {
-	return piece.Piece((m >> 12) & 0xf)
+	val := (m >> 12) & 0xf
+
+	return piece.Piece(byte(val)) // bytehis an alias for uint8
 }
 
 func (m Move) PromotionPiece() piece.Piece {
-	return piece.Piece((m >> 16) & 0xf)
+	val := (m >> 16) & 0xf
+
+	return piece.Piece(byte(val))
 }
 
 func (m Move) IsCapture() bool {
@@ -71,8 +83,8 @@ func (m Move) IsCastling() bool {
 	return (m >> 23) == 1
 }
 
-// MoveBuilder type for debugging and testing
-type MoveBuilder struct {
+// Builder type for debugging and testing.
+type Builder struct {
 	source       sq.Square
 	target       sq.Square
 	piece        piece.Piece
@@ -83,51 +95,68 @@ type MoveBuilder struct {
 	isCastling   bool
 }
 
-func NewMove() *MoveBuilder {
-	return &MoveBuilder{}
+func NewMove() *Builder {
+	return &Builder{
+		source:       sq.NoSquare,
+		target:       sq.NoSquare,
+		piece:        piece.NoPiece,
+		promotion:    piece.NoPiece,
+		isCapture:    false,
+		isDoublePush: false,
+		isEnPassant:  false,
+		isCastling:   false,
+	}
 }
 
-func (b *MoveBuilder) From(square sq.Square) *MoveBuilder {
+func (b *Builder) From(square sq.Square) *Builder {
 	b.source = square
+
 	return b
 }
 
-func (b *MoveBuilder) To(square sq.Square) *MoveBuilder {
+func (b *Builder) To(square sq.Square) *Builder {
 	b.target = square
+
 	return b
 }
 
-func (b *MoveBuilder) Piece(p piece.Piece) *MoveBuilder {
+func (b *Builder) Piece(p piece.Piece) *Builder {
 	b.piece = p
+
 	return b
 }
 
-func (b *MoveBuilder) Promotion(p piece.Piece) *MoveBuilder {
+func (b *Builder) Promotion(p piece.Piece) *Builder {
 	b.promotion = p
+
 	return b
 }
 
-func (b *MoveBuilder) Capture() *MoveBuilder {
+func (b *Builder) Capture() *Builder {
 	b.isCapture = true
+
 	return b
 }
 
-func (b *MoveBuilder) DoublePush() *MoveBuilder {
+func (b *Builder) DoublePush() *Builder {
 	b.isDoublePush = true
+
 	return b
 }
 
-func (b *MoveBuilder) EnPassant() *MoveBuilder {
+func (b *Builder) EnPassant() *Builder {
 	b.isEnPassant = true
+
 	return b
 }
 
-func (b *MoveBuilder) Castling() *MoveBuilder {
+func (b *Builder) Castling() *Builder {
 	b.isCastling = true
+
 	return b
 }
 
-func (b *MoveBuilder) Build() Move {
+func (b *Builder) Build() Move {
 	var move Move
 
 	// Pack all the fields into the move
@@ -139,15 +168,18 @@ func (b *MoveBuilder) Build() Move {
 	if b.isCapture {
 		move |= (1 << 20)
 	}
+
 	if b.isDoublePush {
 		move |= (1 << 21)
 	}
+
 	if b.isEnPassant {
 		move |= (1 << 22)
 	}
+
 	if b.isCastling {
 		move |= (1 << 23)
 	}
 
-	return Move(move)
+	return move
 }

@@ -9,6 +9,8 @@ import (
 )
 
 func TestExtractSourceAndTargetSquares(t *testing.T) {
+	t.Parallel()
+
 	aMove := move.Encode(sq.A1, sq.A2, piece.Wk, 0, 0, 0, 0, 0)
 
 	if aMove.Source() != sq.A1 {

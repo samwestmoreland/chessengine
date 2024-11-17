@@ -22,26 +22,32 @@ var testCases = map[sq.Square]uint64{
 }
 
 func TestMaskKingAttacks(t *testing.T) {
+	t.Parallel()
+
 	for square, expected := range testCases {
 		actual := maskKingAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bb.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Getting king attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
 }
 
 func TestPopulateKingAttackTables(t *testing.T) {
+	t.Parallel()
+
 	kingAttacks := populateKingAttackTables()
 
 	for square, expected := range testCases {
 		actual := kingAttacks[square]
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bb.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Checking king attack table for square %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}

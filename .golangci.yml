@@ -1,23 +1,21 @@
 linters:
   enable-all: true
   disable:
-    - structcheck
-    - ifshort
-    - deadcode
-    - varcheck
-    - exhaustivestruct
-    - nosnakecase
-    - golint
-    - maligned
-    - interfacer
-    - scopelint
-      # --- linters above this line are deprecated
+    - exportloopref
+    # - linters above this line are deprecated
     - godox
-    - paralleltest
-    - gomnd
     - depguard
     - gochecknoglobals
     - forbidigo
+    - mnd
+    # - linters below this line, I intend to get to at some point
+    - cyclop
+    - tagliatelle
+    - err113
+    - nestif
+    - dupl
+    - funlen
+    - gocognit
 
 linters-settings:
   ireturn:
@@ -28,73 +26,24 @@ linters-settings:
   varnamelen:
     ignore-names:
       - err
-      - a1
-      - a2
-      - a3
-      - a4
-      - a5
-      - a6
-      - a7
-      - a8
-      - b1
-      - b2
-      - b3
-      - b4
-      - b5
-      - b6
-      - b7
-      - b8
-      - c1
-      - c2
-      - c3
-      - c4
-      - c5
-      - c6
-      - c7
-      - c8
-      - d1
-      - d2
-      - d3
-      - d4
-      - d5
-      - d6
-      - d7
-      - d8
-      - e1
-      - e2
-      - e3
-      - e4
-      - e5
-      - e6
-      - e7
-      - e8
-      - f1
-      - f2
-      - f3
-      - f4
-      - f5
-      - f6
-      - f7
-      - f8
-      - g1
-      - g2
-      - g3
-      - g4
-      - g5
-      - g6
-      - g7
-      - g8
-      - h1
-      - h2
-      - h3
-      - h4
-      - h5
-      - h6
-      - h7
-      - h8
-      - i
-      - j
       - wg
+      - tt
+      - sb
+      - sq
+      - Wp
+      - Wn
+      - Wb
+      - Wr
+      - Wq
+      - Wk
+      - Bp
+      - Bn
+      - Bb
+      - Br
+      - Bq
+      - Bk
+      - Wa
+      - Ba
 
   dupl:
     # token count to trigger issue. 150 by default

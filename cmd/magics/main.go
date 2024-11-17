@@ -51,14 +51,6 @@ const (
 var versionString = strings.TrimSpace(magic.VersionString)
 
 func main() {
-	// bar := progressbar.NewOptions(128, progressbar.OptionSetTheme(progressbar.Theme{
-	// 	Saucer:        "=",
-	// 	SaucerHead:    ">",
-	// 	SaucerPadding: " ",
-	// 	BarStart:      "[",
-	// 	BarEnd:        "]",
-	// }))
-
 	rookMagics, rookTableSize := generateMagics(rook)
 	bishopMagics, bishopTableSize := generateMagics(bishop)
 
@@ -85,37 +77,45 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := os.WriteFile("magic/magics.json", data, 0644); err != nil {
+	if err := os.WriteFile("magic/magics.json", data, 0o600); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func generateMagics(piece int) ([]magic.Entry, int) {
-	if piece == rook {
+func generateMagics(piece int) ([]magic.Entry, uint64) {
+	switch piece {
+	case rook:
 		log.Println("Generating rook magics")
-	} else if piece == bishop {
+	case bishop:
 		log.Println("Generating bishop magics")
-	} else {
+	default:
 		log.Fatal("Piece must be rook or bishop")
 	}
 
 	numWorkers := runtime.GOMAXPROCS(0)
 	log.Printf("Using %d workers", numWorkers)
+
 	squares := make(chan sq.Square, 64)
+
 	var wg sync.WaitGroup
 
-	var totalTableSize atomic.Int64
+	var totalTableSize atomic.Uint64
 
 	magics := make([]magic.Entry, 64)
 
-	for w := 0; w < numWorkers; w++ {
+	for w := range numWorkers {
 		log.Printf("Spawning worker %d", w)
+
 		wg.Add(1)
+
 		go func() {
 			defer wg.Done()
+
 			for square := range squares {
-				bestTableSize := math.MaxInt64
+				var bestTableSize uint64 = math.MaxUint64
+
 				var bestMagic uint64
+
 				var bestShift int
 
 				var relevantBits int
@@ -126,7 +126,7 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 				}
 
 				for shift := 64 - relevantBits; shift < 64-relevantBits+4; shift++ {
-					for attempt := 0; attempt < 10000000; attempt++ {
+					for range 10000000 {
 						magicCandidate := bb.GenerateSparseRandomUint64()
 
 						if works, tableSize := testMagicCandidate(magicCandidate, square, shift, piece, relevantBits); works {
@@ -147,12 +147,13 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 					log.Printf("Failed to find a magic for square %d", square)
 				}
 
-				totalTableSize.Add(int64(bestTableSize))
+				totalTableSize.Add(bestTableSize)
 
 				entry := magic.Entry{
 					Square: sq.Stringify(square),
 					Magic:  fmt.Sprintf("%016x", bestMagic),
 					Shift:  bestShift,
+					Mask:   "",
 				}
 
 				var mask bb.Bitboard
@@ -165,31 +166,33 @@ func generateMagics(piece int) ([]magic.Entry, int) {
 				entry.Mask = fmt.Sprintf("%016x", mask)
 
 				magics[square] = entry
+
 				log.Printf("Found magic for square %s", sq.Stringify(square))
 			}
 		}()
 	}
 
 	// Feed squares to workers
-	for square := uint8(0); square < 64; square++ {
-		squares <- sq.Square(square)
+	for square := range 64 {
+		squares <- sq.Square(byte(square))
 	}
+
 	close(squares)
 
 	// Wait for all workers to finish
 	wg.Wait()
 
-	return magics, int(totalTableSize.Load())
+	return magics, totalTableSize.Load()
 }
 
-func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, relevantBits int) (bool, int) {
-	var maxIndex int
+func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, relevantBits int) (bool, uint64) {
+	var maxIndex uint64
 
-	var numBlockerConfigs = 1 << relevantBits
+	numBlockerConfigs := 1 << relevantBits
 
-	used := make(map[int]bb.Bitboard) // index -> possible moves
+	used := make(map[uint64]bb.Bitboard) // index -> possible moves
 
-	for blockerConfigIndex := 0; blockerConfigIndex < numBlockerConfigs; blockerConfigIndex++ {
+	for blockerConfigIndex := range numBlockerConfigs {
 		var attacks bb.Bitboard
 		if piece == rook {
 			attacks = tables.MaskRookAttacks(square)
@@ -207,7 +210,7 @@ func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, r
 		}
 
 		hashResult := (uint64(blockerConfig) * magicCandidate) >> shift
-		index := int(hashResult)
+		index := hashResult
 
 		if index > maxIndex {
 			maxIndex = index
@@ -215,18 +218,15 @@ func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, r
 
 		if _, ok := used[index]; !ok { // new index
 			used[index] = actualMoves
-		} else {
-			// check if the actual moves are the same
-			if used[index] != actualMoves {
-				return false, 0
-			}
+		} else if used[index] != actualMoves { // check if actual moves are the same
+			return false, 0
 		}
 	}
 
 	return true, maxIndex + 1
 }
 
-func formatTableSize(numEntries int) string {
+func formatTableSize(numEntries uint64) string {
 	bytes := numEntries * 8 // 8 bytes per uint64
 
 	switch {

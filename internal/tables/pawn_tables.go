@@ -2,7 +2,6 @@
 package tables
 
 import (
-	"github.com/samwestmoreland/chessengine/internal/bitboard"
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
@@ -11,19 +10,19 @@ import (
 func populatePawnAttackTables() [2][64]bb.Bitboard {
 	var attacks [2][64]bb.Bitboard
 
-	for side := uint8(0); side < 2; side++ {
-		for square := uint8(0); square < 64; square++ {
-			attacks[side][square] = maskPawnAttacks(side, sq.Square(square))
+	for side := range 2 {
+		for square := range 64 {
+			attacks[side][square] = maskPawnAttacks(side, sq.Square(byte(square)))
 		}
 	}
 
 	return attacks
 }
 
-func maskPawnAttacks(side uint8, square sq.Square) bb.Bitboard {
+func maskPawnAttacks(side int, square sq.Square) bb.Bitboard {
 	var attacks bb.Bitboard
 
-	board := bitboard.SetBit(0, square)
+	board := bb.SetBit(0, square)
 
 	if side == 0 {
 		attacks = maskWhitePawnAttacks(board, square)
@@ -31,7 +30,7 @@ func maskPawnAttacks(side uint8, square sq.Square) bb.Bitboard {
 		attacks = maskBlackPawnAttacks(board, square)
 	}
 
-	return bitboard.ClearBit(attacks, square)
+	return bb.ClearBit(attacks, square)
 }
 
 func maskBlackPawnAttacks(board bb.Bitboard, square sq.Square) bb.Bitboard {

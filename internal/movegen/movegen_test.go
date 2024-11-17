@@ -19,6 +19,8 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetLegalMoves(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string // Consider adding test case names
 		fen      string
@@ -108,6 +110,8 @@ func TestGetLegalMoves(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			pos, err := position.NewPositionFromFEN(tt.fen)
 			if err != nil {
 				t.Fatalf("failed to create position: %v", err)
@@ -117,11 +121,13 @@ func TestGetLegalMoves(t *testing.T) {
 
 			if len(moves) != tt.numMoves {
 				var buf bytes.Buffer
+
 				buf.WriteString("\n")
 				pos.Print(&buf)
-				t.Errorf(buf.String())
+				t.Error(buf.String())
 				t.Errorf("got %d moves, want %d", len(moves), tt.numMoves)
 				t.Errorf("moves generated:")
+
 				for _, move := range moves {
 					t.Errorf("  %s", move.String())
 				}
@@ -131,6 +137,8 @@ func TestGetLegalMoves(t *testing.T) {
 }
 
 func TestSquareIsAttacked(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		fen            string
@@ -331,6 +339,8 @@ func TestSquareIsAttacked(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			pos, err := position.NewPositionFromFEN(tt.fen)
 			if err != nil {
 				t.Fatalf("failed to create position: %v", err)

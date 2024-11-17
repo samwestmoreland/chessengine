@@ -9,6 +9,8 @@ import (
 )
 
 func TestMaskKnightAttacks(t *testing.T) {
+	t.Parallel()
+
 	testCases := map[sq.Square]uint64{
 		sq.E4: 11333767002587136,   // central
 		sq.G4: 45053588738670592,   // g-file
@@ -26,8 +28,9 @@ func TestMaskKnightAttacks(t *testing.T) {
 		actual := maskKnightAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bitboard.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Getting knight attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}

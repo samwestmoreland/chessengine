@@ -8,10 +8,13 @@ import (
 )
 
 func TestGetBit(t *testing.T) {
+	t.Parallel()
+
 	var board Bitboard = 8 // 1000
 
 	if GetBit(board, sq.A8) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -19,6 +22,7 @@ func TestGetBit(t *testing.T) {
 
 	if !GetBit(board, sq.D8) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -26,11 +30,14 @@ func TestGetBit(t *testing.T) {
 }
 
 func TestSetBit(t *testing.T) {
+	t.Parallel()
+
 	board := SetBit(0, sq.E2)
 	board = SetBit(board, sq.E8)
 
 	if GetBit(board, 0) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -38,6 +45,7 @@ func TestSetBit(t *testing.T) {
 
 	if !GetBit(board, sq.E2) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -45,6 +53,7 @@ func TestSetBit(t *testing.T) {
 
 	if !GetBit(board, sq.E8) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -52,6 +61,7 @@ func TestSetBit(t *testing.T) {
 
 	if GetBit(board, sq.F5) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -59,17 +69,20 @@ func TestSetBit(t *testing.T) {
 }
 
 func TestSetWholeBoard(t *testing.T) {
+	t.Parallel()
+
 	var board Bitboard
 
-	for rank := uint8(0); rank < 8; rank++ {
-		for file := uint8(0); file < 8; file++ {
-			square := sq.Square(rank*8 + file)
+	for rank := range 8 {
+		for file := range 8 {
+			square := sq.Square(byte(rank*8 + file))
 			board = SetBit(board, square)
 		}
 	}
 
 	if board != 18446744073709551615 {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected 18446744073709551615, got ", board)
@@ -77,11 +90,14 @@ func TestSetWholeBoard(t *testing.T) {
 }
 
 func TestClearBit(t *testing.T) {
+	t.Parallel()
+
 	board := SetBit(0, sq.E2)
 	board = SetBit(board, sq.E8)
 
 	if !GetBit(board, sq.E2) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected true, got false")
@@ -91,6 +107,7 @@ func TestClearBit(t *testing.T) {
 
 	if GetBit(board, sq.E2) {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected false, got true")
@@ -98,6 +115,8 @@ func TestClearBit(t *testing.T) {
 }
 
 func TestLSBIndex(t *testing.T) {
+	t.Parallel()
+
 	board := SetBit(0, sq.E2)
 	board = SetBit(board, sq.E8)
 	board = SetBit(board, sq.F5)
@@ -105,6 +124,7 @@ func TestLSBIndex(t *testing.T) {
 	index := LSBIndex(board)
 	if index != 4 {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected 4, got ", index)
@@ -114,6 +134,7 @@ func TestLSBIndex(t *testing.T) {
 
 	if asSquare != "e8" {
 		var buf bytes.Buffer
+
 		PrintBoard(board, &buf)
 		t.Error(buf.String())
 		t.Error("Expected e8, got ", asSquare)
@@ -121,6 +142,8 @@ func TestLSBIndex(t *testing.T) {
 }
 
 func TestLSBIndexOfZero(t *testing.T) {
+	t.Parallel()
+
 	if LSBIndex(0) != sq.NoSquare {
 		t.Errorf("Expected %d, got %d", sq.NoSquare, LSBIndex(0))
 	}

@@ -39,7 +39,7 @@ func NewPositionFromFEN(fen string) (*Position, error) {
 	// parts[5]: fullmove number
 
 	if len(parts) != 6 {
-		return nil, fmt.Errorf("FEN must have 6 parts")
+		return nil, fmt.Errorf("FEN must have 6 parts, got %d", len(parts))
 	}
 
 	occ, err := parsePositionString(parts[0])
@@ -77,8 +77,8 @@ func NewPositionFromFEN(fen string) (*Position, error) {
 		WhiteToMove:     whiteToMove,
 		CastlingRights:  castlingRights,
 		EnPassantSquare: enpassant,
-		HalfMoveClock:   uint8(halfMoveClock),
-		FullMoveNumber:  uint8(fullMoveNumber),
+		HalfMoveClock:   byte(halfMoveClock),
+		FullMoveNumber:  byte(fullMoveNumber),
 	}, nil
 }
 
@@ -101,12 +101,12 @@ func parseEnPassantSquare(square string) (sq.Square, error) {
 		return sq.Square(sq.NoSquare), nil
 	}
 
-	squareInt, err := sq.ToUInt8(square)
+	squareInt, err := sq.ParseString(square)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse en passant square: %w", err)
 	}
 
-	return sq.Square(squareInt), nil
+	return squareInt, nil
 }
 
 func parsePositionString(posStr string) ([]bb.Bitboard, error) {
@@ -114,7 +114,7 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 
 	var square sq.Square
 
-	for i := 0; i < len(posStr); i++ {
+	for i := range len(posStr) {
 		switch posStr[i] {
 		case 'P':
 			occ[piece.Wp] = bb.SetBit(occ[piece.Wp], square)
@@ -165,7 +165,7 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
 			square++
 		case '1':
-			square += 1
+			square++
 		case '2':
 			square += 2
 		case '3':
@@ -196,8 +196,10 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 // 0010: k
 // 0001: q
 func parseCastlingRights(castlingRights string) (uint8, error) {
-	if len(castlingRights) > 4 {
-		return 0, fmt.Errorf("expected castling rights to be 4 characters, got %d", len(castlingRights))
+	expectedLength := 4
+
+	if len(castlingRights) > expectedLength {
+		return 0, fmt.Errorf("expected castling rights to be %d characters, got %d", expectedLength, len(castlingRights))
 	}
 
 	var ret uint8
@@ -221,38 +223,61 @@ func parseCastlingRights(castlingRights string) (uint8, error) {
 	return ret, nil
 }
 
-func (s *Position) Print(output io.Writer) {
-	for rank := 0; rank < 8; rank++ {
-		for file := 0; file < 8; file++ {
-			square := sq.Square(rank*8 + file)
+func (p *Position) Print(output io.Writer) {
+	for rank := range 8 {
+		for file := range 8 {
+			square := sq.Square(byte(rank*8 + file))
 			occupied := false
-			for i, occ := range s.Occupancy {
+
+			for i, occ := range p.Occupancy {
 				if bb.GetBit(occ, square) {
 					occupied = true
-					output.Write([]byte(fmt.Sprintf(" %s", piece.Piece(i).String())))
+
+					if _, err := output.Write([]byte(" " + piece.Piece(byte(i)).String())); err != nil {
+						panic(err)
+					}
+
 					break
 				}
 			}
 
 			if !occupied {
-				output.Write([]byte(fmt.Sprintf(" .")))
+				if _, err := output.Write([]byte(" .")); err != nil {
+					panic(err)
+				}
 			}
 		}
 
-		output.Write([]byte(fmt.Sprintf("\n")))
+		if _, err := output.Write([]byte("\n")); err != nil {
+			panic(err)
+		}
 	}
 
-	output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(s.WhiteToMove))))
-	output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(s.CastlingRights))))
-	output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(s.EnPassantSquare))))
+	if _, err := output.Write([]byte(fmt.Sprintf(
+		"\nside to move: %s\n", sideToString(p.WhiteToMove),
+	))); err != nil {
+		panic(err)
+	}
+
+	if _, err := output.Write([]byte(fmt.Sprintf(
+		"castling rights: %s\n", castlingRightsToString(p.CastlingRights),
+	))); err != nil {
+		panic(err)
+	}
+
+	if _, err := output.Write([]byte(fmt.Sprintf(
+		"en passant square: %s\n", sq.Stringify(p.EnPassantSquare),
+	))); err != nil {
+		panic(err)
+	}
 }
 
 func sideToString(whiteToMove bool) string {
 	if whiteToMove {
 		return "white"
-	} else {
-		return "black"
 	}
+
+	return "black"
 }
 
 func castlingRightsToString(castlingRights uint8) string {

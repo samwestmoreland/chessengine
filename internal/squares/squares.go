@@ -85,7 +85,7 @@ const (
 type Square uint8
 
 func Stringify(square Square) string {
-	if square < 0 || square > 63 {
+	if square > 63 {
 		return "-"
 	}
 
@@ -101,7 +101,7 @@ func Stringify(square Square) string {
 	return ret.String()
 }
 
-func ToUInt8(square string) (Square, error) {
+func ParseString(square string) (Square, error) {
 	if len(square) != 2 {
 		return 0, fmt.Errorf("invalid square format: %s", square)
 	}
@@ -126,9 +126,9 @@ func ToUInt8(square string) (Square, error) {
 
 	index := rankIndex*8 + int(fileIndex)
 
-	return Square(index), nil
+	return Square(byte(index)), nil
 }
 
 func OnBoard(square Square) bool {
-	return square >= 0 && square <= 63
+	return square <= 63
 }

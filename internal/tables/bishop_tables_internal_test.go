@@ -25,18 +25,23 @@ var bishopTestCases = map[sq.Square]uint64{
 }
 
 func TestMaskBishopAttacks(t *testing.T) {
+	t.Parallel()
+
 	for square, expected := range bishopTestCases {
 		actual := MaskBishopAttacks(square)
 		if uint64(actual) != expected {
 			var buf bytes.Buffer
+
 			bb.PrintBoard(actual, &buf)
-			t.Errorf(buf.String())
+			t.Error(buf.String())
 			t.Errorf("Computing bishop attacks for %s, expected %d, got %d", sq.Stringify(square), expected, actual)
 		}
 	}
 }
 
 func TestBishopAttacksOnTheFly(t *testing.T) {
+	t.Parallel()
+
 	var blockers bb.Bitboard
 	blockers = bb.SetBit(blockers, sq.B6)
 	blockers = bb.SetBit(blockers, sq.G7)
@@ -61,8 +66,10 @@ func TestBishopAttacksOnTheFly(t *testing.T) {
 }
 
 func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
+	t.Parallel()
+
 	var data magic.Data
-	if err := json.Unmarshal(magic.JsonData, &data); err != nil {
+	if err := json.Unmarshal(magic.JSONData, &data); err != nil {
 		panic(err)
 	}
 
@@ -122,6 +129,7 @@ func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
 
 		if uint64(moves) != tt.expectedMoves {
 			var buf bytes.Buffer
+
 			buf.WriteString("Blockers:")
 			bb.PrintBoard(tt.blockers, &buf)
 			buf.WriteString("\n")
