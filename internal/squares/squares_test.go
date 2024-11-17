@@ -77,8 +77,12 @@ var tests = []struct {
 }
 
 func TestStringify(t *testing.T) {
+	t.Parallel()
+
 	for _, test := range tests {
 		t.Run(test.stringRepresentation, func(t *testing.T) {
+			t.Parallel()
+
 			result := sq.Stringify(test.integerRepresentation)
 			if result != test.stringRepresentation {
 				t.Errorf("Expected %s, got %s", test.stringRepresentation, result)
@@ -88,8 +92,12 @@ func TestStringify(t *testing.T) {
 }
 
 func TestToInt(t *testing.T) {
+	t.Parallel()
+
 	for _, test := range tests {
 		t.Run(test.stringRepresentation, func(t *testing.T) {
+			t.Parallel()
+
 			result, err := sq.ParseString(test.stringRepresentation)
 			if err != nil {
 				t.Error(err)
@@ -103,6 +111,8 @@ func TestToInt(t *testing.T) {
 }
 
 func TestOnBoard(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		square sq.Square
 		want   bool

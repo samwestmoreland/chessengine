@@ -9,6 +9,8 @@ import (
 )
 
 func TestIsAFile(t *testing.T) {
+	t.Parallel()
+
 	if isAFile(sq.E2) {
 		t.Error("Expected false, got true")
 	}
@@ -19,6 +21,8 @@ func TestIsAFile(t *testing.T) {
 }
 
 func TestIsHFile(t *testing.T) {
+	t.Parallel()
+
 	if isHFile(sq.E2) {
 		t.Error("Expected false, got true")
 	}
@@ -33,6 +37,8 @@ func TestIsHFile(t *testing.T) {
 }
 
 func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
+	t.Parallel()
+
 	attackedSquares := maskPawnAttacks(0, sq.E2)
 
 	if !bb.GetBit(attackedSquares, sq.D3) {
@@ -61,6 +67,8 @@ func TestMaskPawnAttacksWhiteCentral(t *testing.T) {
 }
 
 func TestMaskPawnAttacksBlackCentral(t *testing.T) {
+	t.Parallel()
+
 	attackedSquares := maskPawnAttacks(1, sq.C7)
 
 	if !bb.GetBit(attackedSquares, sq.B6) {
@@ -89,6 +97,8 @@ func TestMaskPawnAttacksBlackCentral(t *testing.T) {
 }
 
 func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
+	t.Parallel()
+
 	attackedSquares := maskPawnAttacks(0, sq.A2)
 
 	if !bb.GetBit(attackedSquares, sq.B3) {
@@ -127,6 +137,8 @@ func TestMaskPawnAttacksWhiteFlanks(t *testing.T) {
 }
 
 func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
+	t.Parallel()
+
 	attackedSquares := maskPawnAttacks(1, sq.A7)
 
 	if !bb.GetBit(attackedSquares, sq.B6) {
@@ -165,6 +177,8 @@ func TestMaskPawnAttacksBlackFlanks(t *testing.T) {
 }
 
 func TestPopulatePawnAttackTables(t *testing.T) {
+	t.Parallel()
+
 	pawnAttacks := populatePawnAttackTables()
 
 	if pawnAttacks[0][sq.E2] != 43980465111040 {

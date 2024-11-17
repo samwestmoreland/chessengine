@@ -13,6 +13,8 @@ import (
 )
 
 func TestMaskRookAttacks(t *testing.T) {
+	t.Parallel()
+
 	tests := map[sq.Square]uint64{
 		sq.E4: 4521664529305600,    // central
 		sq.G4: 18085034619584512,   // g-file
@@ -49,6 +51,8 @@ func TestMaskRookAttacks(t *testing.T) {
 }
 
 func TestRookAttacksOnTheFly(t *testing.T) {
+	t.Parallel()
+
 	var blockers bb.Bitboard
 	blockers = bb.SetBit(blockers, sq.D7)
 	blockers = bb.SetBit(blockers, sq.D3)
@@ -73,6 +77,8 @@ func TestRookAttacksOnTheFly(t *testing.T) {
 }
 
 func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
+	t.Parallel()
+
 	var data magic.Data
 	if err := json.Unmarshal(magic.JSONData, &data); err != nil {
 		panic(err)

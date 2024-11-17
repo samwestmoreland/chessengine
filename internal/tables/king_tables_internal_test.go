@@ -22,6 +22,8 @@ var testCases = map[sq.Square]uint64{
 }
 
 func TestMaskKingAttacks(t *testing.T) {
+	t.Parallel()
+
 	for square, expected := range testCases {
 		actual := maskKingAttacks(square)
 		if uint64(actual) != expected {
@@ -35,6 +37,8 @@ func TestMaskKingAttacks(t *testing.T) {
 }
 
 func TestPopulateKingAttackTables(t *testing.T) {
+	t.Parallel()
+
 	kingAttacks := populateKingAttackTables()
 
 	for square, expected := range testCases {

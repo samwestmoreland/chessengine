@@ -25,6 +25,8 @@ var bishopTestCases = map[sq.Square]uint64{
 }
 
 func TestMaskBishopAttacks(t *testing.T) {
+	t.Parallel()
+
 	for square, expected := range bishopTestCases {
 		actual := MaskBishopAttacks(square)
 		if uint64(actual) != expected {
@@ -38,6 +40,8 @@ func TestMaskBishopAttacks(t *testing.T) {
 }
 
 func TestBishopAttacksOnTheFly(t *testing.T) {
+	t.Parallel()
+
 	var blockers bb.Bitboard
 	blockers = bb.SetBit(blockers, sq.B6)
 	blockers = bb.SetBit(blockers, sq.G7)
@@ -62,6 +66,8 @@ func TestBishopAttacksOnTheFly(t *testing.T) {
 }
 
 func TestLookupTableGivesCorrectMovesForBishop(t *testing.T) {
+	t.Parallel()
+
 	var data magic.Data
 	if err := json.Unmarshal(magic.JSONData, &data); err != nil {
 		panic(err)

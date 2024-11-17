@@ -8,6 +8,8 @@ import (
 )
 
 func TestGetBit(t *testing.T) {
+	t.Parallel()
+
 	var board Bitboard = 8 // 1000
 
 	if GetBit(board, sq.A8) {
@@ -28,6 +30,8 @@ func TestGetBit(t *testing.T) {
 }
 
 func TestSetBit(t *testing.T) {
+	t.Parallel()
+
 	board := SetBit(0, sq.E2)
 	board = SetBit(board, sq.E8)
 
@@ -65,6 +69,8 @@ func TestSetBit(t *testing.T) {
 }
 
 func TestSetWholeBoard(t *testing.T) {
+	t.Parallel()
+
 	var board Bitboard
 
 	for rank := range 8 {
@@ -84,6 +90,8 @@ func TestSetWholeBoard(t *testing.T) {
 }
 
 func TestClearBit(t *testing.T) {
+	t.Parallel()
+
 	board := SetBit(0, sq.E2)
 	board = SetBit(board, sq.E8)
 
@@ -107,6 +115,8 @@ func TestClearBit(t *testing.T) {
 }
 
 func TestLSBIndex(t *testing.T) {
+	t.Parallel()
+
 	board := SetBit(0, sq.E2)
 	board = SetBit(board, sq.E8)
 	board = SetBit(board, sq.F5)
@@ -132,6 +142,8 @@ func TestLSBIndex(t *testing.T) {
 }
 
 func TestLSBIndexOfZero(t *testing.T) {
+	t.Parallel()
+
 	if LSBIndex(0) != sq.NoSquare {
 		t.Errorf("Expected %d, got %d", sq.NoSquare, LSBIndex(0))
 	}
