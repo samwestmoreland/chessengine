@@ -86,13 +86,13 @@ func SetOccupancy(index int, attackMask Bitboard) Bitboard {
 
 	bitsInMask := CountBits(attackMask)
 
-	for i := 0; i < bitsInMask; i++ {
+	for bit := range bitsInMask {
 		sq := LSBIndex(attackMask)
 
 		attackMask = ClearBit(attackMask, sq)
 
 		// Set the bit on the occupancy board
-		if index&(1<<i) != 0 {
+		if index&(1<<bit) != 0 {
 			ret |= (1 << sq)
 		}
 	}
@@ -119,8 +119,8 @@ func PrintBoard(board Bitboard, output io.Writer) {
 		panic(err)
 	}
 
-	for rank := 0; rank < 8; rank++ {
-		for file := 0; file < 8; file++ {
+	for rank := range 8 {
+		for file := range 8 {
 			// Convert rank and file into a square
 			square := sq.Square(byte(rank*8 + file))
 

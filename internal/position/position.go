@@ -39,7 +39,7 @@ func NewPositionFromFEN(fen string) (*Position, error) {
 	// parts[5]: fullmove number
 
 	if len(parts) != 6 {
-		return nil, fmt.Errorf("FEN must have 6 parts")
+		return nil, fmt.Errorf("FEN must have 6 parts, got %d", len(parts))
 	}
 
 	occ, err := parsePositionString(parts[0])
@@ -114,7 +114,7 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 
 	var square sq.Square
 
-	for i := 0; i < len(posStr); i++ {
+	for i := range len(posStr) {
 		switch posStr[i] {
 		case 'P':
 			occ[piece.Wp] = bb.SetBit(occ[piece.Wp], square)
@@ -165,7 +165,7 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
 			square++
 		case '1':
-			square += 1
+			square++
 		case '2':
 			square += 2
 		case '3':
@@ -224,8 +224,8 @@ func parseCastlingRights(castlingRights string) (uint8, error) {
 }
 
 func (p *Position) Print(output io.Writer) {
-	for rank := 0; rank < 8; rank++ {
-		for file := 0; file < 8; file++ {
+	for rank := range 8 {
+		for file := range 8 {
 			square := sq.Square(byte(rank*8 + file))
 			occupied := false
 
@@ -233,7 +233,7 @@ func (p *Position) Print(output io.Writer) {
 				if bb.GetBit(occ, square) {
 					occupied = true
 
-					if _, err := output.Write([]byte(fmt.Sprintf(" %s", piece.Piece(byte(i)).String()))); err != nil {
+					if _, err := output.Write([]byte(" " + piece.Piece(byte(i)).String())); err != nil {
 						panic(err)
 					}
 
@@ -253,15 +253,21 @@ func (p *Position) Print(output io.Writer) {
 		}
 	}
 
-	if _, err := output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(p.WhiteToMove)))); err != nil {
+	if _, err := output.Write([]byte(fmt.Sprintf(
+		"\nside to move: %s\n", sideToString(p.WhiteToMove),
+	))); err != nil {
 		panic(err)
 	}
 
-	if _, err := output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(p.CastlingRights)))); err != nil {
+	if _, err := output.Write([]byte(fmt.Sprintf(
+		"castling rights: %s\n", castlingRightsToString(p.CastlingRights),
+	))); err != nil {
 		panic(err)
 	}
 
-	if _, err := output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(p.EnPassantSquare)))); err != nil {
+	if _, err := output.Write([]byte(fmt.Sprintf(
+		"en passant square: %s\n", sq.Stringify(p.EnPassantSquare),
+	))); err != nil {
 		panic(err)
 	}
 }
@@ -269,9 +275,9 @@ func (p *Position) Print(output io.Writer) {
 func sideToString(whiteToMove bool) string {
 	if whiteToMove {
 		return "white"
-	} else {
-		return "black"
 	}
+
+	return "black"
 }
 
 func castlingRightsToString(castlingRights uint8) string {

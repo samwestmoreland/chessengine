@@ -41,6 +41,8 @@ func TestParseCastlingRights(t *testing.T) {
 }
 
 func TestNewPositionFromFEN(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name          string
 		fen           string

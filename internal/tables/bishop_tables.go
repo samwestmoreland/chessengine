@@ -12,7 +12,7 @@ import (
 func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
 	var attacks [64][]bb.Bitboard
 
-	for square := uint8(0); square < uint8(64); square++ {
+	for square := range uint8(64) {
 		// Get magic data for this square
 		magicNum, err := strconv.ParseUint(data.Magics[square].Magic, 16, 64)
 		if err != nil {
@@ -30,7 +30,7 @@ func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
 		numBlockers := bb.CountBits(mask) // how many relevant squares
 
 		// For each possible blocker configuration...
-		for i := 0; i < (1 << numBlockers); i++ {
+		for i := range 1 << numBlockers {
 			blockers := bb.SetOccupancy(i, mask)
 			// Calculate actual moves for this blocker pattern
 			moves := BishopAttacksOnTheFly(sq.Square(square), blockers)

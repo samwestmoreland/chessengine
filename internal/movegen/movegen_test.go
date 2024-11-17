@@ -137,6 +137,8 @@ func TestGetLegalMoves(t *testing.T) {
 }
 
 func TestSquareIsAttacked(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		fen            string

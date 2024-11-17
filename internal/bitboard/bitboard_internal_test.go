@@ -67,9 +67,9 @@ func TestSetBit(t *testing.T) {
 func TestSetWholeBoard(t *testing.T) {
 	var board Bitboard
 
-	for rank := uint8(0); rank < 8; rank++ {
-		for file := uint8(0); file < 8; file++ {
-			square := sq.Square(rank*8 + file)
+	for rank := range 8 {
+		for file := range 8 {
+			square := sq.Square(byte(rank*8 + file))
 			board = SetBit(board, square)
 		}
 	}

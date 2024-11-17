@@ -83,11 +83,12 @@ func main() {
 }
 
 func generateMagics(piece int) ([]magic.Entry, uint64) {
-	if piece == rook {
+	switch piece {
+	case rook:
 		log.Println("Generating rook magics")
-	} else if piece == bishop {
+	case bishop:
 		log.Println("Generating bishop magics")
-	} else {
+	default:
 		log.Fatal("Piece must be rook or bishop")
 	}
 
@@ -102,7 +103,7 @@ func generateMagics(piece int) ([]magic.Entry, uint64) {
 
 	magics := make([]magic.Entry, 64)
 
-	for w := 0; w < numWorkers; w++ {
+	for w := range numWorkers {
 		log.Printf("Spawning worker %d", w)
 
 		wg.Add(1)
@@ -125,7 +126,7 @@ func generateMagics(piece int) ([]magic.Entry, uint64) {
 				}
 
 				for shift := 64 - relevantBits; shift < 64-relevantBits+4; shift++ {
-					for attempt := 0; attempt < 10000000; attempt++ {
+					for range 10000000 {
 						magicCandidate := bb.GenerateSparseRandomUint64()
 
 						if works, tableSize := testMagicCandidate(magicCandidate, square, shift, piece, relevantBits); works {
@@ -172,8 +173,8 @@ func generateMagics(piece int) ([]magic.Entry, uint64) {
 	}
 
 	// Feed squares to workers
-	for square := uint8(0); square < 64; square++ {
-		squares <- sq.Square(square)
+	for square := range 64 {
+		squares <- sq.Square(byte(square))
 	}
 
 	close(squares)
@@ -191,7 +192,7 @@ func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, r
 
 	used := make(map[uint64]bb.Bitboard) // index -> possible moves
 
-	for blockerConfigIndex := 0; blockerConfigIndex < numBlockerConfigs; blockerConfigIndex++ {
+	for blockerConfigIndex := range numBlockerConfigs {
 		var attacks bb.Bitboard
 		if piece == rook {
 			attacks = tables.MaskRookAttacks(square)
@@ -217,11 +218,8 @@ func testMagicCandidate(magicCandidate uint64, square sq.Square, shift, piece, r
 
 		if _, ok := used[index]; !ok { // new index
 			used[index] = actualMoves
-		} else {
-			// check if the actual moves are the same
-			if used[index] != actualMoves {
-				return false, 0
-			}
+		} else if used[index] != actualMoves { // check if actual moves are the same
+			return false, 0
 		}
 	}
 

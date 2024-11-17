@@ -45,21 +45,25 @@ func (m Move) String() string {
 
 func (m Move) Source() sq.Square {
 	val := m & 0x3f
+
 	return sq.Square(byte(val))
 }
 
 func (m Move) Target() sq.Square {
 	val := (m >> 6) & 0x3f
+
 	return sq.Square(byte(val))
 }
 
 func (m Move) Piece() piece.Piece {
 	val := (m >> 12) & 0xf
-	return piece.Piece(byte(val)) // byte is an alias for uint8
+
+	return piece.Piece(byte(val)) // bytehis an alias for uint8
 }
 
 func (m Move) PromotionPiece() piece.Piece {
 	val := (m >> 16) & 0xf
+
 	return piece.Piece(byte(val))
 }
 

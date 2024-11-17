@@ -10,16 +10,16 @@ import (
 func populatePawnAttackTables() [2][64]bb.Bitboard {
 	var attacks [2][64]bb.Bitboard
 
-	for side := uint8(0); side < 2; side++ {
-		for square := uint8(0); square < 64; square++ {
-			attacks[side][square] = maskPawnAttacks(side, sq.Square(square))
+	for side := range 2 {
+		for square := range 64 {
+			attacks[side][square] = maskPawnAttacks(side, sq.Square(byte(square)))
 		}
 	}
 
 	return attacks
 }
 
-func maskPawnAttacks(side uint8, square sq.Square) bb.Bitboard {
+func maskPawnAttacks(side int, square sq.Square) bb.Bitboard {
 	var attacks bb.Bitboard
 
 	board := bb.SetBit(0, square)

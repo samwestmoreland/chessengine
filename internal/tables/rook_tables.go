@@ -19,7 +19,7 @@ import (
 func populateRookAttackTables(data magic.RookData) [64][]bb.Bitboard {
 	var attacks [64][]bb.Bitboard
 
-	for square := uint8(0); square < 64; square++ {
+	for square := range 64 {
 		// Get magic data for this square
 		magicNum, _ := strconv.ParseUint(data.Magics[square].Magic, 16, 64)
 		shift := data.Magics[square].Shift
@@ -29,14 +29,14 @@ func populateRookAttackTables(data magic.RookData) [64][]bb.Bitboard {
 		attacks[square] = make([]bb.Bitboard, tableSize)
 
 		// Populate this square's table with all possible attack patterns
-		mask := MaskRookAttacks(sq.Square(square))
+		mask := MaskRookAttacks(sq.Square(byte(square)))
 		numBlockers := bb.CountBits(mask) // how many relevant squares
 
 		// For each possible blocker configuration...
-		for i := 0; i < (1 << numBlockers); i++ {
+		for i := range 1 << numBlockers {
 			blockers := bb.SetOccupancy(i, mask)
 			// Calculate actual moves for this blocker pattern
-			moves := RookAttacksOnTheFly(sq.Square(square), blockers)
+			moves := RookAttacksOnTheFly(sq.Square(byte(square)), blockers)
 			// Calculate index using magic
 			index := (uint64(blockers) * magicNum) >> shift
 			// Store moves at this index
