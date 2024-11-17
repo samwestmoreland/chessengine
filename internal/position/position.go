@@ -196,8 +196,10 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 // 0010: k
 // 0001: q
 func parseCastlingRights(castlingRights string) (uint8, error) {
-	if len(castlingRights) > 4 {
-		return 0, fmt.Errorf("expected castling rights to be 4 characters, got %d", len(castlingRights))
+	expectedLength := 4
+
+	if len(castlingRights) > expectedLength {
+		return 0, fmt.Errorf("expected castling rights to be %d characters, got %d", expectedLength, len(castlingRights))
 	}
 
 	var ret uint8
@@ -221,13 +223,13 @@ func parseCastlingRights(castlingRights string) (uint8, error) {
 	return ret, nil
 }
 
-func (s *Position) Print(output io.Writer) {
+func (p *Position) Print(output io.Writer) {
 	for rank := 0; rank < 8; rank++ {
 		for file := 0; file < 8; file++ {
 			square := sq.Square(rank*8 + file)
 			occupied := false
 
-			for i, occ := range s.Occupancy {
+			for i, occ := range p.Occupancy {
 				if bb.GetBit(occ, square) {
 					occupied = true
 
@@ -251,15 +253,15 @@ func (s *Position) Print(output io.Writer) {
 		}
 	}
 
-	if _, err := output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(s.WhiteToMove)))); err != nil {
+	if _, err := output.Write([]byte(fmt.Sprintf("\nside to move: %s\n", sideToString(p.WhiteToMove)))); err != nil {
 		panic(err)
 	}
 
-	if _, err := output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(s.CastlingRights)))); err != nil {
+	if _, err := output.Write([]byte(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(p.CastlingRights)))); err != nil {
 		panic(err)
 	}
 
-	if _, err := output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(s.EnPassantSquare)))); err != nil {
+	if _, err := output.Write([]byte(fmt.Sprintf("en passant square: %s\n", sq.Stringify(p.EnPassantSquare)))); err != nil {
 		panic(err)
 	}
 }
