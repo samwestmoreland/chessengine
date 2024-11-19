@@ -8,6 +8,7 @@ import (
 	"math/bits"
 
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
+	"github.com/samwestmoreland/chessengine/internal/utils"
 )
 
 type Bitboard uint64
@@ -115,9 +116,7 @@ func GenerateSparseRandomUint64() uint64 {
 
 // PrintBoard prints a bitboard to the console.
 func PrintBoard(board Bitboard, output io.Writer) {
-	if _, err := output.Write([]byte("\n")); err != nil {
-		panic(err)
-	}
+	utils.WriteOrDie("\n", output)
 
 	for rank := range 8 {
 		for file := range 8 {
@@ -126,35 +125,23 @@ func PrintBoard(board Bitboard, output io.Writer) {
 
 			// Print the rank
 			if file == 0 {
-				if _, err := output.Write([]byte(fmt.Sprintf("%d  ", 8-rank))); err != nil {
-					panic(err)
-				}
+				utils.WriteOrDie(fmt.Sprintf("%d  ", 8-rank), output)
 			}
 
 			// Check if the square is occupied
 			occupied := GetBit(board, square)
 			if occupied {
-				if _, err := output.Write([]byte(fmt.Sprintf("%d ", 1))); err != nil {
-					panic(err)
-				}
+				utils.WriteOrDie(fmt.Sprintf("%d ", 1), output)
 			} else {
-				if _, err := output.Write([]byte(fmt.Sprintf("%d ", 0))); err != nil {
-					panic(err)
-				}
+				utils.WriteOrDie(fmt.Sprintf("%d ", 0), output)
 			}
 		}
 
-		if _, err := output.Write([]byte("\n")); err != nil {
-			panic(err)
-		}
+		utils.WriteOrDie("\n", output)
 	}
 
-	if _, err := output.Write([]byte("   a b c d e f g h")); err != nil {
-		panic(err)
-	}
+	utils.WriteOrDie("   a b c d e f g h", output)
 
 	// Print the decimal representation
-	if _, err := output.Write([]byte(fmt.Sprintf("\n   bitboard: %d\n", board))); err != nil {
-		panic(err)
-	}
+	utils.WriteOrDie(fmt.Sprintf("\n   bitboard: %d\n", board), output)
 }
