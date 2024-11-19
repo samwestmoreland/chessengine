@@ -9,6 +9,7 @@ import (
 	bb "github.com/samwestmoreland/chessengine/internal/bitboard"
 	"github.com/samwestmoreland/chessengine/internal/piece"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
+	"github.com/samwestmoreland/chessengine/internal/utils"
 )
 
 type Position struct {
@@ -201,43 +202,23 @@ func (p *Position) Print(output io.Writer) {
 				if bb.GetBit(occ, square) {
 					occupied = true
 
-					if _, err := output.Write([]byte(" " + piece.Piece(byte(i)).String())); err != nil {
-						panic(err)
-					}
+					utils.WriteOrDie(" "+piece.Piece(byte(i)).String(), output)
 
 					break
 				}
 			}
 
 			if !occupied {
-				if _, err := output.Write([]byte(" .")); err != nil {
-					panic(err)
-				}
+				utils.WriteOrDie(" .", output)
 			}
 		}
 
-		if _, err := output.Write([]byte("\n")); err != nil {
-			panic(err)
-		}
+		utils.WriteOrDie("\n", output)
 	}
 
-	if _, err := output.Write([]byte(fmt.Sprintf(
-		"\nside to move: %s\n", sideToString(p.WhiteToMove),
-	))); err != nil {
-		panic(err)
-	}
-
-	if _, err := output.Write([]byte(fmt.Sprintf(
-		"castling rights: %s\n", castlingRightsToString(p.CastlingRights),
-	))); err != nil {
-		panic(err)
-	}
-
-	if _, err := output.Write([]byte(fmt.Sprintf(
-		"en passant square: %s\n", sq.Stringify(p.EnPassantSquare),
-	))); err != nil {
-		panic(err)
-	}
+	utils.WriteOrDie(fmt.Sprintf("\nside to move: %s\n", sideToString(p.WhiteToMove)), output)
+	utils.WriteOrDie(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(p.CastlingRights)), output)
+	utils.WriteOrDie(fmt.Sprintf("en passant square: %s\n", sq.Stringify(p.EnPassantSquare)), output)
 }
 
 func sideToString(whiteToMove bool) string {
