@@ -84,6 +84,31 @@ const (
 
 type Square uint8
 
+func (s Square) Rank() int {
+	return int(8 - s/8)
+}
+
+func (s Square) File() int {
+	return int(s%8 + 1)
+}
+
+func (s Square) String() string {
+	if s > 63 {
+		return "-"
+	}
+
+	var ret strings.Builder
+
+	rank := s.Rank()
+
+	file := s.File()
+
+	ret.WriteString(fmt.Sprintf("%c", 'a'+file-1))
+	ret.WriteString(strconv.Itoa((rank)))
+
+	return ret.String()
+}
+
 func Stringify(square Square) string {
 	if square > 63 {
 		return "-"

@@ -129,3 +129,52 @@ func TestOnBoard(t *testing.T) {
 		}
 	}
 }
+
+func TestRankAndFile(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		square   sq.Square
+		wantRank int
+		wantFile int
+	}{
+		{
+			square:   sq.A1,
+			wantRank: 1,
+			wantFile: 1,
+		},
+		{
+			square:   sq.C3,
+			wantRank: 3,
+			wantFile: 3,
+		},
+		{
+			square:   sq.D4,
+			wantRank: 4,
+			wantFile: 4,
+		},
+		{
+			square:   sq.A8,
+			wantRank: 8,
+			wantFile: 1,
+		},
+	}
+
+	for _, tt := range testCases {
+		sqString := sq.Stringify(tt.square)
+		t.Run(sqString, func(t *testing.T) {
+			t.Parallel()
+
+			rank := tt.square.Rank()
+			file := tt.square.File()
+
+			if rank != tt.wantRank {
+				t.Errorf("Rank() = %d, want %d", rank, tt.wantRank)
+			}
+
+			if file != tt.wantFile {
+				t.Errorf("File() = %d, want %d", file, tt.wantFile)
+			}
+		})
+	}
+}
