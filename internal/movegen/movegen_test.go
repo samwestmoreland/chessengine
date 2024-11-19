@@ -5,7 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/samwestmoreland/chessengine/internal/move"
 	"github.com/samwestmoreland/chessengine/internal/movegen"
+	"github.com/samwestmoreland/chessengine/internal/piece"
 	"github.com/samwestmoreland/chessengine/internal/position"
 	sq "github.com/samwestmoreland/chessengine/internal/squares"
 )
@@ -130,6 +132,191 @@ func TestGetLegalMoves(t *testing.T) {
 
 				for _, move := range moves {
 					t.Errorf("  %s", move.String())
+				}
+			}
+		})
+	}
+}
+
+func TestGetLegalMovesReturnsCorrectMoves(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name          string
+		fen           string
+		expectedMoves map[move.Move]struct{}
+	}{
+		{
+			name: "evan's gambit white to move",
+			fen:  "r1bqk1nr/pppp1ppp/2n5/b3p3/2BPP3/2P2N2/P4PPP/RNBQK2R b KQkq - 0 3",
+			expectedMoves: map[move.Move]struct{}{
+				// Pawns
+				move.NewMove().From(sq.A7).To(sq.A6).Piece(piece.Bp).Build():              {},
+				move.NewMove().From(sq.B7).To(sq.B6).Piece(piece.Bp).Build():              {},
+				move.NewMove().From(sq.B7).To(sq.B5).Piece(piece.Bp).DoublePush().Build(): {},
+				move.NewMove().From(sq.D7).To(sq.D6).Piece(piece.Bp).Build():              {},
+				move.NewMove().From(sq.D7).To(sq.D5).Piece(piece.Bp).DoublePush().Build(): {},
+				move.NewMove().From(sq.F7).To(sq.F6).Piece(piece.Bp).Build():              {},
+				move.NewMove().From(sq.F7).To(sq.F5).Piece(piece.Bp).DoublePush().Build(): {},
+				move.NewMove().From(sq.G7).To(sq.G6).Piece(piece.Bp).Build():              {},
+				move.NewMove().From(sq.G7).To(sq.G5).Piece(piece.Bp).DoublePush().Build(): {},
+				move.NewMove().From(sq.H7).To(sq.H6).Piece(piece.Bp).Build():              {},
+				move.NewMove().From(sq.H7).To(sq.H5).Piece(piece.Bp).DoublePush().Build(): {},
+				move.NewMove().From(sq.E5).To(sq.D4).Piece(piece.Bp).Capture().Build():    {},
+				// Rooks
+				move.NewMove().From(sq.A8).To(sq.B8).Piece(piece.Br).Build(): {},
+				// Bishops
+				move.NewMove().From(sq.A5).To(sq.B6).Piece(piece.Bb).Build():           {},
+				move.NewMove().From(sq.A5).To(sq.B4).Piece(piece.Bb).Build():           {},
+				move.NewMove().From(sq.A5).To(sq.C3).Piece(piece.Bb).Capture().Build(): {},
+				// Knights
+				move.NewMove().From(sq.C6).To(sq.B8).Piece(piece.Bn).Build():           {},
+				move.NewMove().From(sq.C6).To(sq.E7).Piece(piece.Bn).Build():           {},
+				move.NewMove().From(sq.C6).To(sq.D4).Piece(piece.Bn).Capture().Build(): {},
+				move.NewMove().From(sq.C6).To(sq.B4).Piece(piece.Bn).Build():           {},
+				move.NewMove().From(sq.G8).To(sq.H6).Piece(piece.Bn).Build():           {},
+				move.NewMove().From(sq.G8).To(sq.F6).Piece(piece.Bn).Build():           {},
+				move.NewMove().From(sq.G8).To(sq.E7).Piece(piece.Bn).Build():           {},
+				// Queen
+				move.NewMove().From(sq.D8).To(sq.E7).Piece(piece.Bq).Build(): {},
+				move.NewMove().From(sq.D8).To(sq.F6).Piece(piece.Bq).Build(): {},
+				move.NewMove().From(sq.D8).To(sq.G5).Piece(piece.Bq).Build(): {},
+				move.NewMove().From(sq.D8).To(sq.H4).Piece(piece.Bq).Build(): {},
+				// King
+				move.NewMove().From(sq.E8).To(sq.E7).Piece(piece.Bk).Build(): {},
+				move.NewMove().From(sq.E8).To(sq.F8).Piece(piece.Bk).Build(): {},
+			},
+		},
+		{
+			name: "scandinavian hikaru vs magnus",
+			fen:  "4r2k/5Rp1/bppp3p/4b3/4P3/2N5/PPP3PP/3R2K1 w - - 0 23",
+			expectedMoves: map[move.Move]struct{}{
+				// Pawns
+				move.NewMove().From(sq.A2).To(sq.A3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.A2).To(sq.A4).Piece(piece.Wp).DoublePush().Build(): {},
+				move.NewMove().From(sq.B2).To(sq.B3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.B2).To(sq.B4).Piece(piece.Wp).DoublePush().Build(): {},
+				move.NewMove().From(sq.G2).To(sq.G3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.G2).To(sq.G4).Piece(piece.Wp).DoublePush().Build(): {},
+				move.NewMove().From(sq.H2).To(sq.H3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.H2).To(sq.H4).Piece(piece.Wp).DoublePush().Build(): {},
+				// Rooks
+				move.NewMove().From(sq.D1).To(sq.D2).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.D3).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.D4).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.D5).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.D6).Piece(piece.Wr).Capture().Build(): {},
+				move.NewMove().From(sq.D1).To(sq.A1).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.B1).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.C1).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.E1).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.F1).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.F8).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.A7).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.B7).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.C7).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.D7).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.E7).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.F6).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.F5).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.F4).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.F3).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.F2).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.F1).Piece(piece.Wr).Build():           {},
+				move.NewMove().From(sq.F7).To(sq.G7).Piece(piece.Wr).Capture().Build(): {},
+				// Knights
+				move.NewMove().From(sq.C3).To(sq.B1).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C3).To(sq.A4).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C3).To(sq.B5).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C3).To(sq.D5).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C3).To(sq.E2).Piece(piece.Wn).Build(): {},
+				// King
+				move.NewMove().From(sq.G1).To(sq.F1).Piece(piece.Wk).Build(): {},
+				move.NewMove().From(sq.G1).To(sq.F2).Piece(piece.Wk).Build(): {},
+				move.NewMove().From(sq.G1).To(sq.H1).Piece(piece.Wk).Build(): {},
+			},
+		},
+		{
+			name: "hikaru kasparov scotch gambit",
+			fen:  "1rb2rk1/ppN1nppp/3p4/2b2q1B/5Pn1/2P1B3/PP1N2PP/R2Q1R1K w - - 1 16",
+			expectedMoves: map[move.Move]struct{}{
+				// Pawns
+				move.NewMove().From(sq.A2).To(sq.A3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.A2).To(sq.A4).Piece(piece.Wp).DoublePush().Build(): {},
+				move.NewMove().From(sq.B2).To(sq.B3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.B2).To(sq.B4).Piece(piece.Wp).DoublePush().Build(): {},
+				move.NewMove().From(sq.C3).To(sq.C4).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.G2).To(sq.G3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.H2).To(sq.H3).Piece(piece.Wp).Build():              {},
+				move.NewMove().From(sq.H2).To(sq.H4).Piece(piece.Wp).DoublePush().Build(): {},
+				// Rooks
+				move.NewMove().From(sq.A1).To(sq.B1).Piece(piece.Wr).Build(): {},
+				move.NewMove().From(sq.A1).To(sq.C1).Piece(piece.Wr).Build(): {},
+				move.NewMove().From(sq.F1).To(sq.F2).Piece(piece.Wr).Build(): {},
+				move.NewMove().From(sq.F1).To(sq.G1).Piece(piece.Wr).Build(): {},
+				move.NewMove().From(sq.F1).To(sq.F3).Piece(piece.Wr).Build(): {},
+				move.NewMove().From(sq.F1).To(sq.E1).Piece(piece.Wr).Build(): {},
+				// Bishops
+				move.NewMove().From(sq.E3).To(sq.D4).Piece(piece.Wb).Build():           {},
+				move.NewMove().From(sq.E3).To(sq.C5).Piece(piece.Wb).Capture().Build(): {},
+				move.NewMove().From(sq.E3).To(sq.F2).Piece(piece.Wb).Build():           {},
+				move.NewMove().From(sq.E3).To(sq.G1).Piece(piece.Wb).Build():           {},
+				move.NewMove().From(sq.H5).To(sq.G6).Piece(piece.Wb).Build():           {},
+				move.NewMove().From(sq.H5).To(sq.G4).Piece(piece.Wb).Capture().Build(): {},
+				move.NewMove().From(sq.H5).To(sq.F7).Piece(piece.Wb).Capture().Build(): {},
+				// Knights
+				move.NewMove().From(sq.D2).To(sq.B1).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.D2).To(sq.B3).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.D2).To(sq.C4).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.D2).To(sq.E4).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.D2).To(sq.F3).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C7).To(sq.A8).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C7).To(sq.E8).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C7).To(sq.E6).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C7).To(sq.D5).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C7).To(sq.B5).Piece(piece.Wn).Build(): {},
+				move.NewMove().From(sq.C7).To(sq.A6).Piece(piece.Wn).Build(): {},
+				// Queen
+				move.NewMove().From(sq.D1).To(sq.B1).Piece(piece.Wq).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.C1).Piece(piece.Wq).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.C2).Piece(piece.Wq).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.B3).Piece(piece.Wq).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.A4).Piece(piece.Wq).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.E2).Piece(piece.Wq).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.F3).Piece(piece.Wq).Build():           {},
+				move.NewMove().From(sq.D1).To(sq.G4).Piece(piece.Wq).Capture().Build(): {},
+				move.NewMove().From(sq.D1).To(sq.E1).Piece(piece.Wq).Build():           {},
+				// King
+				move.NewMove().From(sq.H1).To(sq.G1).Piece(piece.Wk).Build(): {},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			pos, err := position.NewPositionFromFEN(tt.fen)
+			if err != nil {
+				t.Fatalf("failed to create position: %v", err)
+			}
+
+			moves := movegen.GetLegalMoves(pos)
+
+			if len(moves) != len(tt.expectedMoves) {
+				t.Errorf("moves generated:")
+
+				for _, move := range moves {
+					t.Errorf("  %s", move.String())
+				}
+
+				t.Errorf("got %d moves, want %d", len(moves), len(tt.expectedMoves))
+			}
+
+			for _, move := range moves {
+				if _, ok := tt.expectedMoves[move]; !ok {
+					t.Errorf("unexpected move: %s; piece: %s; capture: %t; double push: %t",
+						move.String(), move.Piece().String(), move.IsCapture(), move.IsDoublePush())
 				}
 			}
 		})

@@ -150,7 +150,7 @@ func getWhitePawnMoves(pos *position.Position) []move.Move {
 				// Double push
 				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						move.Encode(source, target, piece.Wp, piece.NoPiece, 0, 1, 0, 0),
+						move.Encode(source, doublePush, piece.Wp, piece.NoPiece, 0, 1, 0, 0),
 					)
 				}
 			}
@@ -164,10 +164,10 @@ func getWhitePawnMoves(pos *position.Position) []move.Move {
 
 			if target < sq.A7 {
 				promotionMoves := []move.Move{
-					move.Encode(source, target, piece.Bp, piece.Bq, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Br, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bn, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bb, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bq, 1, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Br, 1, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bn, 1, 0, 0, 0),
+					move.Encode(source, target, piece.Bp, piece.Bb, 1, 0, 0, 0),
 				}
 
 				ret = append(ret, promotionMoves...)
@@ -229,7 +229,7 @@ func getBlackPawnMoves(pos *position.Position) []move.Move {
 				// Doule push
 				if source >= sq.A7 && source <= sq.H7 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						move.Encode(source, target, piece.Bp, piece.NoPiece, 0, 0, 1, 0),
+						move.Encode(source, doublePush, piece.Bp, piece.NoPiece, 0, 1, 0, 0),
 					)
 				}
 			}
@@ -351,9 +351,14 @@ func getWhiteKnightMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Wn, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Wn, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Wn, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -373,9 +378,14 @@ func getBlackKnightMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Bn, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Bn, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Bn, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -397,9 +407,14 @@ func getWhiteBishopMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Wb, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Wb, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Wb, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -421,9 +436,14 @@ func getBlackBishopMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Bb, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Bb, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Bb, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -445,9 +465,14 @@ func getWhiteRookMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Wr, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Wr, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Wr, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -469,9 +494,14 @@ func getBlackRookMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Br, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Br, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Br, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -491,9 +521,14 @@ func getWhiteKingMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Wk, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Wk, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Wk, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -513,9 +548,14 @@ func getBlackKingMoves(pos *position.Position) []move.Move {
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
-			attacks = bb.ClearBit(attacks, target)
 
-			ret = append(ret, move.Encode(source, target, piece.Bk, piece.NoPiece, 0, 0, 0, 0))
+			if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
+				ret = append(ret, move.Encode(source, target, piece.Bk, piece.NoPiece, 1, 0, 0, 0))
+			} else {
+				ret = append(ret, move.Encode(source, target, piece.Bk, piece.NoPiece, 0, 0, 0, 0))
+			}
+
+			attacks = bb.ClearBit(attacks, target)
 		}
 	}
 
@@ -542,16 +582,26 @@ func getWhiteQueenMoves(pos *position.Position) []move.Move {
 		for bishopAttacks != 0 || rookAttacks != 0 {
 			if bishopAttacks != 0 {
 				target := bb.LSBIndex(bishopAttacks)
-				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 
-				ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
+				if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
+					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 1, 0, 0, 0))
+				} else {
+					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
+				}
+
+				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 			}
 
 			if rookAttacks != 0 {
 				target := bb.LSBIndex(rookAttacks)
-				rookAttacks = bb.ClearBit(rookAttacks, target)
 
-				ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
+				if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
+					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 1, 0, 0, 0))
+				} else {
+					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
+				}
+
+				rookAttacks = bb.ClearBit(rookAttacks, target)
 			}
 		}
 	}
@@ -579,16 +629,26 @@ func getBlackQueenMoves(pos *position.Position) []move.Move {
 		for bishopAttacks != 0 || rookAttacks != 0 {
 			if bishopAttacks != 0 {
 				target := bb.LSBIndex(bishopAttacks)
-				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 
-				ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
+				if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
+					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 1, 0, 0, 0))
+				} else {
+					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
+				}
+
+				bishopAttacks = bb.ClearBit(bishopAttacks, target)
 			}
 
 			if rookAttacks != 0 {
 				target := bb.LSBIndex(rookAttacks)
-				rookAttacks = bb.ClearBit(rookAttacks, target)
 
-				ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
+				if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
+					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 1, 0, 0, 0))
+				} else {
+					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
+				}
+
+				rookAttacks = bb.ClearBit(rookAttacks, target)
 			}
 		}
 	}
