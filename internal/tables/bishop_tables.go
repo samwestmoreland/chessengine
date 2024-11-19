@@ -64,7 +64,6 @@ func MaskBishopAttacks(square sq.Square) bb.Bitboard {
 		for rank, file := startRank+rankDelta, startFile+fileDelta; rank > 0 && rank < 7 &&
 			file > 0 && file < 7; rank, file = rank+rankDelta, file+fileDelta {
 			square := sq.Square(byte(rank*8 + file))
-			log.Println(" setting bit on square:", sq.Stringify(square))
 			attackBoard = bb.SetBit(attackBoard, square)
 		}
 	}
