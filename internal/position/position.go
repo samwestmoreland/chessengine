@@ -112,74 +112,42 @@ func parseEnPassantSquare(square string) (sq.Square, error) {
 func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 	occ := make([]bb.Bitboard, 15)
 
+	// Map pieces to their indices and color bitboards
+	pieceMap := map[rune]struct {
+		index     piece.Piece
+		colorBits piece.Piece
+	}{
+		'P': {piece.Wp, piece.Wa},
+		'N': {piece.Wn, piece.Wa},
+		'B': {piece.Wb, piece.Wa},
+		'R': {piece.Wr, piece.Wa},
+		'Q': {piece.Wq, piece.Wa},
+		'K': {piece.Wk, piece.Wa},
+		'p': {piece.Bp, piece.Ba},
+		'n': {piece.Bn, piece.Ba},
+		'b': {piece.Bb, piece.Ba},
+		'r': {piece.Br, piece.Ba},
+		'q': {piece.Bq, piece.Ba},
+		'k': {piece.Bk, piece.Ba},
+	}
+
 	var square sq.Square
 
-	for i := range len(posStr) {
-		switch posStr[i] {
-		case 'P':
-			occ[piece.Wp] = bb.SetBit(occ[piece.Wp], square)
-			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], square)
+	for _, char := range posStr {
+		// Handle pieces
+		if info, isPiece := pieceMap[char]; isPiece {
+			occ[info.index] = bb.SetBit(occ[info.index], square)
+			occ[info.colorBits] = bb.SetBit(occ[info.colorBits], square)
 			square++
-		case 'N':
-			occ[piece.Wn] = bb.SetBit(occ[piece.Wn], square)
-			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], square)
-			square++
-		case 'B':
-			occ[piece.Wb] = bb.SetBit(occ[piece.Wb], square)
-			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], square)
-			square++
-		case 'R':
-			occ[piece.Wr] = bb.SetBit(occ[piece.Wr], square)
-			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], square)
-			square++
-		case 'Q':
-			occ[piece.Wq] = bb.SetBit(occ[piece.Wq], square)
-			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], square)
-			square++
-		case 'K':
-			occ[piece.Wk] = bb.SetBit(occ[piece.Wk], square)
-			occ[piece.Wa] = bb.SetBit(occ[piece.Wa], square)
-			square++
-		case 'p':
-			occ[piece.Bp] = bb.SetBit(occ[piece.Bp], square)
-			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
-			square++
-		case 'n':
-			occ[piece.Bn] = bb.SetBit(occ[piece.Bn], square)
-			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
-			square++
-		case 'b':
-			occ[piece.Bb] = bb.SetBit(occ[piece.Bb], square)
-			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
-			square++
-		case 'r':
-			occ[piece.Br] = bb.SetBit(occ[piece.Br], square)
-			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
-			square++
-		case 'q':
-			occ[piece.Bq] = bb.SetBit(occ[piece.Bq], square)
-			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
-			square++
-		case 'k':
-			occ[piece.Bk] = bb.SetBit(occ[piece.Bk], square)
-			occ[piece.Ba] = bb.SetBit(occ[piece.Ba], square)
-			square++
-		case '1':
-			square++
-		case '2':
-			square += 2
-		case '3':
-			square += 3
-		case '4':
-			square += 4
-		case '5':
-			square += 5
-		case '6':
-			square += 6
-		case '7':
-			square += 7
-		case '8':
-			square += 8
+
+			continue
+		}
+
+		// Handle empty squares
+		if char >= '1' && char <= '8' {
+			square += sq.Square(char - '0')
+
+			continue
 		}
 	}
 
