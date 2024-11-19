@@ -42,3 +42,10 @@ func (p Piece) String() string {
 
 	return ""
 }
+
+type Colour uint8
+
+const (
+	White Colour = iota
+	Black
+)

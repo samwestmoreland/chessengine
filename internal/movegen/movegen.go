@@ -41,7 +41,7 @@ func GetLegalMoves(pos *position.Position) []move.Move {
 		ret = append(ret, getWhiteBishopMoves(pos)...)
 		ret = append(ret, getWhiteRookMoves(pos)...)
 		ret = append(ret, getWhiteKingMoves(pos)...)
-		ret = append(ret, getWhiteQueenMoves(pos)...)
+		ret = append(ret, getQueenMoves(pos, piece.White)...)
 	} else {
 		ret = append(ret, getBlackPawnMoves(pos)...)
 		ret = append(ret, getBlackKingCastlingMoves(pos)...)
@@ -49,7 +49,7 @@ func GetLegalMoves(pos *position.Position) []move.Move {
 		ret = append(ret, getBlackBishopMoves(pos)...)
 		ret = append(ret, getBlackRookMoves(pos)...)
 		ret = append(ret, getBlackKingMoves(pos)...)
-		ret = append(ret, getBlackQueenMoves(pos)...)
+		ret = append(ret, getQueenMoves(pos, piece.Black)...)
 	}
 
 	return ret
@@ -562,95 +562,53 @@ func getBlackKingMoves(pos *position.Position) []move.Move {
 	return ret
 }
 
-func getWhiteQueenMoves(pos *position.Position) []move.Move {
+func getQueenMoves(pos *position.Position, color piece.Colour) []move.Move {
 	var ret []move.Move
 
-	queens := pos.Occupancy[piece.Wq]
+	var queenPiece piece.Piece
 
-	for queens != 0 {
-		source := bb.LSBIndex(queens)
-		queens = bb.ClearBit(queens, source)
+	var ownOccupancy, enemyOccupancy piece.Piece
 
-		bishopTableIndex := tables.GetBishopLookupIndex(source, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
-
-		bishopAttacks := lookupTables.Bishops[source][bishopTableIndex] &^ pos.Occupancy[piece.Wa]
-
-		rookTableIndex := tables.GetRookLookupIndex(source, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
-
-		rookAttacks := lookupTables.Rooks[source][rookTableIndex] &^ pos.Occupancy[piece.Wa]
-
-		for bishopAttacks != 0 || rookAttacks != 0 {
-			if bishopAttacks != 0 {
-				target := bb.LSBIndex(bishopAttacks)
-
-				if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
-					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 1, 0, 0, 0))
-				} else {
-					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
-				}
-
-				bishopAttacks = bb.ClearBit(bishopAttacks, target)
-			}
-
-			if rookAttacks != 0 {
-				target := bb.LSBIndex(rookAttacks)
-
-				if pos.Occupancy[piece.Ba]&(bb.SetBit(0, target)) != 0 {
-					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 1, 0, 0, 0))
-				} else {
-					ret = append(ret, move.Encode(source, target, piece.Wq, piece.NoPiece, 0, 0, 0, 0))
-				}
-
-				rookAttacks = bb.ClearBit(rookAttacks, target)
-			}
-		}
+	if color == piece.White {
+		queenPiece = piece.Wq
+		ownOccupancy = piece.Wa
+		enemyOccupancy = piece.Ba
+	} else {
+		queenPiece = piece.Bq
+		ownOccupancy = piece.Ba
+		enemyOccupancy = piece.Wa
 	}
 
-	return ret
-}
-
-func getBlackQueenMoves(pos *position.Position) []move.Move {
-	var ret []move.Move
-
-	queens := pos.Occupancy[piece.Bq]
+	queens := pos.Occupancy[queenPiece]
 
 	for queens != 0 {
 		source := bb.LSBIndex(queens)
 		queens = bb.ClearBit(queens, source)
 
-		bishopTableIndex := tables.GetBishopLookupIndex(source, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
+		allPieces := pos.Occupancy[ownOccupancy] | pos.Occupancy[enemyOccupancy]
+		bishopTableIndex := tables.GetBishopLookupIndex(source, allPieces)
+		rookTableIndex := tables.GetRookLookupIndex(source, allPieces)
 
-		bishopAttacks := lookupTables.Bishops[source][bishopTableIndex] &^ pos.Occupancy[piece.Ba]
+		bishopAttacks := lookupTables.Bishops[source][bishopTableIndex] &^ pos.Occupancy[ownOccupancy]
+		rookAttacks := lookupTables.Rooks[source][rookTableIndex] &^ pos.Occupancy[ownOccupancy]
 
-		rookTableIndex := tables.GetRookLookupIndex(source, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
+		// Helper function to avoid duplication in move generation
+		addMoves := func(attacks bb.Bitboard) {
+			for attacks != 0 {
+				target := bb.LSBIndex(attacks)
 
-		rookAttacks := lookupTables.Rooks[source][rookTableIndex] &^ pos.Occupancy[piece.Ba]
-
-		for bishopAttacks != 0 || rookAttacks != 0 {
-			if bishopAttacks != 0 {
-				target := bb.LSBIndex(bishopAttacks)
-
-				if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
-					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 1, 0, 0, 0))
-				} else {
-					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
+				var captureFlag uint32
+				if pos.Occupancy[enemyOccupancy]&(bb.SetBit(0, target)) != 0 {
+					captureFlag = 1
 				}
 
-				bishopAttacks = bb.ClearBit(bishopAttacks, target)
-			}
-
-			if rookAttacks != 0 {
-				target := bb.LSBIndex(rookAttacks)
-
-				if pos.Occupancy[piece.Wa]&(bb.SetBit(0, target)) != 0 {
-					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 1, 0, 0, 0))
-				} else {
-					ret = append(ret, move.Encode(source, target, piece.Bq, piece.NoPiece, 0, 0, 0, 0))
-				}
-
-				rookAttacks = bb.ClearBit(rookAttacks, target)
+				ret = append(ret, move.Encode(source, target, queenPiece, piece.NoPiece, captureFlag, 0, 0, 0))
+				attacks = bb.ClearBit(attacks, target)
 			}
 		}
+
+		addMoves(bishopAttacks)
+		addMoves(rookAttacks)
 	}
 
 	return ret
