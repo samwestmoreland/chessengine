@@ -122,42 +122,42 @@ func getWhitePawnMoves(pos *position.Position) []move.Move {
 
 	var pawnOccupancy bb.Bitboard
 
-	pawnOccupancy = pos.Occupancy[piece.Wp] // white specific
+	pawnOccupancy = pos.Occupancy[piece.Wp]
 
 	for pawnOccupancy != 0 {
 		source := bb.LSBIndex(pawnOccupancy)
 
-		target := source - 8      // white specific
-		doublePush := source - 16 // white specific
+		target := source - 8
+		doublePush := source - 16
 
 		// Pawn advances
 		if sq.OnBoard(target) && !pos.IsOccupied(target) {
 			// Check promotion
-			if target < sq.A7 { // white specific
+			if target < sq.A7 {
 				promotionMoves := []move.Move{
-					move.Encode(source, target, piece.Wp, piece.Wq, 0, 0, 0, 0), // white specific
-					move.Encode(source, target, piece.Wp, piece.Wr, 0, 0, 0, 0), // white specific
-					move.Encode(source, target, piece.Wp, piece.Wn, 0, 0, 0, 0), // white specific
-					move.Encode(source, target, piece.Wp, piece.Wb, 0, 0, 0, 0), // white specific
+					move.Encode(source, target, piece.Wp, piece.Wq, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Wp, piece.Wr, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Wp, piece.Wn, 0, 0, 0, 0),
+					move.Encode(source, target, piece.Wp, piece.Wb, 0, 0, 0, 0),
 				}
 
 				ret = append(ret, promotionMoves...)
 			} else {
 				ret = append(ret,
-					move.Encode(source, target, piece.Wp, piece.NoPiece, 0, 0, 0, 0), // white specific
+					move.Encode(source, target, piece.Wp, piece.NoPiece, 0, 0, 0, 0),
 				)
 
 				// Double push
-				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) { // white specific
+				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						move.Encode(source, doublePush, piece.Wp, piece.NoPiece, 0, 1, 0, 0), // white specific
+						move.Encode(source, doublePush, piece.Wp, piece.NoPiece, 0, 1, 0, 0),
 					)
 				}
 			}
 		}
 
 		// Pawn captures
-		attacks := lookupTables.Pawns[0][source] & pos.Occupancy[piece.Ba] // white specific
+		attacks := lookupTables.Pawns[0][source] & pos.Occupancy[piece.Ba]
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
