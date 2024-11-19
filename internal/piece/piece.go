@@ -20,39 +20,25 @@ const (
 	Ba // All black
 )
 
+var pieceToString = map[Piece]string{
+	Wp: "P",
+	Wn: "N",
+	Wb: "B",
+	Wr: "R",
+	Wq: "Q",
+	Wk: "K",
+	Bp: "p",
+	Bn: "n",
+	Bb: "b",
+	Br: "r",
+	Bq: "q",
+	Bk: "k",
+}
+
 func (p Piece) String() string {
-	switch p {
-	case Wp:
-		return "P"
-	case Wn:
-		return "N"
-	case Wb:
-		return "B"
-	case Wr:
-		return "R"
-	case Wq:
-		return "Q"
-	case Wk:
-		return "K"
-	case Bp:
-		return "p"
-	case Bn:
-		return "n"
-	case Bb:
-		return "b"
-	case Br:
-		return "r"
-	case Bq:
-		return "q"
-	case Bk:
-		return "k"
-	case Wa:
-		return "W"
-	case Ba:
-		return "B"
-	case NoPiece:
-		return ""
-	default:
-		return ""
+	if s, ok := pieceToString[p]; ok {
+		return s
 	}
+
+	return ""
 }
