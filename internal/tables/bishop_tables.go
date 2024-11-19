@@ -47,27 +47,26 @@ func populateBishopAttackTables(data magic.BishopData) [64][]bb.Bitboard {
 func MaskBishopAttacks(square sq.Square) bb.Bitboard {
 	var attackBoard bb.Bitboard
 
-	startRank := square / 8
-	startFile := square % 8
+	startRank := int(square / 8)
+	startFile := int(square % 8)
 
-	// Bottom right
-	for rank, file := startRank+1, startFile+1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank+1, file+1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+	directions := [4][2]int{
+		{1, 1},   // bottom right
+		{1, -1},  // bottom left
+		{-1, 1},  // top right
+		{-1, -1}, // top left
 	}
 
-	// Top left
-	for rank, file := startRank-1, startFile-1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank-1, file-1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
-	}
+	for _, dir := range directions {
+		rankDelta := dir[0]
+		fileDelta := dir[1]
 
-	// Top right
-	for rank, file := startRank-1, startFile+1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank-1, file+1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
-	}
-
-	// Bottom left
-	for rank, file := startRank+1, startFile-1; rank > 0 && rank < 7 && file > 0 && file < 7; rank, file = rank+1, file-1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+		for rank, file := startRank+rankDelta, startFile+fileDelta; rank > 0 && rank < 7 &&
+			file > 0 && file < 7; rank, file = rank+rankDelta, file+fileDelta {
+			square := sq.Square(byte(rank*8 + file))
+			log.Println(" setting bit on square:", sq.Stringify(square))
+			attackBoard = bb.SetBit(attackBoard, square)
+		}
 	}
 
 	return attackBoard
@@ -76,42 +75,28 @@ func MaskBishopAttacks(square sq.Square) bb.Bitboard {
 func BishopAttacksOnTheFly(square sq.Square, blockers bb.Bitboard) bb.Bitboard {
 	var attackBoard bb.Bitboard
 
-	startRank := square / 8
-	startFile := square % 8
+	startRank := int(square / 8)
+	startFile := int(square % 8)
 
-	// Bottom right
-	for rank, file := startRank+1, startFile+1; rank <= 7 && file <= 7; rank, file = rank+1, file+1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
-
-		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
-			break
-		}
+	directions := [4][2]int{
+		{1, 1},   // bottom right
+		{1, -1},  // bottom left
+		{-1, 1},  // top right
+		{-1, -1}, // top left
 	}
 
-	// Top left
-	for rank, file := startRank-1, startFile-1; rank <= 7 && file <= 7; rank, file = rank-1, file-1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
+	for _, dir := range directions {
+		rankDelta := dir[0]
+		fileDelta := dir[1]
 
-		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
-			break
-		}
-	}
+		for rank, file := startRank+rankDelta, startFile+fileDelta; rank >= 0 && rank <= 7 &&
+			file >= 0 && file <= 7; rank, file = rank+rankDelta, file+fileDelta {
+			square := sq.Square(byte(rank*8 + file))
+			attackBoard = bb.SetBit(attackBoard, square)
 
-	// Top right
-	for rank, file := startRank-1, startFile+1; rank <= 7 && file <= 7; rank, file = rank-1, file+1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
-
-		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
-			break
-		}
-	}
-
-	// Bottom left
-	for rank, file := startRank+1, startFile-1; rank <= 7 && file <= 7; rank, file = rank+1, file-1 {
-		attackBoard = bb.SetBit(attackBoard, rank*8+file)
-
-		if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
-			break
+			if uint64(1)<<(rank*8+file)&uint64(blockers) != 0 {
+				break
+			}
 		}
 	}
 
