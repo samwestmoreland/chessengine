@@ -143,17 +143,14 @@ func TestLookupTableGivesCorrectMovesForRook(t *testing.T) {
 
 			buf.WriteString("Blockers:")
 			bb.PrintBoard(tt.blockers, &buf)
-			buf.WriteString("\n")
 
-			buf.WriteString("Expected moves:")
+			buf.WriteString("\nExpected moves:")
 			bb.PrintBoard(bb.Bitboard(tt.expectedMoves), &buf)
-			buf.WriteString("\n")
 
-			buf.WriteString("Got moves:")
+			buf.WriteString("\nGot moves:")
 			bb.PrintBoard(moves, &buf)
-			buf.WriteString("\n")
 
-			t.Error(buf.String())
+			t.Error("\n" + buf.String())
 
 			t.Error("For rook on square", sq.Stringify(tt.square), "expected", tt.expectedMoves, "got", moves)
 		}
