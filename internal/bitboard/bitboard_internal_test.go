@@ -148,3 +148,49 @@ func TestLSBIndexOfZero(t *testing.T) {
 		t.Errorf("Expected %d, got %d", sq.NoSquare, LSBIndex(0))
 	}
 }
+
+func TestIsNthRank(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		square   sq.Square
+		rank     int
+		expected bool
+	}{
+		{
+			sq.A1,
+			1,
+			true,
+		},
+		{
+			sq.A1,
+			2,
+			false,
+		},
+		{
+			sq.A8,
+			8,
+			true,
+		},
+		{
+			sq.A8,
+			7,
+			false,
+		},
+		{
+			sq.E4,
+			4,
+			true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.square.String(), func(t *testing.T) {
+			t.Parallel()
+
+			if IsNthRank(tt.rank, tt.square) != tt.expected {
+				t.Errorf("Expected %t, got %t", tt.expected, IsNthRank(tt.rank, tt.square))
+			}
+		})
+	}
+}

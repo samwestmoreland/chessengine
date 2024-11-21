@@ -35,7 +35,7 @@ func GetLegalMoves(pos *position.Position) []move.Move {
 	var ret []move.Move
 
 	if pos.WhiteToMove {
-		ret = append(ret, getWhitePawnMoves(pos)...)
+		ret = append(ret, getPawnMoves(pos, piece.White)...)
 		ret = append(ret, getWhiteKingCastlingMoves(pos)...)
 		ret = append(ret, getWhiteKnightMoves(pos)...)
 		ret = append(ret, getWhiteBishopMoves(pos)...)
@@ -43,7 +43,7 @@ func GetLegalMoves(pos *position.Position) []move.Move {
 		ret = append(ret, getWhiteKingMoves(pos)...)
 		ret = append(ret, getQueenMoves(pos, piece.White)...)
 	} else {
-		ret = append(ret, getBlackPawnMoves(pos)...)
+		ret = append(ret, getPawnMoves(pos, piece.Black)...)
 		ret = append(ret, getBlackKingCastlingMoves(pos)...)
 		ret = append(ret, getBlackKnightMoves(pos)...)
 		ret = append(ret, getBlackBishopMoves(pos)...)
@@ -117,63 +117,93 @@ func SquareAttacked(pos *position.Position, square sq.Square, whiteAttacking boo
 	return false
 }
 
-func getWhitePawnMoves(pos *position.Position) []move.Move {
+func getPawnMoves(pos *position.Position, colour piece.Colour) []move.Move {
 	var ret []move.Move
 
-	var pawnOccupancy bb.Bitboard
+	var pawnPiece, queenPiece, rookPiece, bishopPiece, knightPiece piece.Piece
 
-	pawnOccupancy = pos.Occupancy[piece.Wp]
+	var enemyPieces piece.Piece
 
-	for pawnOccupancy != 0 {
-		source := bb.LSBIndex(pawnOccupancy)
+	var penultimateRank, startRank int
 
-		target := source - 8
-		doublePush := source - 16
+	if colour == piece.White {
+		pawnPiece = piece.Wp
+		queenPiece = piece.Wq
+		rookPiece = piece.Wr
+		bishopPiece = piece.Wb
+		knightPiece = piece.Wn
+		enemyPieces = piece.Ba
+		penultimateRank = 7
+		startRank = 2
+	} else {
+		pawnPiece = piece.Bp
+		queenPiece = piece.Bq
+		rookPiece = piece.Br
+		bishopPiece = piece.Bb
+		knightPiece = piece.Bn
+		enemyPieces = piece.Wa
+		penultimateRank = 2
+		startRank = 7
+	}
+
+	pawns := pos.Occupancy[pawnPiece]
+
+	for pawns != 0 {
+		source := bb.LSBIndex(pawns)
+
+		var target, doublePush sq.Square
+		if colour == piece.White {
+			target = source - 8
+			doublePush = source - 16
+		} else {
+			target = source + 8
+			doublePush = source + 16
+		}
 
 		// Pawn advances
 		if sq.OnBoard(target) && !pos.IsOccupied(target) {
 			// Check promotion
-			if target < sq.A7 {
+			if bb.IsNthRank(penultimateRank, source) {
 				promotionMoves := []move.Move{
-					move.Encode(source, target, piece.Wp, piece.Wq, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Wp, piece.Wr, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Wp, piece.Wn, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Wp, piece.Wb, 0, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, queenPiece, 0, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, rookPiece, 0, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, bishopPiece, 0, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, knightPiece, 0, 0, 0, 0),
 				}
 
 				ret = append(ret, promotionMoves...)
 			} else {
 				ret = append(ret,
-					move.Encode(source, target, piece.Wp, piece.NoPiece, 0, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, piece.NoPiece, 0, 0, 0, 0),
 				)
 
 				// Double push
-				if source >= sq.A2 && source <= sq.H2 && !pos.IsOccupied(doublePush) {
+				if bb.IsNthRank(startRank, source) && !pos.IsOccupied(doublePush) {
 					ret = append(ret,
-						move.Encode(source, doublePush, piece.Wp, piece.NoPiece, 0, 1, 0, 0),
+						move.Encode(source, doublePush, pawnPiece, piece.NoPiece, 0, 1, 0, 0),
 					)
 				}
 			}
 		}
 
 		// Pawn captures
-		attacks := lookupTables.Pawns[0][source] & pos.Occupancy[piece.Ba]
+		attacks := lookupTables.Pawns[colour][source] & pos.Occupancy[enemyPieces]
 
 		for attacks != 0 {
 			target := bb.LSBIndex(attacks)
 
-			if target < sq.A7 {
+			if bb.IsNthRank(penultimateRank, source) {
 				promotionMoves := []move.Move{
-					move.Encode(source, target, piece.Bp, piece.Bq, 1, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Br, 1, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bn, 1, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bb, 1, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, queenPiece, 1, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, rookPiece, 1, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, bishopPiece, 1, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, knightPiece, 1, 0, 0, 0),
 				}
 
 				ret = append(ret, promotionMoves...)
 			} else {
 				ret = append(ret,
-					move.Encode(source, target, piece.Bp, piece.NoPiece, 1, 0, 0, 0),
+					move.Encode(source, target, pawnPiece, piece.NoPiece, 1, 0, 0, 0),
 				)
 			}
 
@@ -181,96 +211,16 @@ func getWhitePawnMoves(pos *position.Position) []move.Move {
 		}
 
 		if pos.EnPassantSquare != sq.NoSquare {
-			enpassant := lookupTables.Pawns[0][source] & bb.SetBit(0, pos.EnPassantSquare)
+			enpassant := lookupTables.Pawns[colour][source] & bb.SetBit(0, pos.EnPassantSquare)
 
 			if enpassant != 0 {
 				ret = append(ret,
-					move.Encode(source, pos.EnPassantSquare, piece.Wp, piece.NoPiece, 0, 0, 1, 0),
+					move.Encode(source, pos.EnPassantSquare, pawnPiece, piece.NoPiece, 0, 0, 1, 0),
 				)
 			}
 		}
 
-		pawnOccupancy = bb.ClearBit(pawnOccupancy, source)
-	}
-
-	return ret
-}
-
-func getBlackPawnMoves(pos *position.Position) []move.Move {
-	var ret []move.Move
-
-	var pawnOccupancy bb.Bitboard
-
-	pawnOccupancy = pos.Occupancy[piece.Bp]
-
-	for pawnOccupancy != 0 {
-		source := bb.LSBIndex(pawnOccupancy)
-
-		target := source + 8
-		doublePush := source + 16
-
-		// Pawn advances
-		if sq.OnBoard(target) && !pos.IsOccupied(target) {
-			// Check promotion
-			if target > sq.H2 {
-				promotionMoves := []move.Move{
-					move.Encode(source, target, piece.Bp, piece.Bq, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Br, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bn, 0, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bb, 0, 0, 0, 0),
-				}
-
-				ret = append(ret, promotionMoves...)
-			} else {
-				ret = append(ret,
-					move.Encode(source, target, piece.Bp, piece.NoPiece, 0, 0, 0, 0),
-				)
-
-				// Doule push
-				if source >= sq.A7 && source <= sq.H7 && !pos.IsOccupied(doublePush) {
-					ret = append(ret,
-						move.Encode(source, doublePush, piece.Bp, piece.NoPiece, 0, 1, 0, 0),
-					)
-				}
-			}
-		}
-
-		// Pawn captures
-		attacks := lookupTables.Pawns[1][source] & pos.Occupancy[piece.Wa]
-
-		for attacks != 0 {
-			target := bb.LSBIndex(attacks)
-
-			// Promotion
-			if target > sq.H2 {
-				promotionMoves := []move.Move{
-					move.Encode(source, target, piece.Bp, piece.Bq, 1, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Br, 1, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bn, 1, 0, 0, 0),
-					move.Encode(source, target, piece.Bp, piece.Bb, 1, 0, 0, 0),
-				}
-
-				ret = append(ret, promotionMoves...)
-			} else {
-				ret = append(ret,
-					move.Encode(source, target, piece.Bp, piece.NoPiece, 1, 0, 0, 0),
-				)
-			}
-
-			attacks = bb.ClearBit(attacks, target)
-		}
-
-		if pos.EnPassantSquare != sq.NoSquare {
-			enpassant := lookupTables.Pawns[1][source] & bb.SetBit(0, pos.EnPassantSquare)
-
-			if enpassant != 0 {
-				ret = append(ret,
-					move.Encode(source, pos.EnPassantSquare, piece.Bp, piece.NoPiece, 0, 0, 1, 0),
-				)
-			}
-		}
-
-		pawnOccupancy = bb.ClearBit(pawnOccupancy, source)
+		pawns = bb.ClearBit(pawns, source)
 	}
 
 	return ret
@@ -562,14 +512,14 @@ func getBlackKingMoves(pos *position.Position) []move.Move {
 	return ret
 }
 
-func getQueenMoves(pos *position.Position, color piece.Colour) []move.Move {
+func getQueenMoves(pos *position.Position, colour piece.Colour) []move.Move {
 	var ret []move.Move
 
 	var queenPiece piece.Piece
 
 	var ownOccupancy, enemyOccupancy piece.Piece
 
-	if color == piece.White {
+	if colour == piece.White {
 		queenPiece = piece.Wq
 		ownOccupancy = piece.Wa
 		enemyOccupancy = piece.Ba
