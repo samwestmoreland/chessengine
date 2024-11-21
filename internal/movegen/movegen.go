@@ -55,63 +55,55 @@ func GetLegalMoves(pos *position.Position) []move.Move {
 	return ret
 }
 
+// SquareAttacked returns true if the given square is attacked by any opposing pieces.
 func SquareAttacked(pos *position.Position, square sq.Square, whiteAttacking bool) bool {
+	// Define piece sets based on attacking color
+	var pawnLookupIndex int
+
+	var pieces [6]piece.Piece
+
 	if whiteAttacking {
-		if lookupTables.Pawns[1][square]&pos.Occupancy[piece.Wp] != 0 {
-			return true
-		}
-
-		if lookupTables.Kings[square]&pos.Occupancy[piece.Wk] != 0 {
-			return true
-		}
-
-		if lookupTables.Knights[square]&pos.Occupancy[piece.Wn] != 0 {
-			return true
-		}
-
-		bishopIndex := tables.GetBishopLookupIndex(square, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
-		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[piece.Wb] != 0 {
-			return true
-		}
-
-		rookIndex := tables.GetRookLookupIndex(square, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
-		if lookupTables.Rooks[square][rookIndex]&pos.Occupancy[piece.Wr] != 0 {
-			return true
-		}
-
-		// Lookup queen attacks using bishop and rook attacks
-		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[piece.Wq] != 0 ||
-			lookupTables.Rooks[square][rookIndex]&pos.Occupancy[piece.Wq] != 0 {
-			return true
-		}
+		pawnLookupIndex = 1
+		pieces = [6]piece.Piece{piece.Wp, piece.Wk, piece.Wn, piece.Wb, piece.Wr, piece.Wq}
 	} else {
-		if lookupTables.Pawns[0][square]&pos.Occupancy[piece.Bp] != 0 {
-			return true
-		}
+		pawnLookupIndex = 0
+		pieces = [6]piece.Piece{piece.Bp, piece.Bk, piece.Bn, piece.Bb, piece.Br, piece.Bq}
+	}
 
-		if lookupTables.Kings[square]&pos.Occupancy[piece.Bk] != 0 {
-			return true
-		}
+	// Check pawn attacks
+	if lookupTables.Pawns[pawnLookupIndex][square]&pos.Occupancy[pieces[0]] != 0 {
+		return true
+	}
 
-		if lookupTables.Knights[square]&pos.Occupancy[piece.Bn] != 0 {
-			return true
-		}
+	// Check king attacks
+	if lookupTables.Kings[square]&pos.Occupancy[pieces[1]] != 0 {
+		return true
+	}
 
-		bishopIndex := tables.GetBishopLookupIndex(square, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
-		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[piece.Bb] != 0 {
-			return true
-		}
+	// Check knight attacks
+	if lookupTables.Knights[square]&pos.Occupancy[pieces[2]] != 0 {
+		return true
+	}
 
-		rookIndex := tables.GetRookLookupIndex(square, pos.Occupancy[piece.Wa]|pos.Occupancy[piece.Ba])
-		if lookupTables.Rooks[square][rookIndex]&pos.Occupancy[piece.Br] != 0 {
-			return true
-		}
+	// Calculate indices for sliding pieces
+	allPieces := pos.Occupancy[piece.Wa] | pos.Occupancy[piece.Ba]
 
-		// Lookup queen attacks using bishop and rook attacks
-		if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[piece.Bq] != 0 ||
-			lookupTables.Rooks[square][rookIndex]&pos.Occupancy[piece.Bq] != 0 {
-			return true
-		}
+	// Check bishop attacks
+	bishopIndex := tables.GetBishopLookupIndex(square, allPieces)
+	if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[pieces[3]] != 0 {
+		return true
+	}
+
+	// Check rook attacks
+	rookIndex := tables.GetRookLookupIndex(square, allPieces)
+	if lookupTables.Rooks[square][rookIndex]&pos.Occupancy[pieces[4]] != 0 {
+		return true
+	}
+
+	// Check queen attacks
+	if lookupTables.Bishops[square][bishopIndex]&pos.Occupancy[pieces[5]] != 0 ||
+		lookupTables.Rooks[square][rookIndex]&pos.Occupancy[pieces[5]] != 0 {
+		return true
 	}
 
 	return false
