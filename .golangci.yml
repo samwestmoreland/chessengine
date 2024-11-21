@@ -12,7 +12,6 @@ linters:
     - cyclop
     - tagliatelle
     - err113
-    - nestif
     - funlen
     - gocognit
 
