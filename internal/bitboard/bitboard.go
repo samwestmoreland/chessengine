@@ -64,6 +64,12 @@ func CountBits(board Bitboard) int {
 	return bits.OnesCount64(uint64(board))
 }
 
+// IsNthRank returns true if the given square is on the given rank. The rank here is 1-indexed, so
+// the square e4 is on the 4th rank, for example.
+func IsNthRank(rank int, square sq.Square) bool {
+	return rank == square.Rank()
+}
+
 // SetOccupancy sets each bit on the attack mask to 1 or 0.
 //
 // E.g. consider index 9, and an attack mask for a rook on d4:
@@ -101,6 +107,7 @@ func SetOccupancy(index int, attackMask Bitboard) Bitboard {
 	return ret
 }
 
+// RandomUint64 generates a random uint64.
 func RandomUint64() uint64 {
 	var b [8]byte
 	if _, err := rand.Read(b[:]); err != nil {
@@ -110,11 +117,12 @@ func RandomUint64() uint64 {
 	return binary.BigEndian.Uint64(b[:])
 }
 
+// GenerateSparseRandomUint64 generates a random uint64 that is sparse.
 func GenerateSparseRandomUint64() uint64 {
 	return RandomUint64() & RandomUint64() & RandomUint64() //nolint
 }
 
-// PrintBoard prints a bitboard to the console.
+// PrintBoard prints a bitboard to output.
 func PrintBoard(board Bitboard, output io.Writer) {
 	utils.WriteOrDie("\n", output)
 
