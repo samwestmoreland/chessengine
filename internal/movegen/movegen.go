@@ -563,12 +563,12 @@ func MakeMove(pos *position.Position, move move.Move, capturesOnly bool) *positi
 		piece := move.Piece()
 
 		return pos.MakeMove(source, target, piece)
+	}
+
+	if move.IsCapture() {
+		MakeMove(pos, move, false)
 	} else {
-		if move.IsCapture() {
-			MakeMove(pos, move, false)
-		} else {
-			return pos
-		}
+		return pos
 	}
 
 	return nil

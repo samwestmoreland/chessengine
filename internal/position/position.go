@@ -3,7 +3,6 @@ package position
 import (
 	"fmt"
 	"io"
-	"log"
 	"strconv"
 	"strings"
 
@@ -201,7 +200,6 @@ func (p *Position) Print(output io.Writer) {
 			occupied := false
 
 			for i, occ := range p.Occupancy {
-				log.Printf("checking square %s for piece %d", sq.Stringify(square), i)
 				if bb.GetBit(occ, square) {
 					occupied = true
 
