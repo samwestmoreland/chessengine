@@ -555,3 +555,21 @@ func getQueenMoves(pos *position.Position, colour piece.Colour) []move.Move {
 
 	return ret
 }
+
+func MakeMove(pos *position.Position, move move.Move, capturesOnly bool) *position.Position {
+	if !capturesOnly {
+		source := move.Source()
+		target := move.Target()
+		piece := move.Piece()
+
+		return pos.MakeMove(source, target, piece)
+	} else {
+		if move.IsCapture() {
+			MakeMove(pos, move, false)
+		} else {
+			return pos
+		}
+	}
+
+	return nil
+}
