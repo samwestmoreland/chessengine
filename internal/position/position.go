@@ -113,10 +113,10 @@ func parseEnPassantSquare(square string) (sq.Square, error) {
 func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 	occ := make([]bb.Bitboard, 15)
 
-	// Map pieces to their indices and color bitboards
+	// Map pieces to their indices and colour bitboards
 	pieceMap := map[rune]struct {
-		index     piece.Piece
-		colorBits piece.Piece
+		index      piece.Piece
+		colourBits piece.Piece
 	}{
 		'P': {piece.Wp, piece.Wa},
 		'N': {piece.Wn, piece.Wa},
@@ -138,7 +138,7 @@ func parsePositionString(posStr string) ([]bb.Bitboard, error) {
 		// Handle pieces
 		if info, isPiece := pieceMap[char]; isPiece {
 			occ[info.index] = bb.SetBit(occ[info.index], square)
-			occ[info.colorBits] = bb.SetBit(occ[info.colorBits], square)
+			occ[info.colourBits] = bb.SetBit(occ[info.colourBits], square)
 			square++
 
 			continue
@@ -196,6 +196,7 @@ func (p *Position) Print(output io.Writer) {
 	for rank := range 8 {
 		for file := range 8 {
 			square := sq.Square(byte(rank*8 + file))
+
 			occupied := false
 
 			for i, occ := range p.Occupancy {
@@ -219,6 +220,67 @@ func (p *Position) Print(output io.Writer) {
 	utils.WriteOrDie(fmt.Sprintf("\nside to move: %s\n", sideToString(p.WhiteToMove)), output)
 	utils.WriteOrDie(fmt.Sprintf("castling rights: %s\n", castlingRightsToString(p.CastlingRights)), output)
 	utils.WriteOrDie(fmt.Sprintf("en passant square: %s\n", sq.Stringify(p.EnPassantSquare)), output)
+}
+
+func (p *Position) Copy() *Position {
+	newOccupancy := make([]bb.Bitboard, len(p.Occupancy))
+	copy(newOccupancy, p.Occupancy)
+
+	return &Position{
+		Occupancy:       newOccupancy,
+		WhiteToMove:     p.WhiteToMove,
+		CastlingRights:  p.CastlingRights,
+		EnPassantSquare: p.EnPassantSquare,
+		HalfMoveClock:   p.HalfMoveClock,
+		FullMoveNumber:  p.FullMoveNumber,
+	}
+}
+
+func (p *Position) MakeMove(source, target sq.Square, movePiece piece.Piece) *Position {
+	ret := p.Copy()
+
+	ret.ClearSquare(target)
+	ret.ClearSquare(source)
+
+	ret.PlacePiece(target, movePiece)
+
+	return ret
+}
+
+func (p *Position) ClearSquare(square sq.Square) {
+	for i := piece.Wp; i < piece.Bk; i++ {
+		if bb.GetBit(p.Occupancy[i], square) {
+			p.Occupancy[i] = bb.ClearBit(p.Occupancy[i], square)
+
+			colour, err := i.Colour()
+			if err != nil {
+				panic(err)
+			}
+
+			if colour == piece.Black {
+				p.Occupancy[piece.Ba] = bb.ClearBit(p.Occupancy[piece.Ba], square)
+			} else {
+				p.Occupancy[piece.Wa] = bb.ClearBit(p.Occupancy[piece.Wa], square)
+			}
+
+			break
+		}
+	}
+}
+
+func (p *Position) PlacePiece(square sq.Square, pieceToPlace piece.Piece) {
+	p.Occupancy[pieceToPlace] = bb.SetBit(p.Occupancy[pieceToPlace], square)
+
+	colour, err := pieceToPlace.Colour()
+	if err != nil {
+		panic(err)
+	}
+
+	if colour == piece.Black {
+		p.Occupancy[piece.Ba] = bb.SetBit(p.Occupancy[piece.Ba], square)
+	} else {
+		p.Occupancy[piece.Wa] = bb.SetBit(p.Occupancy[piece.Wa], square)
+	}
 }
 
 func sideToString(whiteToMove bool) string {

@@ -1,5 +1,7 @@
 package piece
 
+import "fmt"
+
 type Piece uint8
 
 const (
@@ -41,6 +43,18 @@ func (p Piece) String() string {
 	}
 
 	return ""
+}
+
+func (p Piece) Colour() (Colour, error) {
+	if p >= Bp {
+		return Black, nil
+	}
+
+	if p >= Wp {
+		return White, nil
+	}
+
+	return White, fmt.Errorf("couldn't get colour of piece: %d", p)
 }
 
 type Colour uint8
